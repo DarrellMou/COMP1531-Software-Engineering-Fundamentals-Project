@@ -20,13 +20,13 @@ data = {
         {
             'id' : 1,
             'name' : 'channel1',
-            'owner' : 'name',
+            'owner_members' : ['name1', 'name2'],
             'members' : ['id1', 'id2'],
         },
         {
             'id': 2,
             'name' : 'channel2',
-            'owner' : 'name',
+            'owner_members' : ['name1', 'name2'],
             'members' : ['id1', 'id2'],
         },
     ],
