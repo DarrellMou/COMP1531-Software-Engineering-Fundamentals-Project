@@ -5,7 +5,7 @@ data = {
             'name' : 'first_name last_name',
             'email' : 'random@hotmail.com',
             'password' : 'password123',
-            'auth_user_id' : 'whatever',
+            'auth_user_id' : '123456',
 
         },
         {
@@ -13,7 +13,7 @@ data = {
             'name' : 'first_name last_name',
             'email' : 'random@hotmail.com',
             'password' : 'password123',
-            'auth_user_id' : 'whatever',
+            'auth_user_id' : '123457',
         },
     ],
     'channels' : [

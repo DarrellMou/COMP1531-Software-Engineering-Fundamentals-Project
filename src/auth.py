@@ -1,5 +1,6 @@
 # need a dictionary to match credentials with actual reference(auth_user_id) 
 from src.error import InputError 
+from src.data import data
 import re
 import itertools
 
@@ -14,7 +15,7 @@ def auth_login_v1(email, password):
 	
     for key in userinfo.keys():
     	if(email == key and password == userinfo[key]['passwd']):
-            return userinfo[key]['auth_user_id'] # to do:what is {auth_id} ?			
+            return {'auth_user_id' : int(userinfo[key]['auth_user_id'])} # to do:what is {auth_id} ?			
     raise InputError
 
 def auth_register_v1(email, password, name_first, name_last):
