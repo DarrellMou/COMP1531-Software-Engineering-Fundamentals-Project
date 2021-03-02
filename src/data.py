@@ -5,7 +5,7 @@ data = {
             'name' : 'first_name last_name',
             'email' : 'random@hotmail.com',
             'password' : 'password123',
-            'auth_user_id' : 'whatever',
+            'auth_user_id' : '1',
 
         },
         {
@@ -13,20 +13,22 @@ data = {
             'name' : 'first_name last_name',
             'email' : 'random@hotmail.com',
             'password' : 'password123',
-            'auth_user_id' : 'whatever',
+            'auth_user_id' : '2',
         },
     ],
     'channels' : [
         {
             'id' : 1,
             'name' : 'channel1',
-            'owner' : 'name',
+            'is_public' : True,
+            'owner' : 'first_name',
             'members' : ['id1', 'id2'],
         },
         {
             'id': 2,
             'name' : 'channel2',
-            'owner' : 'name',
+            'is_public' : False,
+            'owner' : 'first_name',
             'members' : ['id1', 'id2'],
         },
     ],
