@@ -1,7 +1,7 @@
 import uuid
 
-from error import InputError, AccessError
-from data import retrieve_data
+from src.error import InputError, AccessError
+from src.data import retrieve_data
 
 def channels_list_v1(auth_user_id):
     return {
