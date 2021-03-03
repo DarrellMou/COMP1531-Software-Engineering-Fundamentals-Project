@@ -17,16 +17,16 @@ def test_function():
     channel_join_v1('auth_user_id2', 'channel_id1')
     assert channel_details_v1('auth_user_id2', 'channel_id1') == {
         'name': 'channel1',
-        'owner_members': [
+        'owners': [
             {
-                'u_id': 1,
+                'u_id': 'auth_user_id1',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
             }
         ],
-        'all_members': [
+        'members': [
             {
-                'u_id': 2,
+                'u_id': 'auth_user_id2',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
             }
@@ -49,29 +49,29 @@ def test_many_channel_members():
         'name': 'channel1',
         'owner_members': [
             {
-                'u_id': 1,
+                'u_id': 'auth_user_id1',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
             }
         ],
         'all_members': [
             {
-                'u_id': 2,
+                'u_id': 'auth_user_id2',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
             },
             {
-                'u_id': 3,
+                'u_id': 'auth_user_id3',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
             },
             {
-                'u_id': 4,
+                'u_id': 'auth_user_id4',
                 'name_first': 'first_name4',
                 'name_last': 'last_name4',
             },
             {
-                'u_id': 5,
+                'u_id': 'auth_user_id5',
                 'name_first': 'first_name5',
                 'name_last': 'last_name5',
             },
