@@ -10,8 +10,7 @@ from src.channel import channel_invite_v1
 from src.channel import channel_details_v1
 
 def test_function():
-    del data['users']
-    del data['channels']
+    data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     channels_create_v1('auth_user_id1', 'channel1', True) #returns channel_id1 e.g.
@@ -35,8 +34,7 @@ def test_function():
     }
 
 def test_multiple_runs():
-    del data['users']
-    del data['channels']
+    data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
@@ -81,24 +79,21 @@ def test_multiple_runs():
     }
 
 def test_invalid_channel_id():
-    del data['users']
-    del data['channels']
+    data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     with pytest.raises(InputError):
         channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
 
 def test_invalid_invited_user():
-    del data['users']
-    del data['channels']
+    data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     channels_create_v1('auth_user_id1', 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(InputError):
         channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
 
 def test_unauthorized_user():
-    del data['users']
-    del data['channels']
+    data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
