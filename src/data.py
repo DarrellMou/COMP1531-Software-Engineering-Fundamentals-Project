@@ -1,5 +1,5 @@
 data = {
-    'users' = []
+    'users' = [],
     'channels' = []
 }
 
