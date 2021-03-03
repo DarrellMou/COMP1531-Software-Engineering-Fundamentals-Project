@@ -2,7 +2,7 @@ import pytest
 
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1
-from error import InputError, AccessError
+from src.error import InputError, AccessError
 
 def test_channels_create_v1():
     
