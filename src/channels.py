@@ -25,7 +25,7 @@ def channels_listall_v1(auth_user_id):
 
 def channels_create_v1(auth_user_id, name, is_public):
 
-    data = retrieve_data
+    data = retrieve_data()
 
     # error when creating a channel name longer than 20 characters
     if len(name) > 20:
@@ -33,7 +33,7 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     # creates channel object
     channel_new = {
-        'channel_id' : int(uuid.uuid1()) # make a int(UUID) based on the host ID and current time
+        'channel_id' : int(uuid.uuid1()), # make a int(UUID) based on the host ID and current time
         'name' : name,  
         'is_public' : is_public,  
         'owner' : auth_user_id
