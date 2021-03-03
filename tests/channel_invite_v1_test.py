@@ -9,6 +9,10 @@ from src.channels import channels_create_v1
 from src.channel import channel_invite_v1
 from src.channel import channel_details_v1
 
+# Include fixtures?
+# After required functions are implemented
+
+# Typical case
 def test_function():
     data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
@@ -33,6 +37,7 @@ def test_function():
         ],
     }
 
+# Running channel_invite multiple times
 def test_multiple_runs():
     data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
@@ -78,6 +83,7 @@ def test_multiple_runs():
         ],
     }
 
+# Channel_invite given channel id belonging to a non-existent channel
 def test_invalid_channel_id():
     data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
@@ -85,6 +91,7 @@ def test_invalid_channel_id():
     with pytest.raises(InputError):
         channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
 
+# Channel_invite given user that does not exist
 def test_invalid_invited_user():
     data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
@@ -92,6 +99,7 @@ def test_invalid_invited_user():
     with pytest.raises(InputError):
         channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
 
+# Channel_invite executed by user not in given channel
 def test_unauthorized_user():
     data.clear()
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
