@@ -5,25 +5,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     }
 
 def channel_details_v1(auth_user_id, channel_id):
-    #print(data['users'][0]['name_first'])
-    return {
-        
-        'name': 'Hayden',
-        'owner_members': [
-            {
-                'u_id': 1,
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': 1,
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-            }
-        ],
-    }
+    if not(any(channel == channel_id for channel in data['channels'])): raise InputError
+    if not(any(user == auth_user_id for user in data['channels'][channel_id]['members'] + data['channels'][channel_id]['owners'])): raise AccessError
+    # TO DO
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
