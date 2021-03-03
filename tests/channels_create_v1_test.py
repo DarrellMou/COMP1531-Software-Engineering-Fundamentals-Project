@@ -15,11 +15,11 @@ def test_channels_create_access_error():
 # error when creating a channel name longer than 20 characters
 def test_channels_create_input_error():
     with pytest.raises(InputError):
-        channels_create_v1(a_u_id_1, "This is longer than 20", True)
+        channels_create_v1("a_u_id_1", "This is longer than 20", True)
 
 # assert channel id is an integer
 def test_channels_create_return_value():
-    channel_id_1 = channels_create_v1(a_u_id_1, "Public Channel", True)
+    channel_id_1 = channels_create_v1("a_u_id_1", "Public Channel", True)
     assert isinstance(channel_id_1['channel_id'], int)
 
 '''
