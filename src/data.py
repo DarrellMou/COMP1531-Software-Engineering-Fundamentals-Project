@@ -1,6 +1,6 @@
 data = {
-    'users' = [],
-    'channels' = []
+    'users' : [],
+    'channels' : []
 }
 
 def get_data():
