@@ -7,7 +7,6 @@ data = {
             'email' : 'random@hotmail.com',
             'password' : 'password123',
             'auth_user_id' : 'whatever',
-
         },
         {
             'id' : 2,
@@ -38,12 +37,14 @@ data = {
         {
             'id' : 1,
             'name' : 'channel1',
+            'is_public' : False,
             'owner_members' : ['id1', 'id2'],
             'members' : ['id3', 'id4'],
         },
         {
             'id': 2,
             'name' : 'channel2',
+            'is_public' : True,
             'owner_members' : ['id1', 'id2'],
             'members' : ['id3', 'id4'],
         },

@@ -1,11 +1,13 @@
-import data.py
+from src.data import data
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
 def channel_details_v1(auth_user_id, channel_id):
+    #print(data['users'][0]['name_first'])
     return {
+        
         'name': 'Hayden',
         'owner_members': [
             {
