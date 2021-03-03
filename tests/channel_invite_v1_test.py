@@ -1,4 +1,5 @@
 import pytest
+from src.data import data
 
 from src.error import InputError
 from src.error import AccessError
