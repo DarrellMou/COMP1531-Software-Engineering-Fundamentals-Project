@@ -39,7 +39,6 @@ def channels_create_v1(auth_user_id, name, is_public):
     if curr_user == {}:
         raise AccessError(description = "Invalid auth_user_id")
         
-
     # creates channel object
     channel_new = {
         'channel_id' : int(uuid.uuid1()), # make a int(UUID) based on the host ID and current time
