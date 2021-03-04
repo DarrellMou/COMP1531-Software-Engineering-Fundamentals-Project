@@ -1,10 +1,10 @@
-from data import data
+from src.data import data
 
-from error import AccessError
-from error import InputError
+from src.error import AccessError
+from src.error import InputError
 
 import uuid
-from auth import auth_register_v1
+from src.auth import auth_register_v1
 
 def channels_list_v1(auth_user_id):
     return {

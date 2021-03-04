@@ -1,12 +1,12 @@
-from data import data
+from src.data import data
 
-from error import AccessError
-from error import InputError
+from src.error import AccessError
+from src.error import InputError
 
 import uuid
-from auth import auth_register_v1
-from channels import channels_listall_v1
-from channels import channels_create_v1
+from src.auth import auth_register_v1
+from src.channels import channels_listall_v1
+from src.channels import channels_create_v1
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Checks for any errors involving parameters
@@ -46,6 +46,7 @@ def channel_details_v1(auth_user_id, channel_id):
         name_last: {data['users'][owner]['name_last']},
     {'},'}'''
         i += 1
+    string += f'\n],'
 
     string += f'\n'
     string += "'all_members': ["
@@ -60,7 +61,7 @@ def channel_details_v1(auth_user_id, channel_id):
         name_last: {data['users'][member]['name_last']},
     {'},'}'''
         i += 1
-    string += f'\n]'
+    string += f'\n],'
     return string
 
 def channel_messages_v1(auth_user_id, channel_id, start):

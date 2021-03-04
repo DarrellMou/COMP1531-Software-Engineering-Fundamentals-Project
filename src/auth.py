@@ -1,6 +1,6 @@
 # need a dictionary to match credentials with actual reference(auth_user_id) 
-from error import InputError 
-from data import data
+from src.error import InputError 
+from src.data import data
 import re
 import itertools
 import uuid

@@ -14,23 +14,24 @@ from src.channel import channel_details_v1
 
 # Typical case
 def test_function():
-    data.clear()
-    auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
-    auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
-    channels_create_v1('auth_user_id1', 'channel1', True) #returns channel_id1 e.g.
-    channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
-    assert channel_details_v1('auth_user_id2', 'channel_id1') == {
+    data['users'] = {}
+    data['channels'] = {}
+    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id e.g.
+    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id e.g.
+    ch_id = channels_create_v1(a_u_id1, 'channel1', True) #returns channel_id e.g.
+    channel_invite_v1(a_u_id1, ch_id, a_u_id2)
+    assert channel_details_v1(a_u_id2, ch_id) == {
         'name': 'channel1',
         'owner_members': [
             {
-                'u_id': 1,
+                'u_id': a_u_id1,
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
             }
         ],
         'all_members': [
             {
-                'u_id': 2,
+                'u_id': a_u_id2,
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
             }
