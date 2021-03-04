@@ -34,7 +34,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     # error when invalid auth_user_id
     curr_user = {}
     for user in data['users']:
-        if user['auth_user_id'] == auth_user_id:
+        if user['auth_user_id'] == auth_user_id['auth_user_id']:
             curr_user = user
     if curr_user == {}:
         raise AccessError("Invalid auth_user_id")
