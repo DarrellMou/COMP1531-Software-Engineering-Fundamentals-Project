@@ -25,7 +25,7 @@ def channels_listall_v1(auth_user_id):
 
 def channels_create_v1(auth_user_id, name, is_public):
 
-    data = retrieve_data
+    data = retrieve_data()
 
     # error when creating a channel name longer than 20 characters
     if len(name) > 20:
@@ -48,7 +48,6 @@ def channels_create_v1(auth_user_id, name, is_public):
         'members' : [],
         'messages' : []
     }
-
     # appends the new channel to the list of channels
     data['channels'].append(channel_new)
 
