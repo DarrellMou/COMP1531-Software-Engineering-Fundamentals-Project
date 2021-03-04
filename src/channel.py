@@ -92,24 +92,3 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
 def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     return {
     }
-
-data['users'] = {}
-data['channels'] = {}
-a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
-a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
-a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
-a_u_id4 = auth_register_v1('user4@email.com', 'User4_pass!', 'user4_first', 'user4_last')
-a_u_id5 = auth_register_v1('user5@email.com', 'User5_pass!', 'user5_first', 'user5_last')
-
-#print(a_u_id1)
-ch_id = channels_create_v1(a_u_id1, 'channel1', True)
-ch_id2 = channels_create_v1(a_u_id1, 'channel2', True)
-#channels_create_v1(a_u_id1, 'channel3', True)
-#print(channels_listall_v1(a_u_id1))
-channel_invite_v1(a_u_id1, ch_id, a_u_id2)
-channel_invite_v1(a_u_id1, ch_id, a_u_id3)
-channel_invite_v1(a_u_id1, ch_id, a_u_id4)
-channel_invite_v1(a_u_id1, ch_id, a_u_id5)
-channel_invite_v1(a_u_id1, ch_id, a_u_id2)
-#print(data['channels'])
-print(channel_details_v1(a_u_id1, ch_id))
