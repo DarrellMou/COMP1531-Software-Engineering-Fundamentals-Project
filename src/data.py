@@ -1,3 +1,4 @@
+global data
 data = {
     'users' : {
         'auth_user_id1' : {
