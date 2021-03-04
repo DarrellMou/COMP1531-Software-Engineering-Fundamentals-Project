@@ -108,3 +108,4 @@ def test_unauthorized_user():
     channels_create_v1('auth_user_id1', 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(AccessError):
         channel_invite_v1('auth_user_id2', 'channel_id1', 'auth_user_id3')
+        
