@@ -1,4 +1,5 @@
 from src.data import data
+from src.other import write_into_data
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     # Checks for any errors involving parameters
@@ -7,7 +8,11 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if not(any(user == auth_user_id for user in data['channels'][channel_id]['members'] + data['channels'][channel_id]['owners'])): raise AccessError
 
     # Appends new user to given channel
-    data['channels'][channel_id]['members'].append(u_id)
+    # Assume no duplicate entries allowed
+    if not(any(user == u_id for user in data['channels'][channel_id]['owners'] + data['channels'][channel_id]['members'])):
+        data['channels'][channel_id]['members'].append(u_id)
+
+    write_into_data(data)    
 
 def channel_details_v1(auth_user_id, channel_id):
     return {
@@ -57,3 +62,5 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
 def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     return {
     }
+
+print(data)
