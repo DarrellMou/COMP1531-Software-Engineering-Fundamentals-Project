@@ -18,7 +18,7 @@ def test_function():
     auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     channels_create_v1('auth_user_id1', 'channel1', True) #returns channel_id1 e.g.
-    channel_join_v1('auth_user_id2', 'channel_id1')
+    channel_invite_v1('auth_user_id1', 'channel_id1', 'auth_user_id2')
     assert channel_details_v1('auth_user_id2', 'channel_id1') == {
         'name': 'channel1',
         'owners': [
@@ -40,26 +40,11 @@ def test_function():
 # Channel_details printing a lot of data
 def test_many_channel_members():
     data.clear()
-    auth_register_v1('example0@hotmail.com', 'password0', 'first_name0', 'last_name0') #returns auth_user_id0 e.g.
-    auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
-    auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
-    auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
-    auth_register_v1('example4@hotmail.com', 'password4', 'first_name4', 'last_name4') #returns auth_user_id4 e.g.
-    auth_register_v1('example5@hotmail.com', 'password5', 'first_name5', 'last_name5') #returns auth_user_id5 e.g.
-    auth_register_v1('example6@hotmail.com', 'password6', 'first_name6', 'last_name6') #returns auth_user_id6 e.g.
-    auth_register_v1('example7@hotmail.com', 'password7', 'first_name7', 'last_name7') #returns auth_user_id7 e.g.
-    auth_register_v1('example8@hotmail.com', 'password8', 'first_name8', 'last_name8') #returns auth_user_id8 e.g.
-    auth_register_v1('example9@hotmail.com', 'password9', 'first_name9', 'last_name9') #returns auth_user_id9 e.g.
+    for i in range(10):
+        auth_register_v1(f'example{i}@hotmail.com', f'password{i}', f'first_name{i}', f'last_name{i}')
     channels_create_v1('auth_user_id0', 'channel0', True) #returns channel_id0 e.g.
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id1')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id2')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id3')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id4')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id5')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id6')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id7')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id8')
-    channel_invite_v1('auth_user_id0', 'channel0', 'auth_user_id9')
+    for i in range(1,10):
+        channel_invite_v1('auth_user_id0', 'channel0', f'auth_user_id{i}')
     assert channel_details_v1('auth_user_id0', 'channel_id0') == {
         'name': 'channel0',
         'owner_members': [
