@@ -25,10 +25,9 @@ def test_standard():
             {
                 'channel_id': 1
                 'name': 'channel1'
-            }
-        ]
+            },
+        ],
     }
-    data.clear()
 
 #Case where a user joins multiple channels
 def test_multiple_channels_joined():
@@ -59,7 +58,6 @@ def test_multiple_channels_joined():
             },
         ],
     }
-    data.clear()
 
 #Case where multiple users join one channel
 def test_multiple_joiners():
@@ -101,7 +99,6 @@ def test_multiple_joiners():
             },
         ],
     }
-    data.clear()
 
 #(TODO)Assumption Case: A user who is already a member of a channel attempts to join
 
@@ -116,7 +113,6 @@ def test_private_channel():
 
     with pytest.raises(AccessError):
         channel_join_v1('auth_user_id2', 'channel_id1') #Channel_id1 is a private channel
-    data.clear()
 
 #Case where channel_join is given the id of a non-existent channel
 def test_invalid_channel():
@@ -127,4 +123,3 @@ def test_invalid_channel():
 
     with pytest.raises(InputError):
         channel_join_v1('auth_user_id2', 'channel_id2') #Channel_id2 doesn't exist
-    data.clear()
