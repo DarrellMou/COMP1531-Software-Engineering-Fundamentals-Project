@@ -55,7 +55,7 @@ data = {
                     'message' : 'Hello World2'
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)'
                 }
-            ]
+            ],
         },
         {
             'channel_id' : 2,
@@ -93,7 +93,7 @@ data = {
                     'message' : 'Hello World2'
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)'
                 }
-            ]
+            ],
         },
     ],
 }
