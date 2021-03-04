@@ -25,15 +25,17 @@ data = {
             'owners' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
-                'message_id1' : {
+                {'message_id1' : {
                     'auth_user_id' : 35746842521,
                     'message' : 'Hello World1',
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
+                    },
                 },
-                'message_id2' : {
+                {'message_id2' : {
                     'auth_user_id' : 11753764853,
                     'message' : 'Hello World2',
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
+                    },
                 },
             ]
         },
@@ -43,15 +45,18 @@ data = {
             'owners' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
-                'message_id1' : {
+                {'message_id1' : {
                     'auth_user_id' : 35746842521,
                     'message' : 'Hello World1',
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
+                    },
                 },
-                'message_id2' : {
+                {'message_id2' : {
                     'auth_user_id' : 11753764853,
                     'message' : 'Hello World2',
                     'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
+                    },
+                }
             ],
         },
     },

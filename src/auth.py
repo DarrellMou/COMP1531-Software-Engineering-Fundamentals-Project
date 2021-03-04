@@ -44,29 +44,27 @@ def auth_register_v1(email, password, name_first, name_last):
 
     new_u_id = int(uuid.uuid4())
 
-    if(any(new_handle == user['handle_str'] for user in data['users'])):
+    if(any(new_handle == data['users'][user]['handle_str'] for user in data['users'])):
         for epilogue in itertools.count(0, 1):
-            if(not any((new_handle + str(epilogue)) == user['handle_str'] for user in data['users'])):
+            if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
                 #userinfo[email] = {'passwd' : password, 'handle' : new_handle + str(epilogue), 'auth_user_id' : new_auth_user_id}
-                data['users'].append(
-                    new_auth_user_id : {
+                data['users'][new_auth_user_id] = {
                     'u_id' : new_u_id, 
                     'name_first' : name_first, 
                     'name_last' : name_last, 
                     'email' : email,
                     'password' : password, 
-                    'auth_user_id' : new_auth_user_id, 
-                    'handle_str' : new_handle + str(epilogue)
-                    })
+                    'handle_str' : new_handle + str(epilogue),
+                }
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         #userinfo[email] = {'passwd' : password, 'handle' : new_handle, 'auth_user_id' : new_auth_user_id}
-        data['users'].append(
-                    {'u_id' : new_u_id, 
-                    'name_first' : name_first, 
-                    'name_last' : name_last, 
-                    'email' : email,
-                    'password' : password, 
-                    'auth_user_id' : new_auth_user_id, 
-                    'handle_str' : new_handle})
+        data['users'][new_auth_user_id] = {
+            'u_id' : new_u_id, 
+            'name_first' : name_first, 
+            'name_last' : name_last, 
+            'email' : email,
+            'password' : password,  
+            'handle_str' : new_handle,
+        }
         return {'auth_user_id' : new_auth_user_id}
