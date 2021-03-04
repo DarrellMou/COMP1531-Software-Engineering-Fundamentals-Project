@@ -1,5 +1,8 @@
 from src.data import data
 from src.error import AccessError, InputError
+#from data import data
+#from error import AccessError, InputError
+
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
@@ -8,10 +11,9 @@ from src.error import AccessError, InputError
 
 # Helper function to determine if a channel is a valid channel
 def is_valid_channel_id(channel_id):
-    global data
-    
+    #global data
     for channel in data['channels']:
-        if int(channel_id) == channel['channel_id']:
+        if channel_id == channel['channel_id']:
             return True
     
     return False
@@ -34,7 +36,7 @@ def is_valid_user_in_channel(user_id, channel_id):
 def num_messages(channel_id):
     # Get the channel from the given channel id
     global data
-    channel = data['channels'][int(channel_id) - 1]
+    channel = data['channels'][channel_id - 1]
 
     count = 0
     for message in channel['messages']:
@@ -78,7 +80,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     # Check to see if the given channel_id is a valid channel
-    if not is_valid_channel_id(channel_id):
+    if is_valid_channel_id(channel_id) == False:
         raise InputError("Channel id is not valid")
     # Check to see if the given user is actully in the given channel
     elif not is_valid_user_in_channel(auth_user_id, channel_id):
@@ -122,7 +124,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # If 50 messages were added, then the most recent message is going to be
     # returned and as per the spec, 'end' should return -1. Otherwise, end
     # should return (start + 50)
-    if count < start + 50:
+    if len(messages_dict['messages']) != 50:
         messages_dict['end'] = -1
     else:
         messages_dict['end'] = start + 50
