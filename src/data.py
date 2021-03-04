@@ -22,7 +22,7 @@ data = {
         14723573315 : {
             'name' : 'channel1',
             'is_public' : True,
-            'owners' : ['auth_user_id1'],
+            'owner_members' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
                 {'message_id1' : {
@@ -42,7 +42,7 @@ data = {
         31627643273 : {
             'name' : 'channel2',
             'is_public' : True,
-            'owners' : ['auth_user_id1'],
+            'owner_members' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
                 {'message_id1' : {
