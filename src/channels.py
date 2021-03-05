@@ -66,20 +66,8 @@ def channels_create_v1(auth_user_id, name, is_public):
     data['channels'][channel_id] = {
         'name' : name, 
         'is_public' : is_public, 
-        'owner_members': [
-            {
-                'auth_user_id': curr_user,
-                'name_first': data['users'][curr_user]['name_first'],
-                'name_last': data['users'][curr_user]['name_last']
-            },
-        ],
-        'all_members': [
-            {
-                'auth_user_id': curr_user,
-                'name_first': data['users'][curr_user]['name_first'],
-                'name_last': data['users'][curr_user]['name_last']
-            },
-        ],
+        'owner_members': [auth_user_id],
+        'all_members': [auth_user_id],
         'messages' : [],
     }   
 
@@ -97,6 +85,7 @@ if __name__ == '__main__' :
   
     user1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     user2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
+    print(data)
 
     print(     ) 
     channel_id1 = channels_create_v1(user1['auth_user_id'], "Public Channel", True)
