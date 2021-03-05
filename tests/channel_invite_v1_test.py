@@ -16,9 +16,9 @@ from src.channel import channel_details_v1
 def test_function():
     reset_data()
 
-    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id e.g.
-    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id e.g.
-    ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id e.g.
+    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') # returns auth_user_id e.g.
+    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') # returns auth_user_id e.g.
+    ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) # returns channel_id e.g.
     channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id2['auth_user_id'])
     assert channel_details_v1(a_u_id1['auth_user_id'], ch_id['channel_id']) == {
         'name': 'channel1',
@@ -57,6 +57,58 @@ def test_multiple_runs():
     channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id3['auth_user_id'])
     channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id4['auth_user_id'])
     channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id5['auth_user_id'])
+    assert channel_details_v1(a_u_id2['auth_user_id'], ch_id['channel_id']) == {
+        'name': 'channel1',
+        'owner_members': [
+            {
+                'u_id': a_u_id1['auth_user_id'],
+                'name_first': 'first_name1',
+                'name_last': 'last_name1',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': a_u_id1['auth_user_id'],
+                'name_first': 'first_name1',
+                'name_last': 'last_name1',
+            },
+            {
+                'u_id': a_u_id2['auth_user_id'],
+                'name_first': 'first_name2',
+                'name_last': 'last_name2',
+            },
+            {
+                'u_id': a_u_id3['auth_user_id'],
+                'name_first': 'first_name3',
+                'name_last': 'last_name3',
+            },
+            {
+                'u_id': a_u_id4['auth_user_id'],
+                'name_first': 'first_name4',
+                'name_last': 'last_name4',
+            },
+            {
+                'u_id': a_u_id5['auth_user_id'],
+                'name_first': 'first_name5',
+                'name_last': 'last_name5',
+            },
+        ],
+    }
+
+# Inviting chain
+def test_multiple_users_invite():
+    reset_data()
+
+    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
+    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
+    a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
+    a_u_id4 = auth_register_v1('example4@hotmail.com', 'password4', 'first_name4', 'last_name4') #returns auth_user_id4 e.g.
+    a_u_id5 = auth_register_v1('example5@hotmail.com', 'password5', 'first_name5', 'last_name5') #returns auth_user_id5 e.g.
+    ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id1 e.g.
+    channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id2['auth_user_id'])
+    channel_invite_v1(a_u_id2['auth_user_id'], ch_id['channel_id'], a_u_id3['auth_user_id'])
+    channel_invite_v1(a_u_id3['auth_user_id'], ch_id['channel_id'], a_u_id4['auth_user_id'])
+    channel_invite_v1(a_u_id4['auth_user_id'], ch_id['channel_id'], a_u_id5['auth_user_id'])
     assert channel_details_v1(a_u_id2['auth_user_id'], ch_id['channel_id']) == {
         'name': 'channel1',
         'owner_members': [
