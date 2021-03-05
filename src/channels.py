@@ -45,6 +45,7 @@ def channels_listall_v1(auth_user_id):
         'channels': channel_listall
     }
 
+
 def channels_create_v1(auth_user_id, name, is_public):
 
     data = retrieve_data()
