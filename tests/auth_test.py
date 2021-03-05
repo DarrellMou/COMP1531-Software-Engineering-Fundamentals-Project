@@ -20,8 +20,3 @@ def test_auth_register_v1():
         auth_register_v1('sampleemail1@gmail.com', 'password1', 'test', 'user1')
         auth_register_v1('sampleemail2@gmail.com', 'passwo', 'test', 'user1')
         auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1')
-
-def test_auth_login_then_register():
-	auth_register_v1('newuseremail@gmail.com', 'thenewguyishere', 'Georg', 'Hegel')
-    with pytest.raises(InputError):
-	   auth_login_v1('newuseremail@gmail.com', 'thenewguyishere')
