@@ -13,7 +13,7 @@ from src.error import AccessError, InputError
 def is_valid_channel_id(channel_id):
     data = retrieve_data()
     for channel in data['channels']:
-        if channel_id == 1:
+        if channel_id == channel:
             return True
     return False
 
@@ -22,10 +22,10 @@ def is_valid_channel_id(channel_id):
 def is_valid_user_in_channel(user_id, channel_id):
     # Get the channel from the given channel id
     data = retrieve_data()
-    channel = data['channels'][channel_id - 1] # Assuming channel_id starts off from 1 intead of 0
+    channel = data['channels'][channel_id]
 
     for user in channel['all_members']:
-        if int(user_id) == user['auth_user_id']:
+        if int(user_id) == user:
             return True
     
     return False
@@ -35,7 +35,7 @@ def is_valid_user_in_channel(user_id, channel_id):
 def num_messages(channel_id):
     # Get the channel from the given channel id
     data = retrieve_data()
-    channel = data['channels'][channel_id - 1]
+    channel = data['channels'][channel_id]
 
     count = 0
     for message in channel['messages']:
@@ -55,8 +55,18 @@ def num_messages(channel_id):
 
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
-    return {
-    }
+    data = retrieve_data()
+    # Checks for any errors involving parameters
+
+    if not(any(channel == channel_id for channel in data['channels'])): raise InputError
+    if not(any(user == u_id for user in data['users'])): raise InputError
+    if not(any(user == auth_user_id for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])): raise AccessError
+
+    # Appends new user to given channel
+    # Assume no duplicate entries allowed
+    if not(any(user == u_id['auth_user_id'] for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])):
+        data['channels'][channel_id]['all_members'].append(u_id)
+    return {}
 
 def channel_details_v1(auth_user_id, channel_id):
     return {
@@ -79,7 +89,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     # Check to see if the given channel_id is a valid channel
-    if is_valid_channel_id(channel_id) == False:
+    if not is_valid_channel_id(channel_id):
         raise InputError("Channel id is not valid")
     # Check to see if the given user is actully in the given channel
     elif not is_valid_user_in_channel(auth_user_id, channel_id):
@@ -103,7 +113,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     # Get our current channel
     data = retrieve_data()
-    channel = data['channels'][channel_id - 1]
+    channel = data['channels'][channel_id]
     # ASSUMPTION: messages are APPENDED to our message list within the channel
     # key of our data dictionary
     # Reverse the order of the channel messages so the most recent message
