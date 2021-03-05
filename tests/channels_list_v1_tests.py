@@ -22,8 +22,8 @@ def test_standard():
     assert channels_list_v1('auth_user_id2') == {
         'channels': [
             {
-                'channel_id': 1
-                'name': 'channel1'
+                'channel_id': 1,
+                'name': 'channel1',
             },
         ],
     }

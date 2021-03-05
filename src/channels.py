@@ -14,11 +14,13 @@ def channels_list_v1(auth_user_id):
 
         #Look for positive match
         for owner in owners:
-            if owner = auth_user_id:
-                print('channel_id: ' + channel '\nname: ' + name)
+            if owner == auth_user_id:
+                print('channel_id: ' + channel)
+                print('\nname: ' + name)
         for member in members:
-            if member = auth_user_id:
-                print('channel_id: ' + channel '\nname: ' + name)
+            if member == auth_user_id:
+                print('channel_id: ' + channel)
+                print('\nname: ' + name)
 
 
 def channels_listall_v1(auth_user_id):
