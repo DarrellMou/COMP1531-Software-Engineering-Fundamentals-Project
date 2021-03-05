@@ -1,3 +1,4 @@
+
 from src.error import InputError 
 from src.data import retrieve_data
 '''
@@ -22,7 +23,7 @@ def auth_login_v1(email, password):
     data = retrieve_data()
 
     # Checks for invalid email format
-    if(auth_email_format(email) == False):
+    if auth_email_format(email) == False:
         raise InputError
     
     # Checks for existing email and password
@@ -30,7 +31,7 @@ def auth_login_v1(email, password):
         data_email = data['users'][key_it]['email']
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
-        if(email == data_email and password == data_password):
+        if email == data_email and password == data_password:
             return {'auth_user_id' : key_it}        
     raise InputError
 
@@ -39,44 +40,53 @@ def auth_login_v1(email, password):
 def auth_register_v1(email, password, name_first, name_last):
 
     data = retrieve_data()
-
-    # Checks for 
-    if(auth_email_format(email) == False):
+    # Checks for invalid email format
+    if auth_email_format(email) == False:
         raise InputError
-    elif(any(email == data['users'][key_it]['email'] for key_it in data['users'].keys())):
+    # Checks for an already existing email address
+    elif any(email == data['users'][key_it]['email']\
+    for key_it in data['users']):
         raise InputError
-    elif(len(password) < 6):
+    # Ensuring password is over 5 characters
+    elif len(password) < 6:
         raise InputError
-    elif(len(name_first) > 50 or len(name_first) < 1 or len(name_last) > 50 or len(name_last) < 1):
+    # Checks that name_first is not between 1 and 50 characters inclusively in length
+    elif len(name_first) > 50 or len(name_first) < 1\
+        or len(name_last) > 50 or len(name_last) < 1:
         raise InputError
     
-    # generate handle and add to data['users']
+    # Generate handle and add to data['users'][auth_user_id]
     new_handle = name_first.lower() + name_last.lower()
+    # Limit handle to first 20 characters if exceeding 20 characters
     if len(new_handle) > 20:
         new_handle = new_handle[0:20]
 
+    # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
-    new_u_id = int(uuid.uuid4())
 
-    if(any(new_handle == data['users'][user]['handle_str'] for user in data['users'])):
+    data['users'][new_auth_user_id] = {
+        'name_first' : name_first, 
+        'name_last' : name_last, 
+        'email' : email,
+        'password' : password,
+        'handle_str' : '',
+    }
+
+    # Check to see if the handle is unique
+    if any(new_handle == data['users'][user]['handle_str']\
+    for user in data['users']):
+        # If the handle already exists, append with a number starting from 0
         for epilogue in itertools.count(0, 1):
-            if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
-                data['users'][new_auth_user_id] = {
-                    'name_first' : name_first, 
-                    'name_last' : name_last, 
-                    'email' : email,
-                    'password' : password, 
-                    'handle_str' : new_handle + str(epilogue),
-                }
+            if(not any((new_handle + str(epilogue)) ==\
+            data['users'][user]['handle_str'] for user in data['users'])):
+                data['users'][new_auth_user_id]['handle_str'] =\
+                new_handle + str(epilogue)
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
-        data['users'][new_auth_user_id] = {
-            'name_first' : name_first, 
-            'name_last' : name_last, 
-            'email' : email,
-            'password' : password,  
-            'handle_str' : new_handle,
-        }
+        data['users'][new_auth_user_id]['handle_str'] = new_handle
         return {'auth_user_id' : new_auth_user_id}
 
+
+if __name__ == '__main__':
+    auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
