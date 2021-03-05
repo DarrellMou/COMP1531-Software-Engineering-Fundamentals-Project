@@ -1,4 +1,4 @@
-from src.data import data
+from src.data import retrieve_data
 
 from src.error import AccessError
 from src.error import InputError
@@ -9,6 +9,9 @@ from src.channels import channels_listall_v1
 from src.channels import channels_create_v1
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
+
+    data = retrieve_data()
+
     # Checks for any errors involving parameters
     if not(any(channel == channel_id for channel in data['channels'])): raise InputError
     if not(any(user == u_id for user in data['users'])): raise InputError
@@ -24,6 +27,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 
 def channel_details_v1(auth_user_id, channel_id):
+
+    data = retrieve_data()
+
     # Checks for any errors involving parameters
     if not(any(channel == channel_id for channel in data['channels'])): raise InputError
     if not(any(user == auth_user_id for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])): raise AccessError

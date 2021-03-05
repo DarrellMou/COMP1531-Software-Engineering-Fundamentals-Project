@@ -1,5 +1,5 @@
 import pytest
-from src.data import data
+from src.data import reset_data
 
 from src.error import InputError
 from src.error import AccessError
@@ -14,8 +14,8 @@ from src.channel import channel_details_v1
 
 # Typical case
 def test_function():
-    data['users'] = {}
-    data['channels'] = {}
+    reset_data()
+
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id e.g.
     ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id e.g.
@@ -45,8 +45,8 @@ def test_function():
 
 # Running channel_invite multiple times
 def test_multiple_runs():
-    data['users'] = {}
-    data['channels'] = {}
+    reset_data()
+
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
@@ -97,8 +97,8 @@ def test_multiple_runs():
 
 # Channel_invite given channel id belonging to a non-existent channel
 def test_invalid_channel_id():
-    data['users'] = {}
-    data['channels'] = {}
+    reset_data()
+
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     with pytest.raises(InputError):
@@ -106,8 +106,8 @@ def test_invalid_channel_id():
 
 # Channel_invite given user that does not exist
 def test_invalid_invited_user():
-    data['users'] = {}
-    data['channels'] = {}
+    reset_data()
+
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(InputError):
@@ -115,8 +115,8 @@ def test_invalid_invited_user():
 
 # Channel_invite executed by user not in given channel
 def test_unauthorized_user():
-    data['users'] = {}
-    data['channels'] = {}
+    reset_data()
+
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
