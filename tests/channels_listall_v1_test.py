@@ -3,9 +3,11 @@ import pytest
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1, channels_listall_v1
 from src.error import InputError, AccessError
+from src.data import reset_data
     
 def setup_user():
-    
+    reset_data()
+
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
     a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
@@ -28,21 +30,43 @@ def test_channels_listall_invalid_user():
 
 # listing channels with none created
 def test_channels_listall_empty():
+
     users = setup_user()
 
-    assert channels_listall_v1(users['user3']) == {'channels': []}
+    assert channels_listall_v1(users['user3']['auth_user_id']) == {'channels': []}
 
 # listing a single channel
 def test_channels_listall_single():
+
     users = setup_user()
 
-    channel_id3 = channels_create_v1(users['user3'], 'Public3', True)
+    channel_id3 = channels_create_v1(users['user3']['auth_user_id'], 'Public3', True)
 
     # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3'])
+    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
 
-    assert channel_list['channels'][0]['channel_id'] == channel_id['channel_id_3']
+    assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public3'
 
+# listing multiple channels
+def test_channels_listall_multiple():
+
+    users = setup_user()
+
+    channel_id3 = channels_create_v1(users['user3']['auth_user_id'], 'Public3', True)
+    channel_id4 = channels_create_v1(users['user2']['auth_user_id'], 'Private4', False)
+    channel_id5 = channels_create_v1(users['user1']['auth_user_id'], 'Public5', True)
+
+    # ensure channels_listall returns correct values
+    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
+
+    assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
+    assert channel_list['channels'][0]['name'] == 'Public3'
+
+    assert channel_list['channels'][1]['channel_id'] == channel_id4['channel_id']
+    assert channel_list['channels'][1]['name'] == 'Private4'
+
+    assert channel_list['channels'][2]['channel_id'] == channel_id5['channel_id']
+    assert channel_list['channels'][2]['name'] == 'Public5'
 
 
