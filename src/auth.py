@@ -15,22 +15,32 @@ def auth_email_format(email):
     
     return bool(re.match(pattern, email))
 
+# Given a registered users' email and password
+# Returns their `auth_user_id` value
 def auth_login_v1(email, password):  
 
     data = retrieve_data()
 
+    # Checks for invalid email format
     if(auth_email_format(email) == False):
         raise InputError
     
+    # Checks for existing email and password
     for key_it in data['users'].keys():
-        if(email == data['users'][key_it]['email'] and password == data['users'][key_it]['password']):
+        data_email = data['users'][key_it]['email']
+        data_password = data['users'][key_it]['password']
+        # Checks for matching email and password
+        if(email == data_email and password == data_password):
             return {'auth_user_id' : key_it}        
     raise InputError
 
+# Given a user's first and last name, email address, and password
+# create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
 
     data = retrieve_data()
 
+    # Checks for 
     if(auth_email_format(email) == False):
         raise InputError
     elif(any(email == data['users'][key_it]['email'] for key_it in data['users'].keys())):
