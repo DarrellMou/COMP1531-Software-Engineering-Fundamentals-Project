@@ -20,6 +20,8 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if not(any(user == u_id for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])):
         data['channels'][channel_id]['all_members'].append(u_id)
 
+    return {}
+
 
 def channel_details_v1(auth_user_id, channel_id):
     # Checks for any errors involving parameters
