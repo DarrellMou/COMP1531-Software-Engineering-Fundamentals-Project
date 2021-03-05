@@ -1,11 +1,7 @@
-# Updated data file so we have a clear data section
-
-# Data dictionary which will be used throughout the project
-global data
+# Iteration 1 test data
 data = {
     'users' : {
         35746842521 : {
-            'u_id' : 1,
             'name_first' : 'first_name1',
             'name_last' : 'last_name1',
             'email' : 'example1@hotmail.com',
@@ -13,7 +9,6 @@ data = {
             'handle_str' : 'first_name1last_name',
         },
         11753764853 : {
-            'u_id' : 2,
             'name_first' : 'first_name2',
             'name_last' : 'last_name2',
             'email' : 'example2@hotmail.com',
