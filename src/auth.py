@@ -53,7 +53,6 @@ def auth_register_v1(email, password, name_first, name_last):
         for epilogue in itertools.count(0, 1):
             if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
                 data['users'][new_auth_user_id] = {
-                    'u_id' : new_u_id, 
                     'name_first' : name_first, 
                     'name_last' : name_last, 
                     'email' : email,
@@ -63,7 +62,6 @@ def auth_register_v1(email, password, name_first, name_last):
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id] = {
-            'u_id' : new_u_id, 
             'name_first' : name_first, 
             'name_last' : name_last, 
             'email' : email,

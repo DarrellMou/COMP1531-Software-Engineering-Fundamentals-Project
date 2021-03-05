@@ -23,4 +23,5 @@ def test_auth_register_v1():
 
 def test_auth_login_then_register():
 	auth_register_v1('newuseremail@gmail.com', 'thenewguyishere', 'Georg', 'Hegel')
-	auth_login_v1('newuseremail@gmail.com', 'thenewguyishere')
+    with pytest.raises(InputError):
+	   auth_login_v1('newuseremail@gmail.com', 'thenewguyishere')
