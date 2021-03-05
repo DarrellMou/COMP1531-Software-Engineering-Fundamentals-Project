@@ -26,7 +26,6 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 def channel_details_v1(auth_user_id, channel_id):
     # Checks for any errors involving parameters
     if not(any(channel == channel_id for channel in data['channels'])): raise InputError
-<<<<<<< HEAD
     if not(any(user == auth_user_id for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])): raise AccessError
 
     # Creates list with necessary data
