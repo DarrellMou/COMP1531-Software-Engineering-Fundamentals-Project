@@ -18,9 +18,9 @@ def test_function():
     data['channels'] = {}
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id e.g.
-    ch_id = channels_create_v1(a_u_id1, 'channel1', True) #returns channel_id e.g.
-    channel_invite_v1(a_u_id1, ch_id, a_u_id2)
-    assert channel_details_v1(a_u_id2, ch_id) == {
+    ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id e.g.
+    channel_invite_v1(a_u_id1['auth_user_id'], ch_id['channel_id'], a_u_id2['auth_user_id'])
+    assert channel_details_v1(a_u_id2['auth_user_id'], ch_id['channel_id']) == {
         'name': 'channel1',
         'owner_members': [
             {
