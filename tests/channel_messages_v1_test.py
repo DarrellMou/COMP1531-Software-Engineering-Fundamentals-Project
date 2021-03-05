@@ -2,7 +2,7 @@ import pytest
 
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v1
-from src.data import data, reset_data
+from src.data import data, reset_data, retrieve_data
 
 
 ###############################################################################
@@ -15,7 +15,7 @@ def add_simple_data():
     user1 = {'auth_user_id': 1, 'passwd': 1234, 'handle': 'brendanye'} # Should be using auth_register function but don't have that yet
     user2 = {'auth_user_id': 2, 'passwd': 5678, 'handle': 'bobbuilder'} # Ditto above
 
-    global data
+    data = retrieve_data()
     data['users'].extend([user1, user2])
     channel_1 = {'channel_id': 1, 'channel_name': 'channel_1', 'is_public': True,
     'owner': data['users'][0]['auth_user_id'], 'all_members': [{'auth_user_id': 1}], 'messages': []}
@@ -24,12 +24,9 @@ def add_simple_data():
     return data
 
 def add_1_message():
-    global data
-    data = {
-        "users" : [],
-        "channels" : []
-    }
-    add_simple_data()
+    data = retrieve_data()
+    reset_data()
+    data = add_simple_data()
 
     # Physically creating messages because we don't have message_send available yet
     data['channels'][0]['messages'].append({'message_id': 1, 'u_id': 1, 'message': "Test message", 'time_created': 1})
@@ -39,24 +36,22 @@ def add_1_message():
 
 # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id
 def add_50_messages():
-    global data
-    data = {
-        "users" : [],
-        "channels" : []
-    }
-    add_simple_data()
+    data = retrieve_data()
+    reset_data()
+    data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
     data['channels'][0]['all_members'].append({'auth_user_id': 2})
 
     # Physically creating 50 messages...
+    # The most recent message is at the beginning of the list as per spec
     message_count = 0
     while message_count < 50:
         message_num = message_count + 1
-        if message_num % 2 == 0:
-            message = {'message_id': 51 - message_num, 'u_id': 1, 'message': str(51 - message_num), 'time_created': 51 - message_num}
+        if message_num % 2 == 1:
+            message = {'message_id': message_num, 'u_id': 1, 'message': str(message_num), 'time_created': message_num}
         else:
-            message = {'message_id': 51 - message_num, 'u_id': 2, 'message': str(51 - message_num), 'time_created': 51 - message_num}
+            message = {'message_id': message_num, 'u_id': 2, 'message': str(message_num), 'time_created': message_num}
         data['channels'][0]['messages'].append(message)
         message_count += 1
 
@@ -64,24 +59,22 @@ def add_50_messages():
 
 
 def add_111_messages():
-    global data
-    data = {
-        "users" : [],
-        "channels" : []
-    }
-    add_simple_data()
+    data = retrieve_data()
+    reset_data()
+    data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
     data['channels'][0]['all_members'].append(data['users'][1]['auth_user_id'])
 
     # Physically creating 111 messages...
+    # The most recent message is at the beginning of the list as per spec
     message_count = 0
     while message_count < 111:
         message_num = message_count + 1
         if message_num % 2 == 1:
-            message = {'message_id': 112 - message_num, 'u_id': 1, 'message': str(112 - message_num), 'time_created': 112 - message_num}
+            message = {'message_id': message_num, 'u_id': 1, 'message': str(message_num), 'time_created': message_num}
         else:
-            message = {'message_id': 112 - message_num, 'u_id': 2, 'message': str(112 - message_num), 'time_created': 112 - message_num}
+            message = {'message_id': message_num, 'u_id': 2, 'message': str(message_num), 'time_created': message_num}
         data['channels'][0]['messages'].append(message)
         message_count += 1
 
@@ -89,12 +82,9 @@ def add_111_messages():
 
 
 def add_21_messages():
-    global data
-    data = {
-        "users" : [],
-        "channels" : []
-    }
-    add_simple_data()
+    data = retrieve_data()
+    reset_data()
+    data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
     data['channels'][0]['all_members'].append(data['users'][1]['auth_user_id'])
@@ -103,10 +93,10 @@ def add_21_messages():
     message_count = 0
     while message_count < 21:
         message_num = message_count + 1
-        if message_num % 2 == 0:
-            message = {'message_id': 22 - message_num, 'u_id': 1, 'message': str(22 - message_num), 'time_created': 22 - message_num}
+        if message_num % 2 == 1:
+            message = {'message_id': message_num, 'u_id': 1, 'message': str(message_num), 'time_created': message_num}
         else:
-            message = {'message_id': 22 - message_num, 'u_id': 2, 'message': str(22 - message_num), 'time_created': 22 - message_num}
+            message = {'message_id': message_num, 'u_id': 2, 'message': str(message_num), 'time_created': message_num}
         data['channels'][0]['messages'].append(message)
         message_count += 1
 
@@ -129,7 +119,7 @@ def add_21_messages():
 def test_channel_messages_v1_AccessError():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()
-    add_1_message()
+    data = add_1_message()
 
     # auth_user_id: 2 is not part of channel_1 - should raise an access error
     with pytest.raises(AccessError):
@@ -140,7 +130,7 @@ def test_channel_messages_v1_AccessError():
 def test_channel_messages_v1_InputError_invalid_channel():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()    
-    add_1_message()
+    data = add_1_message()
 
     # 2 is an invalid channel_id in this case
     with pytest.raises(InputError):
@@ -151,7 +141,7 @@ def test_channel_messages_v1_InputError_invalid_channel():
 def test_channel_messages_v1_InputError_invalid_start():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()
-    add_1_message() # Only has 1 message
+    data = add_1_message() # Only has 1 message
 
     with pytest.raises(InputError):
         assert channel_messages_v1(1, 1, 2)
@@ -161,7 +151,7 @@ def test_channel_messages_v1_InputError_invalid_start():
 def test_channel_messages_v1_InputError_negative_start():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()
-    add_1_message() # Only has 1 message
+    data = add_1_message() # Only has 1 message
 
     with pytest.raises(InputError):
         assert channel_messages_v1(1, 1, -1)
@@ -177,22 +167,32 @@ def test_channel_messages_v1_InputError_negative_start():
 def test_channel_messages_v1_no_messages():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()
-    add_1_message()
+    data = add_1_message()
     data['channels'][0]['messages'].clear() # Removes all messages from my simple data dictionary
 
     # TODO: Create a better assertion error message
     assert channel_messages_v1(1, 1, 0) == {'messages': [], 'start': 0, 'end': -1}, "No messages - should return end: -1"
+
+    # Raise an index error if trying to access ['messages'][0] as it is empty
+    with pytest.raises(IndexError):
+        assert channel_messages_v1(1, 1, 0)['messages'][0]
 
 
 # Testing to see if the function is working for a single message
 def test_channel_messages_v1_1_message():
     # Add member 1 into channel 1 and add 1 message
     # Data is already reset in add_1_message()
-    add_1_message()
+    data = add_1_message()
 
     assert channel_messages_v1(1, 1, 0)['start'] == 0, "Start should not change"
     assert channel_messages_v1(1, 1, 0)['end'] == -1, "The most recent message has been reached - return 'end': -1"
     assert channel_messages_v1(1, 1, 0)['messages'][0] == {'message_id': 1, 'u_id': 1, 'message': "Test message", 'time_created': 1}
+
+    # Raise an index error if trying to access beyond index 0 of ['messages']
+    # as index 1 is meant to be out of range
+    with pytest.raises(IndexError):
+        assert channel_messages_v1(1, 1, 0)['messages'][1]
+
 
 
 # Testing for exactly 50 messages
@@ -201,7 +201,7 @@ def test_channel_messages_v1_1_message():
 def test_channel_messages_v1_50_messages():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id
     # Data is already reset in add_50_messages()
-    add_50_messages()
+    data = add_50_messages()
 
     assert channel_messages_v1(1, 1, 0)['start'] == 0, "Start should not change"
     assert channel_messages_v1(1, 1, 0)['end'] == -1, "50th message IS the least recent message so it should return 'end': -1"
@@ -259,15 +259,21 @@ def test_channel_messages_v1_50_messages():
     {'message_id': 1, 'u_id': 1, 'message': '1', 'time_created': 1}
     ], "Error, messages do not match"
 
+    # Raise an index error if trying to access beyond index 49 of ['messages']
+    # as index 50 is meant to be out of range
+    with pytest.raises(IndexError):
+        assert channel_messages_v1(1, 1, 0)['messages'][50]
+
+
 
 # Testing for <50 messages (checking if 'end' returns -1)
 def test_channel_messages_v1_48_messages():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id
     # Data is already reset within add_50_messages
-    add_50_messages()
+    data = add_50_messages()
 
     # Delete the two most recent messages
-    del data['channels'][0]['messages'][0:2] # This deletes index 0 and 1 (id 50 and 49)
+    del data['channels'][0]['messages'][48:50] # This deletes index 48 and 49 (id 49 and 50)
 
     assert channel_messages_v1(1, 1, 0)['start'] == 0, "Start should not change"
     assert channel_messages_v1(1, 1, 0)['end'] == -1, "48 < start + 50 so the funtion should return 'end': -1"
@@ -284,9 +290,9 @@ def test_channel_messages_v1_48_messages():
 def test_channel_messages_v1_51_messages():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id
     # Data is already reset within add_50_messages()
-    add_50_messages()
+    data = add_50_messages()
     message_51 = {'message_id': 51, 'u_id': 1, 'message': "51", 'time_created': 51}
-    data['channels'][0]['messages'].insert(0, message_51)
+    data['channels'][0]['messages'].append(message_51)
 
     assert channel_messages_v1(1, 1, 0)['start'] == 0, "Start should not change"
     assert channel_messages_v1(1, 1, 0)['end'] == 50, "51 > start + 50 so the funtion should return 'end': 50"
@@ -308,7 +314,7 @@ def test_channel_messages_v1_51_messages():
 def test_channel_messages_v1_111_messages_start_0():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     # Data is already reset within add_111_messages()
-    add_111_messages()
+    data = add_111_messages()
 
     assert channel_messages_v1(1, 1, 0)['start'] == 0, "Start should not change"
     assert channel_messages_v1(1, 1, 0)['end'] == 50, "111 > start + 50 - function should return 'end': 50"
@@ -327,7 +333,7 @@ def test_channel_messages_v1_111_messages_start_0():
 def test_channel_messages_v1_111_messages_start_50():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     # Data is already reset within add_111_messages()
-    add_111_messages()
+    data = add_111_messages()
 
     assert channel_messages_v1(1, 1, 50)['start'] == 50, "Start should not change"
     assert channel_messages_v1(1, 1, 50)['end'] == 100, "111 > start + 50 - function should return 'end': 100"
@@ -346,7 +352,7 @@ def test_channel_messages_v1_111_messages_start_50():
 def test_channel_messages_v1_111_messages_start_100():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     # Data is already reset within add_111_messages()
-    add_111_messages()
+    data = add_111_messages()
 
     assert channel_messages_v1(1, 1, 100)['start'] == 100, "Start should not change"
     assert channel_messages_v1(1, 1, 100)['end'] == -1, "111 < start + 50 - function should return 'end': -1"
@@ -365,7 +371,7 @@ def test_channel_messages_v1_111_messages_start_100():
 def test_channel_messages_v1_start_21():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     # Data is already reset within add_111_messages()
-    add_111_messages()
+    data = add_111_messages()
 
     assert channel_messages_v1(1, 1, 21)['start'] == 21, "Start should not change"
     assert channel_messages_v1(1, 1, 21)['end'] == 71, "End = start + 50 if the least recent message is not returned"
@@ -385,14 +391,14 @@ def test_channel_messages_v1_start_21():
 def test_channel_messages_v1_start_21_end_neg1():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id
     # Data is already reset within add_50_messages()    
-    add_50_messages()
+    data = add_50_messages()
 
     assert channel_messages_v1(1, 1, 21)['start'] == 21, "Start should not change"
     assert channel_messages_v1(1, 1, 21)['end'] == -1, "50 < start + 50 if so return 'end': -1"
 
     # The 22nd most recent message of the whole channel is the first one to be returned
     # (essentially data['messages'][21] - the 21st index)
-    assert channel_messages_v1(1, 1, 21)['messages'][0] == {'message_id': 29, 'u_id': 2, 'message': '29', 'time_created': 29}
+    assert channel_messages_v1(1, 1, 21)['messages'][0] == {'message_id': 29, 'u_id': 1, 'message': '29', 'time_created': 29}
     assert channel_messages_v1(1, 1, 21)['messages'][25] == {'message_id': 4, 'u_id': 2, 'message': '4', 'time_created': 4}
     assert channel_messages_v1(1, 1, 21)['messages'][28] == {'message_id': 1, 'u_id': 1, 'message': '1', 'time_created': 1}
 
