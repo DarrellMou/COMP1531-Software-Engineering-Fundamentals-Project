@@ -1,6 +1,11 @@
-# need a dictionary to match credentials with actual reference(auth_user_id) 
+
 from src.error import InputError 
-from src.data import data
+from src.data import retrieve_data
+'''
+# For testing
+from error import InputError 
+from data import retrieve_data
+'''
 import re
 import itertools
 import uuid
@@ -11,7 +16,10 @@ def auth_email_format(email):
     
     return bool(re.match(pattern, email))
 
-def auth_login_v1(email, password):             
+def auth_login_v1(email, password):  
+
+    data = retrieve_data()
+
     if(auth_email_format(email) == False):
         raise InputError
     
@@ -21,6 +29,9 @@ def auth_login_v1(email, password):
     raise InputError
 
 def auth_register_v1(email, password, name_first, name_last):
+
+    data = retrieve_data()
+
     if(auth_email_format(email) == False):
         raise InputError
     elif(any(email == data['users'][key_it]['email'] for key_it in data['users'].keys())):
@@ -61,3 +72,4 @@ def auth_register_v1(email, password, name_first, name_last):
             'handle_str' : new_handle,
         }
         return {'auth_user_id' : new_auth_user_id}
+
