@@ -49,7 +49,7 @@ def add_50_messages(user1, user2, channel1):
     #data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], data['users'][user2['auth_user_id']]['u_id'])
+    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
 
     # Physically creating 50 messages...
     # The most recent message is at the beginning of the list as per spec
@@ -72,7 +72,7 @@ def add_111_messages(user1, user2, channel1):
     #data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], data['users'][user2['auth_user_id']]['u_id'])
+    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
 
     # Physically creating 111 messages...
     # The most recent message is at the beginning of the list as per spec
@@ -95,7 +95,7 @@ def add_21_messages(user1, user2, channel1):
     #data = add_simple_data()
 
     # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], data['users'][user2['auth_user_id']]['u_id'])
+    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
 
     # Physically creating 21 messages...
     message_count = 0

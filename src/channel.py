@@ -64,7 +64,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
     # Appends new user to given channel
     # Assume no duplicate entries allowed
-    if not(any(user == u_id['auth_user_id'] for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])):
+    if not(any(user == u_id for user in data['channels'][channel_id]['owner_members'] + data['channels'][channel_id]['all_members'])):
         data['channels'][channel_id]['all_members'].append(u_id)
     return {}
 
