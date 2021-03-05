@@ -1,4 +1,3 @@
-
 from src.error import InputError 
 from src.data import retrieve_data
 '''
@@ -44,7 +43,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # generate handle and add to data['users']
     new_handle = name_first.lower() + name_last.lower()
     if len(new_handle) > 20:
-        new_handle = new_handle[0:19]
+        new_handle = new_handle[0:20]
 
     new_auth_user_id = int(uuid.uuid4())
 
