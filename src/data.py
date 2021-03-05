@@ -15,3 +15,7 @@ def reset_data():
         "channels" : []
     }
     return data
+
+def retrieve_data():
+    global data
+    return data
