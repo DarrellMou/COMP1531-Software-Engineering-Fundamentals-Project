@@ -1,6 +1,6 @@
-from src.data import data
+from src.data import data, retrieve_data
 from src.error import AccessError, InputError
-#from data import data
+#from data import data, retrieve_data
 #from error import AccessError, InputError
 
 
@@ -11,18 +11,17 @@ from src.error import AccessError, InputError
 
 # Helper function to determine if a channel is a valid channel
 def is_valid_channel_id(channel_id):
-    #global data
+    data = retrieve_data()
     for channel in data['channels']:
-        if channel_id == channel['channel_id']:
+        if channel_id == 1:
             return True
-    
     return False
 
 
 # Helper function to determine if an authorised user is a member of the channel
 def is_valid_user_in_channel(user_id, channel_id):
     # Get the channel from the given channel id
-    global data
+    data = retrieve_data()
     channel = data['channels'][channel_id - 1] # Assuming channel_id starts off from 1 intead of 0
 
     for user in channel['all_members']:
@@ -35,7 +34,7 @@ def is_valid_user_in_channel(user_id, channel_id):
 # Helper function to determine the number of messages in a given channel
 def num_messages(channel_id):
     # Get the channel from the given channel id
-    global data
+    data = retrieve_data()
     channel = data['channels'][channel_id - 1]
 
     count = 0
@@ -103,13 +102,14 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     }
 
     # Get our current channel
-    global data
+    data = retrieve_data()
     channel = data['channels'][channel_id - 1]
     # ASSUMPTION: messages are APPENDED to our message list within the channel
     # key of our data dictionary
     # Reverse the order of the channel messages so the most recent message
     # appears in index 0 and the least recent in the last index
     messages_list = channel['messages'][::-1]
+    #messages_list = channel['messages']
 
     # Loop through our list and return up to 50 of the most recent messages
     # starting our index with the given start
@@ -125,6 +125,10 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # returned and as per the spec, 'end' should return -1. Otherwise, end
     # should return (start + 50)
     if len(messages_dict['messages']) != 50:
+        messages_dict['end'] = -1
+    # If the number of messages in the channel minus the given start divided
+    # by 50 returns 1, this mean the most recent message has been returned
+    elif (num_messages(channel_id) - start) / 50 == 1:
         messages_dict['end'] = -1
     else:
         messages_dict['end'] = start + 50
