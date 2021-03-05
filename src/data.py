@@ -25,15 +25,17 @@ data = {
             'owner_members' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
-                {'message_id1': 4561328123,
-                'auth_user_id': 35746842521,
-                'message': 'Hello World1',
-                'time_created': 123416589,
+                {
+                    'message_id': 4561328123,
+                    'u_id': 35746842521,
+                    'message': 'Hello World1',
+                    'time_created': 123416589,
                 },
-                {'message_id2': 61510648893,
-                'auth_user_id': 11753764853,
-                'message': 'Hello World2',
-                'time_created': 123456789,
+                {
+                    'message_id': 61510648893,
+                    'u_id': 11753764853,
+                    'message': 'Hello World2',
+                    'time_created': 123456789,
                 },
             ]
         },
@@ -43,17 +45,17 @@ data = {
             'owner_members' : ['auth_user_id1'],
             'all_members' : ['auth_user_id1', 'auth_user_id2'],
             'messages' : [
-                {'message_id1' : {
-                    'auth_user_id' : 35746842521,
-                    'message' : 'Hello World1',
-                    'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
-                    },
+                {
+                    'message_id': 12354122383,
+                    'u_id': 35746842521,
+                    'message': 'Hello World1',
+                    'time_created': 45132806512,
                 },
-                {'message_id2' : {
-                    'auth_user_id' : 11753764853,
-                    'message' : 'Hello World2',
-                    'timecreated' : 'datetime(YYYY, MM, DD, HH, MM)',
-                    },
+                {
+                    'message_id': 123156231064,
+                    'u_id': 11753764853,
+                    'message': 'Hello World2',
+                    'time_created': 68741450315603,
                 }
             ],
         },
