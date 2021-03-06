@@ -287,6 +287,7 @@ def test_channel_messages_v1_51_messages_start_0():
         assert channel_messages_v1(user1, channel1, 0)['messages'][50]
 
 
+# Testing for >50 messages wit start being 50
 def test_channel_messages_v1_51_messages_start_50():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
@@ -400,7 +401,7 @@ def test_channel_messages_v1_111_messages_start_100():
     with pytest.raises(IndexError):
         assert channel_messages_v1(user1, channel1, 100)['messages'][11]
 
-# TODO: Create a test for when start is not 0, 50, 100, 150 etc (e.g. start = 21) - should act normal with end being 71
+
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
 def test_channel_messages_v1_start_21():
     setup = set_up_data()
