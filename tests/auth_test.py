@@ -55,24 +55,4 @@ def test_auth_register_v1_nonunique_handle():
     users = setup_user()
     data = retrieve_data()
     assert data['users'][users['user1']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las'
-    assert data['users'][users['user2']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las0'
 
-
-if __name__ == '__main__':
-    users = setup_user()
-    data = retrieve_data()
-    print(data['users'])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user1']])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user1']]['auth_user_id'])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user2']['auth_user_id']]['handle_str'])
