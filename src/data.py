@@ -73,10 +73,3 @@ def reset_data():
 def retrieve_data():
     global data
     return data
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> master

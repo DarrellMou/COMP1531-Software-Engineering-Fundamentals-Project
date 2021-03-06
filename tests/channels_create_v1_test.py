@@ -57,7 +57,6 @@ def test_channels_create_return_value():
 # create channels of the same name
 def test_channels_create_same_name():
 
-<<<<<<< HEAD
     users = setup_user()
 
     channel_id2 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
@@ -85,42 +84,6 @@ def test_channels_create_no_name():
 
     assert channel_list['channels'][0]['channel_id'] == channel_id4['channel_id']
     assert channel_list['channels'][0]['name'] == ''
-
-
-'''
-# test private channel 
-def test_channels_create_private():
-=======
->>>>>>> master
-    users = setup_user()
-
-    channel_id2 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
-    channel_id3 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
-
-    # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
-
-    assert channel_list['channels'][0]['channel_id'] == channel_id2['channel_id']
-    assert channel_list['channels'][0]['name'] == 'Public Channel'
-
-    assert channel_list['channels'][1]['channel_id'] == channel_id3['channel_id']
-    assert channel_list['channels'][1]['name'] == 'Public Channel'
-
-
-# create channel with no name 
-def test_channels_create_no_name():
-
-    users = setup_user()
-
-    channel_id4 = channels_create_v1(users['user1']['auth_user_id'], "", True)
-
-    # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
-
-    assert channel_list['channels'][0]['channel_id'] == channel_id4['channel_id']
-    assert channel_list['channels'][0]['name'] == ''
-
-
 
     
 

@@ -32,12 +32,7 @@ def channels_listall_v1(auth_user_id):
         channel_listall.append(channel_details)
 
     return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+        'channels': channel_listall
     }
 
 # Creates a new channel with that name that is either a public or private channel
@@ -64,7 +59,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     }   
 
     return {
-        'channel_id': 1,
+        'channel_id': channel_id
     }
 
 
