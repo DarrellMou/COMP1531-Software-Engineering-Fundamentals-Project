@@ -90,10 +90,10 @@ def channel_details_v1(auth_user_id, channel_id):
 def channel_messages_v1(auth_user_id, channel_id, start):
     data = retrieve_data()
     # Check to see if the given channel_id is a valid channel
-    if not any(channel == channel_id for channel in data['channels']):
+    if channel_id not in data['channels']:
         raise InputError("Channel id is not valid")
     # Check to see if the given user is actully in the given channel
-    elif not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']):
+    elif auth_user_id not in data['channels'][channel_id]['all_members']:
         raise AccessError("The user is not in the channel")
     
     # Check to see if the given start value is larger than the number of
