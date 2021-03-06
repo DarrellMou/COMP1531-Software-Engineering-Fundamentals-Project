@@ -19,9 +19,9 @@ def test_standard():
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
-    channel_join_v1(a_u_id2['auth_user_id'], chid1['channel_id'])
+    channel_join_v1(a_u_id2['auth_user_id'], chid1['channel_id']) #User 2 joins channel 1 as regular member
     
-    # Will validate by asserting channels_list_v1, may use different function
+    # Expect a list containing channel 1
     assert channels_list_v1(a_u_id2['auth_user_id']) == {
         'channels': [
             {
@@ -39,17 +39,15 @@ def test_multiple_channels_joined():
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created
     chid2 = channels_create_v1(a_u_id1['auth_user_id'], 'channel2', True) #Public channel2 created
     chid3 = channels_create_v1(a_u_id1['auth_user_id'], 'channel3', True) #Public channel3 created
-    channel_join_v1(a_u_id2['auth_user_id'], chid1['channel_id'])
-    channel_join_v1(a_u_id2['auth_user_id'], chid2['channel_id'])
-    channel_join_v1(a_u_id2['auth_user_id'], chid3['channel_id'])
+    chid4 = channels_create_v1(a_u_id1['auth_user_id'], 'channel4', True) #Public channel4 created
+    channel_join_v1(a_u_id2['auth_user_id'], chid2['channel_id']) #User 2 joins channel 2 as regular member
+    channel_join_v1(a_u_id2['auth_user_id'], chid3['channel_id']) #User 2 joins channel 3 as regular member
+    channel_join_v1(a_u_id2['auth_user_id'], chid4['channel_id']) #User 2 joins channel 4 as regular member
+    
 
-    # Will validate by asserting channels_list_v1, may use different function
+    # Expecting a list containing channels 2-4
     assert channels_list_v1(a_u_id2['auth_user_id']) == {
         'channels': [
-            {
-                'channel_id': chid1['channel_id'],
-                'name': 'channel1',
-            },
             {
                 'channel_id': chid2['channel_id'],
                 'name': 'channel2',
@@ -57,6 +55,10 @@ def test_multiple_channels_joined():
             {
                 'channel_id': chid3['channel_id'],
                 'name': 'channel3',
+            },
+            {
+                'channel_id': chid4['channel_id'],
+                'name': 'channel4',
             },
         ],
     }
@@ -69,11 +71,11 @@ def test_multiple_joiners():
     a_u_id3 = auth_register_v1('temp3@gmail.com','password3','first3','last3') #auth_user_id3 created
     a_u_id4 = auth_register_v1('temp4@gmail.com','password4','first4','last4') #auth_user_id4 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created
-    channel_join_v1(a_u_id2['auth_user_id'], chid1['channel_id'])
-    channel_join_v1(a_u_id3['auth_user_id'], chid1['channel_id'])
-    channel_join_v1(a_u_id4['auth_user_id'], chid1['channel_id'])
+    channel_join_v1(a_u_id2['auth_user_id'], chid1['channel_id']) #User 2 joins channel 1 as regular member
+    channel_join_v1(a_u_id3['auth_user_id'], chid1['channel_id']) #User 3 joins channel 1 as regular member
+    channel_join_v1(a_u_id4['auth_user_id'], chid1['channel_id']) #User 4 joins channel 1 as regular member
 
-    # Will validate by asserting channels_details_v1, may use different function
+    # Expecting a owner members including 1, and all members including 1-4
     assert channel_details_v1(a_u_id1['auth_user_id'], chid1['channel_id']) == {
         'name': 'channel1',
         'owner_members': [
