@@ -78,6 +78,7 @@ def channel_leave_v1(auth_user_id, channel_id):
     return {
     }
 
+# Function that allows a member to add themselves to a channel given that it is public
 def channel_join_v1(auth_user_id, channel_id):
     data = retrieve_data()
 
@@ -86,8 +87,9 @@ def channel_join_v1(auth_user_id, channel_id):
 
     # Checks if the auth_user is in channel, if not proceed, otherwise do nothing
     if not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']):
-        # Checks if channel is public, if true proceed
+        # Checks if channel is public, if true proceed, if false raise error
         if (data['channels'][channel_id]['is_public']):
+            #Add user to all_members pool in channel
             data['channels'][channel_id]['all_members'].append(auth_user_id)
         else: raise AccessError
 
