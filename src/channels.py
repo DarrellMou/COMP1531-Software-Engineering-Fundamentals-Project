@@ -1,10 +1,7 @@
-from data import data
-
-from error import AccessError
-from error import InputError
-
 import uuid
-from auth import auth_register_v1
+
+from src.error import InputError, AccessError
+from src.data import retrieve_data, reset_data
 
 def channels_list_v1(auth_user_id):
     return {
@@ -16,22 +13,17 @@ def channels_list_v1(auth_user_id):
         ],
     }
 
+
+# Provide a list of all channels (and their associated details)
 def channels_listall_v1(auth_user_id):
 
-    global data
+    data = retrieve_data()
     
-    # error when invalid auth_user_id
-    curr_user = {}
-    # find auth_user_id in data
-    for user in data['users']:
-        if user == auth_user_id['auth_user_id']:
-            curr_user = user
-    if curr_user == {}:
-        raise AccessError("Invalid auth_user_id")
+    # AccessError occurs when input is invalid auth_user_id
+    if auth_user_id not in data['users']: raise AccessError("Invalid auth_user_id")
 
-    # list of all channels
+    # Create list of all channels
     channel_listall = []
-
     for channel in data['channels']:
         channel_details = {
             'channel_id' : channel,
@@ -43,32 +35,31 @@ def channels_listall_v1(auth_user_id):
         'channels': channel_listall
     }
 
-
+# Creates a new channel with that name that is either a public or private channel
 def channels_create_v1(auth_user_id, name, is_public):
 
-    global data
+    data = retrieve_data()
 
-    # error when creating a channel name longer than 20 characters
-    if len(name) > 20:
-        raise InputError("Channel name cannot be longer than 20 characters")
+    # InputError occurs when creating a channel name longer than 20 characters
+    if len(name) > 20: raise InputError("Channel name cannot be longer than 20 characters")
 
-    # error when invalid auth_user_id
-    curr_user = {}
-    for user in data['users']:
-        if user == auth_user_id['auth_user_id']:
-            curr_user = user
-    if curr_user == {}:
-        raise AccessError("Invalid auth_user_id")
-        
+    # AccessError occurs when input is invalid auth_user_id
+    if auth_user_id not in data['users']: raise AccessError("Invalid auth_user_id")
+
+    # Generate unique channel_id
     channel_id = int(uuid.uuid1())
+
+    # Add new channel to channels data
     data['channels'][channel_id] = {
-            'name' : name, 
-            'is_public' : is_public, 
-            'owner_members' : [auth_user_id['auth_user_id']],
-            'all_members' : [auth_user_id['auth_user_id']],
-            'messages' : [],
-    }
+        'name' : name, 
+        'is_public' : is_public, 
+        'owner_members': [auth_user_id],
+        'all_members': [auth_user_id],
+        'messages' : [],
+    }   
 
     return {
         'channel_id': channel_id
     }
+
+
