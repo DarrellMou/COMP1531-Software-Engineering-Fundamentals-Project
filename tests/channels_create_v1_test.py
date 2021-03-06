@@ -85,7 +85,5 @@ def test_channels_create_no_name():
     assert channel_list['channels'][0]['channel_id'] == channel_id4['channel_id']
     assert channel_list['channels'][0]['name'] == ''
 
-
-
     
 
