@@ -2,6 +2,30 @@ import pytest
 
 from src.error import InputError
 from src.auth import auth_login_v1, auth_email_format, auth_register_v1
+from src.data import reset_data, retrieve_data
+
+#from error import InputError
+#from auth import auth_login_v1, auth_email_format, auth_register_v1
+#from data import reset_data, retrieve_data
+
+
+def setup_user():
+    reset_data()
+
+    a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
+    a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user1_first', 'user1_last')
+    a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
+    a_u_id4 = auth_register_v1('user4@email.com', 'User4_pass!', 'user4_first', 'user4_last')
+    a_u_id5 = auth_register_v1('user5@email.com', 'User5_pass!', 'user5_first', 'user5_last')
+
+    return {
+        'user1' : a_u_id1,
+        'user2' : a_u_id2,
+        'user3' : a_u_id3,
+        'user4' : a_u_id4,
+        'user5' : a_u_id5
+    }
+
 
 def test_auth_email_format():
     assert auth_email_format('123@gmailcom') == False, 'invalid email format'
@@ -9,19 +33,26 @@ def test_auth_email_format():
     assert auth_email_format('myvalidemail@yahoogmail.com') == True, 'valid email format'
 
 def test_auth_login_v1():
-    assert auth_login_v1('adminemail@domain.com', '123456') == {'auth_user_id' : 999}, 'login function broken'
+    users = setup_user()
+
+    assert auth_login_v1('user1@email.com', 'User1_pass!') == users['user1'], 'login function broken'
     with pytest.raises(InputError):
     	auth_login_v1('123456789@@gmail.com', '123456') # invalid email format 
     	auth_login_v1('adminemail@domain.com', '123456off')	# valid format but password doesn't match
-        
+
 def test_auth_register_v1():
-    assert auth_register_v1('sampleemail1@gmail.com', 'password1', 'test', 'user1') == {'auth_user_id' : 1234}
+    data = reset_data()
+
+    a_u_id = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
+    assert data['users'][a_u_id['auth_user_id']]['handle_str'] == 'bobbuilder'
     with pytest.raises(InputError):
         auth_register_v1('sampleemail1gmail.com', 'password1', 'test', 'user1')
         auth_register_v1('sampleemail1@gmail.com', 'password1', 'test', 'user1')
         auth_register_v1('sampleemail2@gmail.com', 'passwo', 'test', 'user1')
         auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1')
 
-def test_auth_login_then_register():
-	assert auth_register_v1('newuseremail@gmail.com', 'thenewguyishere', 'Georg', 'Hegel') == {'auth_user_id' : 1234}
-	assert auth_login_v1('newuseremail@gmail.com', 'thenewguyishere') == {'auth_user_id' : 1234}
+def test_auth_register_v1_nonunique_handle():
+    users = setup_user()
+    data = retrieve_data()
+    assert data['users'][users['user1']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las'
+    assert data['users'][users['user2']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las0'
