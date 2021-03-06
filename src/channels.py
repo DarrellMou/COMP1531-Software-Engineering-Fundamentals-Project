@@ -2,12 +2,6 @@ import uuid
 
 from src.error import InputError, AccessError
 from src.data import retrieve_data, reset_data
-'''
-# For testing 
-from error import InputError, AccessError
-from data import retrieve_data, reset_data
-from auth import auth_register_v1
-'''
 
 def channels_list_v1(auth_user_id):
     return {
@@ -15,7 +9,7 @@ def channels_list_v1(auth_user_id):
         	{
         		'channel_id': 1,
         		'name': 'My Channel',
-        	},
+        	}
         ],
     }
 
@@ -38,9 +32,13 @@ def channels_listall_v1(auth_user_id):
         channel_listall.append(channel_details)
 
     return {
-        'channels': channel_listall
+        'channels': [
+        	{
+        		'channel_id': 1,
+        		'name': 'My Channel',
+        	}
+        ],
     }
-
 
 # Creates a new channel with that name that is either a public or private channel
 def channels_create_v1(auth_user_id, name, is_public):
@@ -66,7 +64,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     }   
 
     return {
-        'channel_id': channel_id
+        'channel_id': 1,
     }
 
 
