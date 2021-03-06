@@ -48,7 +48,7 @@ def add_x_messages(user1, user2, channel1, num_messages):
     # Add user 2 into the channel so user 1 and 2 can have a conversation
     channel_invite_v1(user1, channel1, user2)
 
-    # Physically creating 111 messages...
+    # Physically creating num_messages amount of messages
     # The most recent message is at the beginning of the list as per spec
     message_count = 0
     while message_count < num_messages:
