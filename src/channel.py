@@ -1,61 +1,63 @@
-from src.data import data
+from src.data import data, retrieve_data
+from src.error import AccessError, InputError
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
+# Given a Channel with ID channel_id that the authorised user is part of
+# Provides basic details about the channel
 def channel_details_v1(auth_user_id, channel_id):
-    # Checks for any errors involving parameters
-    if not(any(channel == channel_id for channel in data['channels'])): raise InputError
-    if not(any(user == auth_user_id for user in data['channels'][channel_id]['members'] + data['channels'][channel_id]['owners'])): raise AccessError
+
+    data = retrieve_data()
+
+    # Checks if given channel_id is valid
+    if not any(channel == channel_id for channel in data['channels']): raise InputError
+
+    # Checks if the auth_user is in channel
+    if not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']): raise AccessError
 
     # Creates list with necessary data
     name = data['channels'][channel_id]['name']
-    owners = data['channels'][channel_id]['owners']
-    members = data['channels'][channel_id]['members']
+    owners = data['channels'][channel_id]['owner_members']
+    members = data['channels'][channel_id]['all_members']
 
-    # Printing function
-    print('name: ' + name)
-    print('owner_members: [')
-    i = 0
-    # Iterates through owner members, and prints
+    # Create list to return
+    details_dict = {
+        'name' : name,
+        'owner_members' : [],
+        'all_members' : []
+    }
+
+    # Create temporary list for owner members
+    tmp_list = []
     for owner in owners:
-        print(f'''    {'{'}
-        u_id: {owners[i]},
-        name_first: {data['users'][owner]['name_first']},
-        name_last: {data['users'][owner]['name_last']},
-        {'},'}''')
-        i += 1
+        tmp_dict = {
+            'u_id' : owner,
+            'name_first' : data['users'][owner]['name_first'],
+            'name_last' : data['users'][owner]['name_last']
+        }
+        tmp_list.append(tmp_dict)
 
-    # Iterates through other members, and prints
-    print('all_members: [')
-    i = 0
+    # Assigns 'owner_members' key to tmp_list
+    details_dict['owner_members'] = tmp_list
+
+    # Create temporary list for all members
+    tmp_list = []
+    
+    # Iterates through members in 'all_members', and appends to tmp_list
     for member in members:
-        print(f'''    {'{'}
-        u_id: {members[i]},
-        name_first: {data['users'][member]['name_first']},
-        name_last: {data['users'][member]['name_last']},
-        {'},'}''')
-        i += 1
-
-    # Template
-    '''
-    'name': 'Hayden',
-    'owner_members': [
-        {
-            'u_id': 1,
-            'name_first': 'Hayden',
-            'name_last': 'Jacobs',
+        tmp_dict = {
+            'u_id' : member,
+            'name_first' : data['users'][member]['name_first'],
+            'name_last' : data['users'][member]['name_last']
         }
-    ],
-    'all_members': [
-        {
-            'u_id': 1,
-            'name_first': 'Hayden',
-            'name_last': 'Jacobs',
-        }
-    ],'''
+        tmp_list.append(tmp_dict)
+    
+    # Assigns 'all_members' key to tmp_list
+    details_dict['all_members'] = tmp_list
 
+    return details_dict
 
 def channel_messages_v1(auth_user_id, channel_id, start):
     return {
