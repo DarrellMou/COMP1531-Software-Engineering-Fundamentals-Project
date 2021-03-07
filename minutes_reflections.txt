@@ -180,3 +180,5 @@ REFLECTIONS
 
 -   Utilise Git Taskboard more and consistently check board.
 
+-   Better commit comments.
+
