@@ -4,6 +4,7 @@
 ## Minutes
 <!-- <h2>Minutes</h2> -->
 
+
 ### Week 2 - Allocation of Work
 <!-- <h3>Allocation</h3> -->
 <table>
