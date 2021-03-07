@@ -37,8 +37,9 @@ def test_auth_login_v1():
 
     assert auth_login_v1('user1@email.com', 'User1_pass!') == users['user1'], 'login function broken'
     with pytest.raises(InputError):
-    	auth_login_v1('123456789@@gmail.com', '123456') # invalid email format 
-    	auth_login_v1('adminemail@domain.com', '123456off')	# valid format but password doesn't match
+        auth_login_v1('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
+    with pytest.raises(InputError):
+        auth_login_v1('jsfdsfdsds123.con', '123456') # invalid email format 
 
 def test_auth_register_v1():
     data = reset_data()
@@ -46,9 +47,12 @@ def test_auth_register_v1():
     a_u_id = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     assert data['users'][a_u_id['auth_user_id']]['handle_str'] == 'bobbuilder'
     with pytest.raises(InputError):
+        auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)
+    with pytest.raises(InputError):
         auth_register_v1('sampleemail1gmail.com', 'password1', 'test', 'user1')
-        auth_register_v1('sampleemail1@gmail.com', 'password1', 'test', 'user1')
-        auth_register_v1('sampleemail2@gmail.com', 'passwo', 'test', 'user1')
+    with pytest.raises(InputError):
+        auth_register_v1('sampleemail2@gmail.com', '12345', 'test', 'user1') # password too short, less than 6 chars
+    with pytest.raises(InputError):
         auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1')
 
 def test_auth_register_v1_nonunique_handle():
@@ -56,23 +60,3 @@ def test_auth_register_v1_nonunique_handle():
     data = retrieve_data()
     assert data['users'][users['user1']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las'
     assert data['users'][users['user2']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las0'
-
-
-if __name__ == '__main__':
-    users = setup_user()
-    data = retrieve_data()
-    print(data['users'])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user1']])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user1']]['auth_user_id'])
-    print("BREAK")
-    print("BREAK")
-    print("BREAK")
-    print(data['users'][users['user2']['auth_user_id']]['handle_str'])
