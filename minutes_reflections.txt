@@ -1,4 +1,5 @@
-﻿COMP1531 ASSIGNMENT - ITERATION 1 Meeting Minutes
+﻿COMP1531 ASSIGNMENT - ITERATION 1 
+Meeting Minutes and Reflection
 
 Week 2 - Allocation of work
 
@@ -33,23 +34,25 @@ Platform	Discord
 Attendees	Darrell, Brendan, Kellen, Nikki
 
 
-
+ACTIONS:
 -	Darrell, Brendan, Nikki finished drafting their function tests and code.
 
 -	Kellen drafted function tests.
 
 -	All four attendees needed auth.py to execute and affirm their tests, however Winston did not attend the meeting.
 
--	Darrell, Brendan, Nikki proceeded to understand Winston?s auth.py code drafted in the previous week.
+-	Darrell, Brendan, Nikki proceeded to understand Winston's auth.py code drafted in the previous week.
 
 -	Darrell, Brendan, Nikki modified data.py and relevant code to ensure a consistent format and delivery.
 
--	Darrell and Brendan modified auth.py on Winston?s auth branch to import data.py and made other relevant changes.
+-	Darrell and Brendan modified auth.py on Winston's auth branch to import data.py and made other relevant changes.
 
 -	Nikki gets channels_create_v1 to work with pytest.
 
-NOTE: 
+-   auth.py and channels_create_v1 is merged to a draft master branch called Iteration1.
 
+
+NOTE: 
 -	Tell Winston during tutorial/lab to attend the meeting tomorrow night.
 
 
@@ -63,7 +66,7 @@ Platform	Discord
 Attendees	Darrell, Brendan, Kellen, Nikki, Winston (1 hour)
 
 
-
+ACTIONS:
 -	Kellen begins code for his functions.
 
 -	Winston understands that Darrell and Brendan altered his code.
@@ -74,15 +77,17 @@ Attendees	Darrell, Brendan, Kellen, Nikki, Winston (1 hour)
 
 -	Darrell and Brendan also complete their functions to work with pytest.
 
+-   Further functions are merged to Iteration1.
+
 -	Winston leaves without notice.
 
 -	Darrell, Brendan, Nikki begin reviewing code starting from auth.py and seeing what could be altered to be more pythonic and efficient. Comments are also added where necessary.
 
--	Darrell and Brendan spot incorrect code in auth.py, specifically with creating unique handles, and fixes that. 
+-	Darrell and Brendan spots incorrect code in auth.py, specifically with creating unique handles, and fixes that. 
+
 
 NOTE: 
-
--	Kellen needs to finish his code
+-	Kellen needs to finish his code.
 
 -	Winston needs to code additional tests.
 
@@ -97,7 +102,7 @@ Platform	Discord
 Attendees	Darrell, Brendan, Kellen, Nikki
 
 
-
+ACTIONS:
 -	Darrell, Brendan and Nikki assist Kellen in his code and gets it working with other functions and pytest.
 
 -	Brendan attempts to modify his code to be more efficient.
@@ -127,7 +132,7 @@ Platform	Discord
 Attendees	Darrell, Brendan, Kellen, Nikki, Winston
 
 
-
+ACTIONS:
 -	Kellen's code is merged into master.
 
 -	Darrell, Brendan, Nikki updates Winston on what happened the previous meeting and how we merged his auth.
@@ -144,6 +149,23 @@ Attendees	Darrell, Brendan, Kellen, Nikki, Winston
 
 
 
+Meeting - Sunday 7/3/20
+
+Duration	10:30pm 
+
+Platform	Discord
+
+Attendees	Darrell, Brendan, Nikki, Kellen
+
+
+ACTIONS:
+-	Brendan added more assumptions and added more tests to channel_messages.
+
+-   All four attendees review and confirm assumptions.md and minutes_reflections.txt.
+
+
+
+
 REFLECTIONS
 
 -	Start earlier and read the spec carefully.
@@ -153,4 +175,8 @@ REFLECTIONS
 -	Attend all meetings that are proposed.
 
 -	Don’t leave code to last minute.
+
+-   Utilise proper Git practices.
+
+-   Utilise Git Taskboard more and consistently check board.
 
