@@ -43,7 +43,7 @@
         </ul></td>
     </tr>
 
-## Stand-Up - Thursday, 04/03/21
+### Stand-Up - Thursday, 04/03/21
 <table>
     <tr>
         <th>Duration</th>
