@@ -150,10 +150,10 @@ def channel_join_v1(auth_user_id, channel_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
-    if not any(channel == channel_id for channel in data['channels']): raise InputError
+    if channel_id not in data['channels']: raise InputError
 
     # Checks if the auth_user is in channel, if not proceed, otherwise do nothing
-    if not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']):
+    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
         # Checks if channel is public, if true proceed, if false raise error
         if (data['channels'][channel_id]['is_public']):
             #Add user to all_members pool in channel
