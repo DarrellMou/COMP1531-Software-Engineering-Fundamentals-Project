@@ -76,5 +76,40 @@
         </ul></td>
     </tr>
 
+### Stand-Up - Friday, 05/03/21
+<table>
+    <tr>
+        <th>Duration</th>
+        <td><ul>8:30pm - 2:00am</ul></td>
+    </tr>
+    <tr>
+        <th>Platform</th>
+        <td><ul>Discord</ul></td>
+    </tr>
+    <tr>
+        <th>Attendees</th>
+        <td><ul>Darrell, Brendan, Kellen, Nikki, Winston(1 hour)</ul></td>
+    </tr>
+    <tr>
+        <th>Actions</th>
+        <td><ul>
+        <li>Kellen begins code for his functions.
+        <li>Winston understands that Darrell and Brendan altered his code.
+        <li>Nikki writes several tests required for auth for Winston to implement.
+        <li>Nikki completes channels_listall_v1 to work with pytest.
+        <li>Darrell and Brendan also complete their functions to work with pytest.
+        <li>Winston leaves without notice.
+        <li>Darrell, Brendan, Nikki begin reviewing code starting from auth.py and seeing what could be altered to be more pythonic and efficient. Comments are also added where necessary.
+        <li>Darrell and Brendan spot incorrect code in auth.py, specifically with creating unique handles, and fixes that. 
+        </ul></td>
+    </tr>
+    <tr>
+        <th>Notes</th>
+        <td><ul>
+        <li>Kellen needs to finish his code.
+        <li>Winston needs to code additional tests.
+        </ul></td>
+    </tr>
+
 
 
