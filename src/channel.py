@@ -9,20 +9,20 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
-    if not any(channel == channel_id for channel in data['channels']): raise InputError
+    if channel_id not in data['channels']: raise InputError
 
     # Checks if user exists
-    if not any(user == u_id for user in data['users']): raise InputError
+    if u_id not in data['users']: raise InputError
 
     # Checks if the auth_user is in channel
-    if not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']): raise AccessError
+    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
     # Appends new user to given channel
     # Assume no duplicate entries allowed
     # Assume no inviting themselves
     # Assume inviting people outside channel only
-    if not any(user == u_id for user in data['channels'][channel_id]['all_members']):
-        data['channels'][channel_id]['all_members'].append(u_id)
+    # if not any(user == u_id for user in data['channels'][channel_id]['all_members']):
+    data['channels'][channel_id]['all_members'].append(u_id)
 
     return {}
 
@@ -33,10 +33,10 @@ def channel_details_v1(auth_user_id, channel_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
-    if not any(channel == channel_id for channel in data['channels']): raise InputError
+    if channel_id not in data['channels']: raise InputError
 
     # Checks if the auth_user is in channel
-    if not any(user == auth_user_id for user in data['channels'][channel_id]['all_members']): raise AccessError
+    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
     # Creates list with necessary data
     name = data['channels'][channel_id]['name']
@@ -79,7 +79,6 @@ def channel_details_v1(auth_user_id, channel_id):
     details_dict['all_members'] = tmp_list
 
     return details_dict
-
 
 
 # Given a valid channel_id, return up to 50 messages in the channel
