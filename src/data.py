@@ -1,3 +1,5 @@
+from src.other import clear_v1
+
 # Iteration 1 test data
 data = {
     'users' : {
@@ -64,10 +66,7 @@ data = {
 # Function to reset the data to default (assists in testing)
 def reset_data():
     global data
-    data = {
-        "users" : {},
-        "channels" : {}
-    }
+    data = clear_v1()
     return data
 
 def retrieve_data():
