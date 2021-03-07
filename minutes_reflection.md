@@ -1,8 +1,11 @@
 # Stand-Up Minutes and Reflections
 <!-- <h1>MinutesandReflections</h1> -->
 
+## Minutes
+<!-- <h2>Minutes</h2> -->
+
 ### Week 2 - Allocation of Work
-<!-- <h2>Allocation</h2> -->
+<!-- <h3>Allocation</h3> -->
 <table>
     <tr>
         <th>Member</th>
@@ -45,7 +48,7 @@
     </tr>
 
 ### Stand-Up - Thursday, 04/03/21
-<!-- <h2>Thurs</h2> -->
+<!-- <h3>Thurs</h3> -->
 <table>
     <tr>
         <th>Duration</th>
@@ -79,7 +82,7 @@
     </tr>
 
 ### Stand-Up - Friday, 05/03/21
-<!-- <h2>Friday</h2> -->
+<!-- <h3>Friday</h3> -->
 <table>
     <tr>
         <th>Duration</th>
