@@ -49,11 +49,11 @@ def test_auth_register_v1():
     with pytest.raises(InputError):
         auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)
     with pytest.raises(InputError):
-        auth_register_v1('sampleemail1gmail.com', 'password1', 'test', 'user1')
+        auth_register_v1('sampleemail1gmail.com', 'password1', 'test', 'user1') # invalid email format 
     with pytest.raises(InputError):
         auth_register_v1('sampleemail2@gmail.com', '12345', 'test', 'user1') # password too short, less than 6 chars
     with pytest.raises(InputError):
-        auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1')
+        auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
 
 def test_auth_register_v1_nonunique_handle():
     users = setup_user()
