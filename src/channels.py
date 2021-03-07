@@ -13,6 +13,7 @@ def channels_list_v1(auth_user_id):
     channel_list = []
 
     # Search through individual channels for specific user
+    # Go through each channel
     for channel in channel_ids:
         for member in data['channels'][channel]['all_members']:
             if member == auth_user_id:
@@ -48,6 +49,7 @@ def channels_listall_v1(auth_user_id):
         'channels': channel_listall
     }
 
+
 def channels_create_v1(auth_user_id, name, is_public):
 
     data = retrieve_data()
@@ -57,12 +59,7 @@ def channels_create_v1(auth_user_id, name, is_public):
         raise InputError("Channel name cannot be longer than 20 characters")
 
     # AccessError occurs when input is invalid auth_user_id
-    curr_user = {}
-    for user in data['users']:
-        if user == auth_user_id:
-            curr_user = user
-    if curr_user == {}:
-        raise AccessError("Invalid auth_user_id")
+    if auth_user_id not in data['users']: raise AccessError("Invalid auth_user_id")
 
     channel_id = int(uuid.uuid1())
 
