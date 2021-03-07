@@ -7,6 +7,16 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v1
 
 
+# ASSUMPTION: Start refers to the starting index of the
+# data['channels'][channel_id]['messages'] list
+
+# ASSUMPTION: An out of index message within the messages list of a channel
+# (i.e data['channels'][channel_id]['messages']) will never be accessed and
+# therefore, there is no need to raise an index error.
+# E.g. trying to access data['channels'][channel_id]['messages'][1] when there
+# is only 1 message in that specific channel_id, which has an index of 0.
+
+
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
 ###############################################################################
@@ -130,10 +140,6 @@ def test_channel_messages_v1_no_messages():
     assert channel_messages_v1(user1, channel1, 0) ==\
     {'messages': [], 'start': 0, 'end': -1}, "No messages - should return end: -1"
 
-    # Raise an index error if trying to access ['messages'][0] as it is empty
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][0]
-
 
 # Testing to see if the function is working for a single message
 def test_channel_messages_v1_1_message():
@@ -151,16 +157,11 @@ def test_channel_messages_v1_1_message():
     assert channel_messages_v1(user1, channel1, 0)['messages'][0] ==\
     {'message_id': 1, 'u_id': user1, 'message': "Test message", 'time_created': 1}
 
-    # Raise an index error if trying to access beyond index 0 of ['messages']
-    # as index 1 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][1]
-
 
 
 # Testing for exactly 50 messages
 # ASSUMPTION: 50th message IS the last message so return 'end': -1 rather than 'end': 50
-# ASSUMPTION: Message id starts from 1
+# when there are 50 messages in the channel with start being 0
 def test_channel_messages_v1_50_messages():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
@@ -229,11 +230,74 @@ def test_channel_messages_v1_50_messages():
         {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
     ], "Error, messages do not match"
 
-    # Raise an index error if trying to access beyond index 49 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][50]
 
+# Create 100 messages, with a given start of 50 (50th index means the 51st most
+# recent message). Should return 50 messages (index 50 up to index 99 which
+# corresponds with the 51st most recent message up to the least recent message,
+# i.e. the 100th message) and an end of -1 as per the reasons in the test above
+def test_channel_messages_v1_100_messages_start_50():
+    setup = set_up_data()
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+
+    # Add 100 messages
+    data = add_x_messages(user1, user2, channel1, 100)
+
+    assert channel_messages_v1(user1, channel1, 50)['start'] == 50,\
+    "Start should not change"
+    
+    assert channel_messages_v1(user1, channel1, 50)['end'] == -1,\
+    "50th message from start IS the least recent message so it should return 'end': -1"
+    
+    assert len(channel_messages_v1(user1, channel1, 50)['messages']) == 50
+
+    assert channel_messages_v1(user1, channel1, 50)['messages'][0] ==\
+        {'message_id': 50, 'u_id': user2, 'message': '50', 'time_created': 50}
+
+    assert channel_messages_v1(user1, channel1, 50)['messages'][49] ==\
+        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
+
+
+# Given a channel with 10 messages and a start of 9 (10th most recent message
+# i.e. the least recent message), return that last message as the only one in
+# the messages list and an end of -1
+def test_channel_messages_start_is_last_message():
+    setup = set_up_data()
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+
+    # Add 10 messages
+    data = add_x_messages(user1, user2, channel1, 10)
+
+    assert channel_messages_v1(user1, channel1, 9)['start'] == 9,\
+    "Start should not change"
+    
+    assert channel_messages_v1(user1, channel1, 9)['end'] == -1,\
+    "50th message from start IS the least recent message so it should return 'end': -1"
+    
+    assert len(channel_messages_v1(user1, channel1, 9)['messages']) == 1
+
+    assert channel_messages_v1(user1, channel1, 9)['messages'] ==\
+        [{'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}]
+
+
+# Given a start being equal to the number of messages in the given channel,
+# return and empty messages list and an end of -1 as per spec and this
+# forum post: https://edstem.org/courses/5306/discussion/384787
+def test_start_equals_num_messages():
+    setup = set_up_data()
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+
+    # Add 10 messages
+    data = add_x_messages(user1, user2, channel1, 10)
+
+    assert channel_messages_v1(user1, channel1, 10)['start'] == 10,\
+    "Start should not change"
+    
+    assert channel_messages_v1(user1, channel1, 10)['end'] == -1,\
+    "No messages so the most recent message has been returned so function should return 'end': -1"
+    
+    assert len(channel_messages_v1(user1, channel1, 10)['messages']) == 0
+
+    assert channel_messages_v1(user1, channel1, 10)['messages'] == []
 
 
 # Testing for <50 messages (checking if 'end' returns -1)
@@ -256,11 +320,6 @@ def test_channel_messages_v1_48_messages():
     assert channel_messages_v1(user1, channel1, 0)['messages'][0] ==\
         {'message_id': 48, 'u_id': user2, 'message': '48', 'time_created': 48}
 
-    # Raise an index error if trying to access beyond index 47 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][48]
-
 
 # Testing for >50 messages (checking if the correct final message is returned)
 def test_channel_messages_v1_51_messages_start_0():
@@ -280,11 +339,6 @@ def test_channel_messages_v1_51_messages_start_0():
 
     assert channel_messages_v1(user1, channel1, 0)['messages'][0] ==\
         {'message_id': 51, 'u_id': user1, 'message': "51", 'time_created': 51}
-    
-    # Raise an index error if trying to access beyond index 49 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][50]
 
 
 # Testing for >50 messages wit start being 50
@@ -332,11 +386,6 @@ def test_channel_messages_v1_111_messages_start_0():
     assert channel_messages_v1(user1, channel1, 0)['messages'][49] ==\
         {'message_id': 62, 'u_id': user2, 'message': '62', 'time_created': 62}
 
-    # Raise an index error if trying to access beyond index 49 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 0)['messages'][50]
-
 
 # Testing for between 100 and 150 messages with start being 50
 def test_channel_messages_v1_111_messages_start_50():
@@ -363,11 +412,6 @@ def test_channel_messages_v1_111_messages_start_50():
 
     assert channel_messages_v1(user1, channel1, 50)['messages'][49] ==\
         {'message_id': 12, 'u_id': user2, 'message': '12', 'time_created': 12}
-
-    # Raise an index error if trying to access beyond index 49 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 50)['messages'][50]
 
 
 # Testing for between 100 and 150 messages with start being 100
@@ -396,11 +440,6 @@ def test_channel_messages_v1_111_messages_start_100():
     assert channel_messages_v1(user1, channel1, 100)['messages'][10] ==\
         {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
 
-    # Raise an index error if trying to access beyond index 10 of ['messages']
-    # as index 11 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 100)['messages'][11]
-
 
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
 def test_channel_messages_v1_start_21():
@@ -425,11 +464,6 @@ def test_channel_messages_v1_start_21():
 
     assert channel_messages_v1(user1, channel1, 21)['messages'][49] ==\
         {'message_id': 41, 'u_id': user1, 'message': '41', 'time_created': 41}
-
-    # Raise an index error if trying to access beyond index 49 of ['messages']
-    # as index 50 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 21)['messages'][50]
 
 
 # Test for when start is not a multiple of 50 and there are less than 50 messages remaining
@@ -456,8 +490,3 @@ def test_channel_messages_v1_start_21_end_neg1():
     
     assert channel_messages_v1(user1, channel1, 21)['messages'][28] ==\
         {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
-
-    # Raise an index error if trying to access beyond index 28 of ['messages']
-    # as index 29 is meant to be out of range
-    with pytest.raises(IndexError):
-        assert channel_messages_v1(user1, channel1, 21)['messages'][29]
