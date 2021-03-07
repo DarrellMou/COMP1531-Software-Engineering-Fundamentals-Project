@@ -153,7 +153,7 @@ def channel_join_v1(auth_user_id, channel_id):
     if channel_id not in data['channels']: raise InputError
 
     # Checks if the auth_user is in channel, if not proceed, otherwise do nothing
-    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
+    if auth_user_id not in data['channels'][channel_id]['all_members']:
         # Checks if channel is public, if true proceed, if false raise error
         if (data['channels'][channel_id]['is_public']):
             #Add user to all_members pool in channel
