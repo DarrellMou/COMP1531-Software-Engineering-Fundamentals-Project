@@ -2,6 +2,7 @@
 <!-- <h1>MinutesandReflections</h1> -->
 
 ### Week 2 - Allocation of Work
+<!-- <h2>Allocation</h2> -->
 <table>
     <tr>
         <th>Member</th>
@@ -44,6 +45,7 @@
     </tr>
 
 ### Stand-Up - Thursday, 04/03/21
+<!-- <h2>Thurs</h2> -->
 <table>
     <tr>
         <th>Duration</th>
@@ -77,6 +79,7 @@
     </tr>
 
 ### Stand-Up - Friday, 05/03/21
+<!-- <h2>Friday</h2> -->
 <table>
     <tr>
         <th>Duration</th>
