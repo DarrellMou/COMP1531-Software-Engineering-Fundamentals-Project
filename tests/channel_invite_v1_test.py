@@ -175,4 +175,3 @@ def test_unauthorized_user():
     ch_id = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(AccessError):
         channel_invite_v1(a_u_id2['auth_user_id'], ch_id['channel_id'], a_u_id3['auth_user_id'])
-        

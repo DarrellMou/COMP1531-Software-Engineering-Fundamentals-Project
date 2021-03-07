@@ -1,4 +1,3 @@
-
 from src.error import InputError 
 from src.data import retrieve_data
 '''
@@ -34,6 +33,8 @@ def auth_login_v1(email, password):
         if email == data_email and password == data_password:
             return {'auth_user_id' : key_it}        
     raise InputError
+
+
 
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
@@ -86,7 +87,3 @@ def auth_register_v1(email, password, name_first, name_last):
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
         return {'auth_user_id' : new_auth_user_id}
-
-
-if __name__ == '__main__':
-    auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
