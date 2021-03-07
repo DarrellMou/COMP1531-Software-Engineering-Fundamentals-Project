@@ -1,7 +1,7 @@
 # Stand-Up Minutes and Reflections
 <!-- <h1>MinutesandReflections</h1> -->
 
-## Week 2 - Allocation of Work
+### Week 2 - Allocation of Work
 <table>
     <tr>
         <th>Member</th>
