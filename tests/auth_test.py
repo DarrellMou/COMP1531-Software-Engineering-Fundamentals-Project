@@ -60,3 +60,12 @@ def test_auth_register_v1_nonunique_handle():
     data = retrieve_data()
     assert data['users'][users['user1']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las'
     assert data['users'][users['user2']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las0'
+
+def test_check_auth_permissions():
+    users = setup_user()
+    data = retrieve_data()
+    assert data['users'][users['user1']['auth_user_id']]['permission_id'] == 1
+    assert data['users'][users['user2']['auth_user_id']]['permission_id'] == 2
+    assert data['users'][users['user3']['auth_user_id']]['permission_id'] == 2
+    assert data['users'][users['user4']['auth_user_id']]['permission_id'] == 2
+    assert data['users'][users['user5']['auth_user_id']]['permission_id'] == 2

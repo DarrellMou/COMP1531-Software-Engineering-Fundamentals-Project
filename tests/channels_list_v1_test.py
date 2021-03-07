@@ -197,3 +197,9 @@ def test_memberless():
     assert channels_list_v1(a_u_id1['auth_user_id']) == {
         'channels': [],
     }
+
+# error when listing a channel with an invalid auth_user_id
+def test_channels_list_access_error():
+
+    with pytest.raises(AccessError):
+        channels_list_v1("invalid a_u_id")
