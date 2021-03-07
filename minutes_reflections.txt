@@ -169,6 +169,8 @@ ACTIONS:
 
 -   Darrell adds code to cater to permissions with assistance of Nikki, Brendan and Kellen.
 
+-   Added access error to channel_list_v1.
+
 
 
 REFLECTIONS
