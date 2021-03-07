@@ -1,9 +1,6 @@
 # Stand-Up Minutes and Reflections
 <!-- <h1>MinutesandReflections</h1> -->
 
-## Stand-Up Minutes
-<!-- <h2>Minutes</h2> -->
-
 ### Week 2 - Allocation of Work
 <!-- <h3>Allocation</h3> -->
 <table>
@@ -47,6 +44,9 @@
         </ul></td>
     </tr>
 
+## Stand-Up Minutes
+<!-- <h2>Minutes</h2> -->
+
 ### Stand-Up - Thursday, 04/03/21
 <!-- <h4>Thursday</h4> -->
 <table>
@@ -72,6 +72,6 @@
 * Nikki gets channels_create_v1 to work with pytest.
 
 #### Notes
-* -	Tell Winston during tutorial/lab to attend the meeting tomorrow night.
+* Tell Winston during tutorial/lab to attend the meeting tomorrow night.
 
 
