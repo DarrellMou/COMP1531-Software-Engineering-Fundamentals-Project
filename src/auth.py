@@ -65,6 +65,10 @@ def auth_register_v1(email, password, name_first, name_last):
     # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
+    if not data['users']:
+        permission_id = 1
+    else:
+        permission_id = 2
 
     data['users'][new_auth_user_id] = {
         'name_first' : name_first, 
@@ -72,6 +76,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'email' : email,
         'password' : password,
         'handle_str' : '',
+        'permission_id': permission_id
     }
 
     # Check to see if the handle is unique

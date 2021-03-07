@@ -7,6 +7,9 @@ from src.error import AccessError
 def channels_list_v1(auth_user_id):
     data = retrieve_data()
 
+    # AccessError occurs when input is invalid auth_user_id
+    if auth_user_id not in data['users']: raise AccessError("Invalid auth_user_id")
+
     # No parameter errors
     # List of channels
     channel_ids = data['channels']

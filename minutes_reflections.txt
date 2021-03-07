@@ -163,8 +163,11 @@ ACTIONS:
 
 -   All four attendees review and confirm assumptions.md and minutes_reflections.txt.
 
--   Darrell made for loop in test_channel_messages_v1_50_messages()
+-   Darrell made for loop in test_channel_messages_v1_50_messages().
 
+-   Brendan spotted 6.5 Permissions and notified Nikki and Darrell which was previously overlooked.
+
+-   Darrell adds code to cater to permissions with assistance of Nikki, Brendan and Kellen.
 
 
 
