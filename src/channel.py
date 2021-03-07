@@ -80,19 +80,66 @@ def channel_details_v1(auth_user_id, channel_id):
 
     return details_dict
 
+
+# Given a valid channel_id, return up to 50 messages in the channel
+# ASSUMPTION: Start IS NOT negative (originally I made it an input error but
+# apparently you're not allowed to raise any input or access errors other than
+# the ones listed in the spec, so its tests were removed altogether and was
+# replaced by an assumption)
 def channel_messages_v1(auth_user_id, channel_id, start):
-    return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
-        'start': 0,
-        'end': 50,
+    data = retrieve_data()
+    # Check to see if the given channel_id is a valid channel
+    if channel_id not in data['channels']:
+        raise InputError("Channel id is not valid")
+    # Check to see if the given user is actully in the given channel
+    elif auth_user_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError("The user is not in the channel")
+    
+    # Check to see if the given start value is larger than the number of
+    # messages in the given channel
+    num_messages = len(data['channels'][channel_id]['messages'])
+    if start > num_messages:
+        raise InputError("Inputted starting index is larger than the current number of messages in the channel")
+
+    # Initialise our message dictionary which we will be returning
+    messages_dict = {
+        'messages': [],
+        'start': start,
+        'end': 0
     }
+
+    # Get our current channel
+    channel = data['channels'][channel_id]
+    # ASSUMPTION: messages are APPENDED to our message list within the channel
+    # key of our data dictionary
+    # Reverse the order of the channel messages so the most recent message
+    # appears in index 0 and the least recent in the last index
+    messages_list = channel['messages'][::-1]
+
+
+    # Loop through our list and return up to 50 of the most recent messages
+    # starting our index with the given start
+    count = 0
+    for message in messages_list:
+        # Starting off at the start index, add up to 50 messages to the list
+        # in the messages dictionary
+        if count >= start and count < (start + 50):
+            messages_dict['messages'].append(message)
+        count += 1
+
+    # If 50 messages were added, then the most recent message is going to be
+    # returned and as per the spec, 'end' should return -1. Otherwise, end
+    # should return (start + 50)
+    if len(messages_dict['messages']) != 50:
+        messages_dict['end'] = -1
+    # If the number of messages in the channel minus the given start divided
+    # by 50 returns 1, this mean the most recent message has been returned
+    elif (num_messages - start) / 50 == 1:
+        messages_dict['end'] = -1
+    else:
+        messages_dict['end'] = start + 50
+
+    return messages_dict
 
 def channel_leave_v1(auth_user_id, channel_id):
     return {
