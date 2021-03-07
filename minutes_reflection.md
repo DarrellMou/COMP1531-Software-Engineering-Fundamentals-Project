@@ -82,6 +82,9 @@
         </ul></td>
     </tr>
 
+
+
+
 ### Stand-Up - Friday, 05/03/21
 <!-- <h3>Friday</h3> -->
 <table>
