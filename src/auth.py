@@ -34,6 +34,8 @@ def auth_login_v1(email, password):
             return {'auth_user_id' : key_it}        
     raise InputError
 
+
+
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
