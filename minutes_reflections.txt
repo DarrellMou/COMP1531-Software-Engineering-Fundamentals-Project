@@ -1,5 +1,7 @@
-﻿COMP1531 ASSIGNMENT - ITERATION 1 
+﻿COMP1531 ASSIGNMENT 
 Meeting Minutes and Reflection
+
+ITERATION 1
 
 Week 2 - Allocation of work
 
@@ -189,3 +191,9 @@ REFLECTIONS
 
 -   Better commit comments.
 
+
+ITERATION 2
+Week 4 Friday - Allocation of work
+
+15.03.21
+-   Nikki edited code to fix pylint
