@@ -118,7 +118,7 @@ def test_channel_messages_v1_InputError_invalid_start():
     user1, channel1 = setup['user1'], setup['channel1']
 
     # Add 1 message to channel1
-    data = add_1_message(user1, channel1) # Only has 1 message
+    add_1_message(user1, channel1) # Only has 1 message
 
     with pytest.raises(InputError):
         assert channel_messages_v1(user1, channel1, 2)
