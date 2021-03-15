@@ -175,60 +175,15 @@ def test_channel_messages_v1_50_messages():
     "50th message IS the least recent message so it should return 'end': -1"
     
     assert len(channel_messages_v1(user1, channel1, 0)['messages']) == 50
-    
-    assert channel_messages_v1(user1, channel1, 0)['messages'] == [
-        {'message_id': 50, 'u_id': user2, 'message': '50', 'time_created': 50},
-        {'message_id': 49, 'u_id': user1, 'message': '49', 'time_created': 49},
-        {'message_id': 48, 'u_id': user2, 'message': '48', 'time_created': 48},
-        {'message_id': 47, 'u_id': user1, 'message': '47', 'time_created': 47},
-        {'message_id': 46, 'u_id': user2, 'message': '46', 'time_created': 46},
-        {'message_id': 45, 'u_id': user1, 'message': '45', 'time_created': 45},
-        {'message_id': 44, 'u_id': user2, 'message': '44', 'time_created': 44},
-        {'message_id': 43, 'u_id': user1, 'message': '43', 'time_created': 43},
-        {'message_id': 42, 'u_id': user2, 'message': '42', 'time_created': 42},
-        {'message_id': 41, 'u_id': user1, 'message': '41', 'time_created': 41},
-        {'message_id': 40, 'u_id': user2, 'message': '40', 'time_created': 40},
-        {'message_id': 39, 'u_id': user1, 'message': '39', 'time_created': 39},
-        {'message_id': 38, 'u_id': user2, 'message': '38', 'time_created': 38},
-        {'message_id': 37, 'u_id': user1, 'message': '37', 'time_created': 37},
-        {'message_id': 36, 'u_id': user2, 'message': '36', 'time_created': 36},
-        {'message_id': 35, 'u_id': user1, 'message': '35', 'time_created': 35},
-        {'message_id': 34, 'u_id': user2, 'message': '34', 'time_created': 34},
-        {'message_id': 33, 'u_id': user1, 'message': '33', 'time_created': 33},
-        {'message_id': 32, 'u_id': user2, 'message': '32', 'time_created': 32},
-        {'message_id': 31, 'u_id': user1, 'message': '31', 'time_created': 31},
-        {'message_id': 30, 'u_id': user2, 'message': '30', 'time_created': 30},
-        {'message_id': 29, 'u_id': user1, 'message': '29', 'time_created': 29},
-        {'message_id': 28, 'u_id': user2, 'message': '28', 'time_created': 28},
-        {'message_id': 27, 'u_id': user1, 'message': '27', 'time_created': 27},
-        {'message_id': 26, 'u_id': user2, 'message': '26', 'time_created': 26},
-        {'message_id': 25, 'u_id': user1, 'message': '25', 'time_created': 25},
-        {'message_id': 24, 'u_id': user2, 'message': '24', 'time_created': 24},
-        {'message_id': 23, 'u_id': user1, 'message': '23', 'time_created': 23},
-        {'message_id': 22, 'u_id': user2, 'message': '22', 'time_created': 22},
-        {'message_id': 21, 'u_id': user1, 'message': '21', 'time_created': 21},
-        {'message_id': 20, 'u_id': user2, 'message': '20', 'time_created': 20},
-        {'message_id': 19, 'u_id': user1, 'message': '19', 'time_created': 19},
-        {'message_id': 18, 'u_id': user2, 'message': '18', 'time_created': 18},
-        {'message_id': 17, 'u_id': user1, 'message': '17', 'time_created': 17},
-        {'message_id': 16, 'u_id': user2, 'message': '16', 'time_created': 16},
-        {'message_id': 15, 'u_id': user1, 'message': '15', 'time_created': 15},
-        {'message_id': 14, 'u_id': user2, 'message': '14', 'time_created': 14},
-        {'message_id': 13, 'u_id': user1, 'message': '13', 'time_created': 13},
-        {'message_id': 12, 'u_id': user2, 'message': '12', 'time_created': 12},
-        {'message_id': 11, 'u_id': user1, 'message': '11', 'time_created': 11},
-        {'message_id': 10, 'u_id': user2, 'message': '10', 'time_created': 10},
-        {'message_id': 9, 'u_id': user1, 'message': '9', 'time_created': 9},
-        {'message_id': 8, 'u_id': user2, 'message': '8', 'time_created': 8},
-        {'message_id': 7, 'u_id': user1, 'message': '7', 'time_created': 7},
-        {'message_id': 6, 'u_id': user2, 'message': '6', 'time_created': 6},
-        {'message_id': 5, 'u_id': user1, 'message': '5', 'time_created': 5},
-        {'message_id': 4, 'u_id': user2, 'message': '4', 'time_created': 4},
-        {'message_id': 3, 'u_id': user1, 'message': '3', 'time_created': 3},
-        {'message_id': 2, 'u_id': user2, 'message': '2', 'time_created': 2},
-        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
-    ], "Error, messages do not match"
 
+    message_list = []
+    for i in range(50,0,-1):
+        if i % 2 == 0:
+            message_list.append({'message_id': i, 'u_id': user2, 'message': f'{i}', 'time_created': i})
+        else:
+            message_list.append({'message_id': i, 'u_id': user1, 'message': f'{i}', 'time_created': i})
+    
+    assert channel_messages_v1(user1, channel1, 0)['messages'] == message_list, "Error, messages do not match"
 
 # Create 100 messages, with a given start of 50 (50th index means the 51st most
 # recent message). Should return 50 messages (index 50 up to index 99 which

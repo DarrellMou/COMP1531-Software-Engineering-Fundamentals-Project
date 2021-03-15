@@ -26,6 +26,7 @@
 ## channel_join_v1 (kellen)
 * Users who are already members of a channel will not attempt to join again.
 * There will be no duplicate entries.
+* Global owners do not become an owner member, but has owner permissions (implemented later).
 
 ## channels_list_v1 (kellen)
 * The channels will appear in the order they were created.

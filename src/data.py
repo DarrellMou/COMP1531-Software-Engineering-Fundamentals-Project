@@ -9,6 +9,7 @@ data = {
             'email' : 'example1@hotmail.com',
             'password' : 'password1',
             'handle_str' : 'first_name1last_name',
+            'permission_id': 1,
         },
         11753764853 : {
             'name_first' : 'first_name2',
@@ -16,6 +17,7 @@ data = {
             'email' : 'example2@hotmail.com',
             'password' : 'password2',
             'handle_str' : 'first_name2last_name',
+            'permission_id': 2,
         },
     },
     'channels' : {
@@ -43,7 +45,7 @@ data = {
             'name' : 'channel2',
             'is_public' : True,
             'owner_members' : [123456789],
-            'all_members' : [12356789, 12389473129847],
+            'all_members' : [123456789, 12389473129847],
             'messages' : [
                 {
                     'message_id': 12354122383,
