@@ -92,7 +92,7 @@ def channel_messages_v2(token, channel_id, start):
     if channel_id not in data['channels']:
         raise InputError("Channel id is not valid")
     # Check to see if the given user is actully in the given channel
-    elif auth_user_id not in data['channels'][channel_id]['all_members']:
+    elif token not in data['channels'][channel_id]['all_members']:
         raise AccessError("The user is not in the channel")
     
     # Check to see if the given start value is larger than the number of
