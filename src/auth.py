@@ -4,6 +4,7 @@ from src.server import APP
 
 import datetime
 import jwt
+import hashlib 
 from flask import jsonify, request
 
 SECRET = 'CHAMPAGGNE?'
@@ -40,7 +41,7 @@ def auth_login_v1(email, password):
         data_email = data['users'][key_it]['email']
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
-        if email == data_email and password == data_password:
+        if email == data_email and hashlib.sha256(password.encode()).hexdigest() == data_password:
             return {'token' : auth_encode_token(key_it), 'auth_user_id' : key_it}        
     raise InputError
 
@@ -83,7 +84,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'name_first' : name_first, 
         'name_last' : name_last, 
         'email' : email,
-        'password' : password,
+        'password' : hashlib.sha256(password.encode()).hexdigest(),
         'handle_str' : '',
         'permission_id': permission_id
     }
@@ -132,6 +133,12 @@ def auth_decode_token(token):
         return 'invalid token, log in again'
     except jwt.DecodeError as e:
         return e
+
+def auth_token_ok(token):
+    if(isinstance(auth_decode_token(token), str):
+        return False
+    else
+        return True
 
 @APP.route('/register', methods=['POST'])
 def auth_register_route():
