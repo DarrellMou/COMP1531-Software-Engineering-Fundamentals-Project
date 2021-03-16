@@ -9,6 +9,7 @@ from src.data import reset_data
 def setup_user():
     reset_data()
 
+    # a_u_id* has two fields: token and auth_user_id
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
     a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
@@ -24,7 +25,7 @@ def setup_user():
     }
 
 
-# error when creating a channel with an invalid auth_user_id
+# error when creating a channel with an invalid token
 def test_channels_create_access_error():
 
     with pytest.raises(AccessError):
@@ -38,11 +39,11 @@ def test_channels_create_input_error():
 
     # public channel with namesize > 20 characters
     with pytest.raises(InputError):
-        channels_create_v1(users['user1']['auth_user_id'], "This is longer than 20", True)
+        channels_create_v1(users['user1']['token'], "This is longer than 20", True)
 
     # private channel with namesize > 20 characters
     with pytest.raises(InputError):
-        channels_create_v1(users['user1']['auth_user_id'], "This is longer than 20", False)
+        channels_create_v1(users['user1']['token'], "This is longer than 20", False)
 
 
 # assert channel id is an integer
@@ -50,7 +51,7 @@ def test_channels_create_return_value():
     
     users = setup_user()
 
-    channel_id1 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
+    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
     assert isinstance(channel_id1['channel_id'], int)
 
 
@@ -59,11 +60,11 @@ def test_channels_create_same_name():
 
     users = setup_user()
 
-    channel_id2 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
-    channel_id3 = channels_create_v1(users['user1']['auth_user_id'], "Public Channel", True)
+    channel_id2 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id3 = channels_create_v1(users['user1']['token'], "Public Channel", True)
 
     # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
+    channel_list = channels_listall_v1(users['user3']['token'])
 
     assert channel_list['channels'][0]['channel_id'] == channel_id2['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public Channel'
@@ -77,10 +78,10 @@ def test_channels_create_no_name():
 
     users = setup_user()
 
-    channel_id4 = channels_create_v1(users['user1']['auth_user_id'], "", True)
+    channel_id4 = channels_create_v1(users['user1'][token], "", True)
 
     # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
+    channel_list = channels_listall_v1(users['user3']['token'])
 
     assert channel_list['channels'][0]['channel_id'] == channel_id4['channel_id']
     assert channel_list['channels'][0]['name'] == ''
