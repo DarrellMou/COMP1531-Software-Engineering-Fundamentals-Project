@@ -1,5 +1,13 @@
 from src.error import InputError 
 from src.data import retrieve_data
+from src.server import APP
+
+import datetime
+import jwt
+from flask import jsonify, request
+
+SECRET = 'CHAMPAGGNE?'
+
 '''
 # For testing
 from error import InputError 
@@ -8,6 +16,8 @@ from data import retrieve_data
 import re
 import itertools
 import uuid
+
+session = {}
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -31,9 +41,8 @@ def auth_login_v1(email, password):
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
         if email == data_email and password == data_password:
-            return {'auth_user_id' : key_it}        
+            return {'token' : auth_encode_token(key_it), 'auth_user_id' : key_it}        
     raise InputError
-
 
 
 # Given a user's first and last name, email address, and password
@@ -91,4 +100,50 @@ def auth_register_v1(email, password, name_first, name_last):
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
-        return {'auth_user_id' : new_auth_user_id}
+        return {'token' : auth_encode_token(new_auth_user_id), 'auth_user_id' : new_auth_user_id}
+
+"""
+Generate and return an expirable token based on auth_user_id
+"""
+def auth_encode_token(auth_user_id):
+    try:
+        payload = {
+            'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=30)),
+            'iat' : datetime.datetime.utcnow(),
+            'sub' : auth_user_id
+        }
+
+        return jwt.encode(
+            payload,
+            SECRET,
+            algorithm='HS256'
+        )
+    except Exception as e: # catch all kinds of exception
+        return e
+
+def auth_decode_token(token):
+    try:
+        payload = jwt.decode(token, SECRET, algorithms=['HS256'])
+
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        return 'Session expired, log in again'
+    except jwt.InvalidTokenError:
+        return 'invalid token, log in again'
+    except jwt.DecodeError as e:
+        return e
+
+@APP.route('/register', methods=['POST'])
+def auth_register_route():
+    if not request.json or not 'email' in request.json or not 'password' in request.json or not 'first_name' in request.json or not 'last_name' in request.json:
+        abort(400)
+
+    try:
+        responseObj = auth_register_v1(request.json['email'], request.json['password'], 
+                            request.json['first_name'], request.json['last_name'])
+        session.add(responseObj['auth_user_id'])
+        return make_response(jsonify(responseObj)), 201
+
+    except InputError as e:
+        responseObj = {'status' : 'input error'}
+        return make_response(jsonify(responseObj)), 402
