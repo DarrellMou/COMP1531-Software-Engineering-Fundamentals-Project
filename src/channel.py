@@ -86,7 +86,7 @@ def channel_details_v1(auth_user_id, channel_id):
 # apparently you're not allowed to raise any input or access errors other than
 # the ones listed in the spec, so its tests were removed altogether and was
 # replaced by an assumption)
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v2(token, channel_id, start):
     data = retrieve_data()
     # Check to see if the given channel_id is a valid channel
     if channel_id not in data['channels']:
