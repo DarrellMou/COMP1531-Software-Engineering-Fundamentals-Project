@@ -41,7 +41,7 @@ def auth_login_v1(email, password):
         data_email = data['users'][key_it]['email']
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
-        if email == data_email and hashlib.sha256(password.encode()).hexdigest() == data_password:
+        if email == data_email and auth_password_hash(password) == data_password:
             return {'token' : auth_encode_token(key_it), 'auth_user_id' : key_it}        
     raise InputError
 
@@ -75,6 +75,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
+    # type 1 is owner, type 2 is member 
     if not data['users']:
         permission_id = 1
     else:
@@ -84,7 +85,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'name_first' : name_first, 
         'name_last' : name_last, 
         'email' : email,
-        'password' : hashlib.sha256(password.encode()).hexdigest(),
+        'password' : auth_password_hash(password),
         'handle_str' : '',
         'permission_id': permission_id
     }
@@ -122,6 +123,9 @@ def auth_encode_token(auth_user_id):
     except Exception as e: # catch all kinds of exception
         return e
 
+"""
+returns auth_user_id for others to use 
+"""
 def auth_decode_token(token):
     try:
         payload = jwt.decode(token, SECRET, algorithms=['HS256'])
