@@ -86,7 +86,8 @@ def auth_register_v1(email, password, name_first, name_last):
         'email' : email,
         'password' : hashlib.sha256(password.encode()).hexdigest(),
         'handle_str' : '',
-        'permission_id': permission_id
+        'permission_id': permission_id,
+        'dms': [],
     }
 
     # Check to see if the handle is unique
@@ -135,9 +136,9 @@ def auth_decode_token(token):
         return e
 
 def auth_token_ok(token):
-    if(isinstance(auth_decode_token(token), str):
+    if(isinstance(auth_decode_token(token), str)):
         return False
-    else
+    else:
         return True
 
 @APP.route('/register', methods=['POST'])
