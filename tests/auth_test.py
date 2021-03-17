@@ -85,4 +85,6 @@ def test_encode_decode_token(test_users):
 def test_auth_token_ok():
     token = auth_encode_token(123)
     assert auth_token_ok(token) == True
+    bad_token = 'edaeddawedead'
+    assert auth_token_ok(bad_token) == False
 
