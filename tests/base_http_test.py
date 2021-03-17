@@ -1,15 +1,16 @@
-from flask import Flask 
-
 import pytest
 
-# a new app instance 
-def create_app():
-	app = Flask(__name__)
+from src import create_app
 
-	return app
+# a new app instance for every test
+@pytest.fixture
+def app():
+	a = create_app()
+
+	yield a # a is a generator 
 
 
 @pytest.fixture 
-def client():
-	with create_app().test_client() as client:
-		yield client
+def client(app):
+	return app.test_client()
+
