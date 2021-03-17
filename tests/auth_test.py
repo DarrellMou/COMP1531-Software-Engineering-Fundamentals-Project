@@ -1,7 +1,7 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
 from src.data import reset_data, retrieve_data
 
 #from error import InputError
@@ -81,3 +81,8 @@ def test_encode_decode_token(test_users):
     assert isinstance(token, str) == True
     assert auth_decode_token(token) == test_users['login1']
     assert auth_decode_token('whatisthis') == 'invalid token, log in again'
+
+def test_auth_token_ok():
+    token = auth_encode_token(123)
+    assert auth_token_ok(token) == True
+
