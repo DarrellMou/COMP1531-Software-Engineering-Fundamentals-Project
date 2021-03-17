@@ -185,6 +185,22 @@ def channel_join_v2(token, channel_id):
     return channel_join_v1(user_id, channel_id)
 
 def channel_addowner_v1(auth_user_id, channel_id, u_id):
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']: raise InputError
+    
+    # If the target user is already an owner_member of the channel, raise access error
+    if u_id in data['channels'][channel_id]['owner_members']: raise InputError
+
+    # If the commanding user is not an owner or dreams owner
+    if user_id not in data['channels'][channel_id]['owner_members'] and
+    data['users'][user_id]['permission_id'] != 1: raise AccessError
+
+    # All error checks passed, continue on to add owner
+    data['channels'][channel_id]['owner_members'].append(u_id)
+
     return {
     }
 
@@ -200,6 +216,13 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
 
     # If the target user is the only owner, raise access error
     if len(data['channels'][channel_id]['owner_members']) == 1: raise InputError
+
+    # If the commanding user is not an owner or dreams owner
+    if user_id not in data['channels'][channel_id]['owner_members'] and
+    data['users'][user_id]['permission_id'] != 1: raise AccessError
+
+    # All error checks passed, continue on to remove owner
+    data['channels'][channel_id]['owner_members'].remove(u_id)
 
     return {
     }
