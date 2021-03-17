@@ -141,7 +141,24 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     return messages_dict
 
-def channel_leave_v1(auth_user_id, channel_id):
+def channel_leave_v1(token, channel_id):
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']: raise InputError
+    
+    # If the auth_user is not a member of the channel, raise access error
+    if user_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError
+    # auth_user is a member, proceed with removal
+    else:
+        # Remove user ID from all_members
+        data['channels'][channel_id]['all_members'].remove(user_id)
+        # Remove in owner_members if applicable as well
+        if user_id in data['channels'][channel_id]['all_members']:
+            data['channels'][channel_id]['owner_members'].remove(user_id)
+    
     return {
     }
 
@@ -172,5 +189,17 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
     }
 
 def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']: raise InputError
+    
+    # If the target user is not an owner_member of the channel, raise access error
+    if u_id not in data['channels'][channel_id]['owner_members']: raise InputError
+
+    # If the target user is the only owner, raise access error
+    if len(data['channels'][channel_id]['owner_members']) == 1: raise InputError
+
     return {
     }
