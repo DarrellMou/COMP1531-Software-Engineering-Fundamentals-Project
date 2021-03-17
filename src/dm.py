@@ -1,10 +1,16 @@
-from src.data import data, retrieve_data
+
+from src.data import data, retrieve_data, reset_data
 from src.error import AccessError, InputError
 
 from src.auth import auth_token_ok, auth_decode_token
 
 import uuid
+'''
+from data import data, retrieve_data, reset_data
+from error import AccessError, InputError
 
+from auth import auth_token_ok, auth_decode_token, auth_register_v1
+'''
 # Creates dm given list of users
 def dm_create_v1(token, u_ids):
     data = retrieve_data()
@@ -21,14 +27,12 @@ def dm_create_v1(token, u_ids):
 
     dm_name = ''
     for u_id in u_ids:
-        if u_id == u_ids[:-1]:
-            dm_name += data['users'][u_ids[-1]][handle_str]
+        if u_id == u_ids[-1]:
+            dm_name += data['users'][u_ids[-1]]['handle_str']
         else:
-            dm_name += data['users'][u_id][handle_str] + ', '
+            dm_name += data['users'][u_id]['handle_str'] + ', '
         data['users'][u_id]['dms'].append(dm_id)
 
     data['users'][auth_user_id]['dms'].append(dm_id)
 
     return {'dm_id': dm_id, 'dm_name': dm_name}
-
-    
