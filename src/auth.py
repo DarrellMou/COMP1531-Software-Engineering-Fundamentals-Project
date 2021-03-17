@@ -5,7 +5,7 @@ from src.server import APP
 import datetime
 import jwt
 import hashlib 
-from flask import jsonify, request
+from flask import jsonify, request, Blueprint, abort, make_response
 
 SECRET = 'CHAMPAGGNE?'
 
@@ -18,7 +18,10 @@ import re
 import itertools
 import uuid
 
-session = {}
+# registered in src/__init__.py
+bp = Blueprint('auth', __name__, url_prefix='/')
+
+session = set() # can't use {} lmaooo
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -138,23 +141,49 @@ def auth_decode_token(token):
     except jwt.DecodeError as e:
         return e
 
+# check before using auth_token_decode
 def auth_token_ok(token):
-    if(isinstance(auth_decode_token(token), str):
+    if(isinstance(auth_decode_token(token), str)):
         return False
-    else
+    else:
         return True
 
-@APP.route('/register', methods=['POST'])
-def auth_register_route():
+# wrapper
+def auth_password_hash(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+@bp.route('register', methods=['POST'])
+def auth_register_api(): 
     if not request.json or not 'email' in request.json or not 'password' in request.json or not 'first_name' in request.json or not 'last_name' in request.json:
-        abort(400)
+        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
+        return make_response(jsonify(responseObj)), 408
 
     try:
+        # responseObj is a dict with 'token' and 'auth_user_id'
         responseObj = auth_register_v1(request.json['email'], request.json['password'], 
                             request.json['first_name'], request.json['last_name'])
+        
         session.add(responseObj['auth_user_id'])
         return make_response(jsonify(responseObj)), 201
 
     except InputError as e:
-        responseObj = {'status' : 'input error'}
+        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
+        return make_response(jsonify(responseObj)), 402 # just random status codes, come back later呵呵
+
+
+@bp.route('login', methods=['POST'])
+def auth_login_api():
+    if not request.json or not 'email' in request.json or not 'password' in request.json:
+        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
+        return make_response(jsonify(responseObj)), 408
+
+    try:
+        responseObj = auth_login_v1(request.json['email'], request.json['password'])
+
+        session.add(responseObj['auth_user_id'])
+        return make_response(jsonify(responseObj)), 201
+
+    except InputError as e:
+        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
         return make_response(jsonify(responseObj)), 402
