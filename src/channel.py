@@ -162,6 +162,10 @@ def channel_join_v1(auth_user_id, channel_id):
 
     return {}
 
+# Second version of channel_join that requires authentic token
+def channel_join_v2(token, channel_id):
+    user_id = auth_decode_token(token)
+    return channel_join_v1(user_id, channel_id)
 
 def channel_addowner_v1(auth_user_id, channel_id, u_id):
     return {
