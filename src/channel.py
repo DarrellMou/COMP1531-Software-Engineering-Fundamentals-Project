@@ -1,5 +1,6 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
+from src.auth import auth_token_ok, auth_token_decode
 #from data import data, retrieve_data
 #from error import AccessError, InputError
 
@@ -88,12 +89,20 @@ def channel_details_v1(auth_user_id, channel_id):
 # replaced by an assumption)
 def channel_messages_v2(token, channel_id, start):
     data = retrieve_data()
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError("The given token is not valid")
+
+    # Check to see if the given user (token) is actully in the given channel
+    user_id = auth_decode_token(token)
+    if user_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError("The user corresponding to the given token is not in the channel")
+
     # Check to see if the given channel_id is a valid channel
     if channel_id not in data['channels']:
         raise InputError("Channel id is not valid")
-    # Check to see if the given user is actully in the given channel
-    elif token not in data['channels'][channel_id]['all_members']:
-        raise AccessError("The user is not in the channel")
+
     
     # Check to see if the given start value is larger than the number of
     # messages in the given channel
