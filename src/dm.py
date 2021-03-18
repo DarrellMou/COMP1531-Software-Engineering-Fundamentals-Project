@@ -49,12 +49,12 @@ def dm_create_v1(token, u_ids):
 def dm_details_v1(token, dm_id):
     data = retrieve_data()
 
-    # Checks if dm_id is valid
-    if dm_id not in data['dms']: raise InputError
-
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
     auth_user_id = auth_decode_token(token)
+
+    # Checks if dm_id is valid
+    if dm_id not in data['dms']: raise InputError
 
     # Checks if user belongs in dm
     if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
@@ -101,3 +101,21 @@ def dm_list_v1(token):
 
     return {'dms': dm_list}
 
+# Returns nothing, removes dm from data
+def dm_remove_v1(token, dm_id):
+    data = retrieve_data()
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
+
+    # Checks if dm_id is valid
+    if dm_id not in data['dms']: raise InputError
+
+    # Checks if user is the creator of dm
+    if auth_user_id != data['dms'][dm_id]['members'][0]: raise AccessError
+
+    # Deletes dm from data
+    del data['dms'][dm_id]
+
+    return {}
