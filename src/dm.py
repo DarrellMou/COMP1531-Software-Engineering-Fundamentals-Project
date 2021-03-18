@@ -79,7 +79,7 @@ def dm_details_v1(token, dm_id):
 
     return details_dict
 
-# Returns list of dms
+# Returns list of dms that user is a member of
 def dm_list_v1(token):
     data = retrieve_data()
 
@@ -117,5 +117,26 @@ def dm_remove_v1(token, dm_id):
 
     # Deletes dm from data
     del data['dms'][dm_id]
+
+    return {}
+
+# Inviting a user to an existing dm
+def dm_invite_v1(token, dm_id, u_id):
+    data = retrieve_data()
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
+
+    # Checks if dm_id is valid
+    if dm_id not in data['dms']: raise InputError
+
+    # Checks if user exists
+    if u_id not in data['users']: raise InputError
+
+    # Checks if user belongs in dm
+    if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
+
+    data['dms'][dm_id]['members'].append(u_id)
 
     return {}
