@@ -36,8 +36,10 @@ def channels_listall_v1(token):
 
     data = retrieve_data()
     
-    # AccessError occurs when input is invalid token
-    if token not in data['users']['token']: raise AccessError("Invalid token")
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
+
 
     # Create list of all channels
     channel_listall = []
@@ -61,14 +63,9 @@ def channels_create_v1(token, name, is_public):
     # InputError occurs when creating a channel name longer than 20 characters
     if len(name) > 20: raise InputError("Channel name cannot be longer than 20 characters")
 
-    # AccessError occurs when input is invalid token
-    if token in data['users']['token']: 
-        auth_user_id = data['users']
-    else:
-        raise AccessError("Invalid token")
-
-    # Find user data of the token
-
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
 
     # Generate unique channel_id
     channel_id = int(uuid.uuid1())
