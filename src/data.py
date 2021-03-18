@@ -10,7 +10,6 @@ data = {
             'password' : 'password1',
             'handle_str' : 'first_name1last_name',
             'permission_id': 1,
-            'dms': [1,2,3],
         },
         11753764853 : {
             'name_first' : 'first_name2',
@@ -19,7 +18,6 @@ data = {
             'password' : 'password2',
             'handle_str' : 'first_name2last_name',
             'permission_id': 2,
-            'dms': [1,2,3],
         },
     },
     'channels' : {
@@ -64,6 +62,12 @@ data = {
             ],
         },
     },
+    'dms': {
+        12345: {
+            'name': 'dms1'
+            'members': [35746842521, 11753764853]
+        }
+    }
 }
 
 
