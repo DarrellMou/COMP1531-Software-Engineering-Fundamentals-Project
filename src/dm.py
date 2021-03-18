@@ -78,3 +78,26 @@ def dm_details_v1(token, dm_id):
     }
 
     return details_dict
+
+# Returns list of dms
+def dm_list_v1(token):
+    data = retrieve_data()
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
+
+    # Make list for dms
+    dm_list = []
+
+    # Make dict to append to dm_list
+    for dm in data['dms']:
+        if auth_user_id in data['dms'][dm]['members']:
+            dm_dict = {
+                'dm_id': dm,
+                'name': data['dms'][dm]['name']
+            }
+            dm_list.append(dm_dict)
+
+    return {'dms': dm_list}
+
