@@ -9,7 +9,7 @@ from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1
 
 # Typical case
 def test_function():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -26,11 +26,11 @@ def test_function():
 
     dm_remove_v1(a_u_id1['token'], dm_id['dm_id'])
 
-    assert dm_list_v1(a_u_id1['token']) == {}
+    assert dm_list_v1(a_u_id1['token']) == {'dms': []}
 
 # dm_remove removing multiple dms
 def test_multiple():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
@@ -82,11 +82,11 @@ def test_multiple():
     dm_remove_v1(a_u_id1['token'], dm_id4['dm_id'])
     dm_remove_v1(a_u_id1['token'], dm_id5['dm_id'])
 
-    assert dm_list_v1(a_u_id1['token']) == {}
+    assert dm_list_v1(a_u_id1['token']) == {'dms': []}
 
 # dm_remove given invalid token
 def test_invalid_token():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -97,23 +97,20 @@ def test_invalid_token():
 
 # dm_remove given invalid dm_id
 def test_invalid_dm_id():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
-    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
-
-    dm_id = dm_create_v1(a_u_id1['token'], [a_u_id2['auth_user_id']])
-    
+        
     with pytest.raises(InputError):
         dm_remove_v1(a_u_id1['token'], 12345)
 
 # dm_remove given user who is not the creator of dm
 def test_wrong_user():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
     dm_id = dm_create_v1(a_u_id1['token'], [a_u_id2['auth_user_id']])
     
     with pytest.raises(AccessError):
-        dm_remove_v1(a_u_id2['token'], 12345)
+        dm_remove_v1(a_u_id2['token'], dm_id['dm_id'])
 

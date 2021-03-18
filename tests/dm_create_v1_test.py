@@ -34,15 +34,14 @@ def test_multiple():
 
 # dm_create given invalid token
 def test_invalid_token():
-    data = reset_data()
-    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
+    reset_data()
 
     with pytest.raises(AccessError):
         dm_create_v1(12345, [12345, 67890])
 
 # dm_create given invalid user
 def test_invalid_user():
-    data = reset_data()
+    reset_data()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
 
     with pytest.raises(InputError):
