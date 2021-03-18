@@ -197,3 +197,30 @@ Week 4 Friday - Allocation of work
 
 15.03.21
 -   Nikki edited code to fix pylint
+
+
+Meeting - Wednesday 17/03/21
+
+
+Duration	8:30pm - 
+
+Platform	Discord
+
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+
+UPDATES:
+-	Winston implemented token helper functions to auth. 
+-   Winston added to __init__.
+-   Brendan, Nikki, Darrell, Kellen and Winston changed their initial assigned functions to have input token.
+-   Darrell began on dm functions.
+
+ACTIONS:
+-   Winston verifying auth.
+-   Everyone else start their newly assigned functions for Iteration2.
+-   Darrell merged Winston's auth into his branch.
+
+TO-DO: 
+-   Work out uniform architecture.
+-   Work on new functions.
+
