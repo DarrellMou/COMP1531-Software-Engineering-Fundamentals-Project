@@ -138,7 +138,7 @@ def auth_decode_token(token):
         return 'Session expired, log in again'
     except jwt.InvalidTokenError:
         return 'invalid token, log in again'
-    except jwt.DecodeError as e:
+    except jwt.InvalidTokenError as e:
         return e
 
 # check before using auth_token_decode
