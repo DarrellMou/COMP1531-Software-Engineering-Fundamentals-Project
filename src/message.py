@@ -39,7 +39,7 @@ def message_send_v2(token, channel_id, message):
     }
 
     # Append our message dictionary to the messages list
-    data['channels'][channel_id]['messages'].append(message)
+    data['channels'][channel_id]['messages'].append(message_dictionary)
 
     return {
         'message_id': unique_message_id

@@ -3,7 +3,7 @@ import pytest
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v1
 from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v1
+from src.auth import auth_register_v1, auth_decode_token
 from src.channels import channels_create_v1
 from src.message import message_send_v2
 
@@ -23,7 +23,7 @@ from src.message import message_send_v2
 # Simple data population helper function; registers users 1 and 2,
 # creates channel_1 with member u_id = 1
 def set_up_data():
-    reset_data()
+    data = reset_data()
     
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
@@ -31,8 +31,8 @@ def set_up_data():
     channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
 
     setup = {
-        'user1': user1['auth_user_id'],
-        'user2': user2['auth_user_id'],
+        'user1': user1['token'],
+        'user2': user2['token'],
         'channel1': channel1['channel_id']
     }
 
@@ -49,6 +49,8 @@ def send_x_messages(user1, user2, channel1, num_messages):
         else:
             message_send_v2(user2, channel1, str(message_num))
         message_count += 1
+    
+    return data
 
 
 
@@ -77,10 +79,10 @@ def test_message_send_v2_InputError():
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
     while len(long_message) < 1001:
-        long_message = long_message + "a" 
+        long_message += "a" 
 
     # user1 tries to send a message that is too long to channel 1
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         assert message_send_v2(user1, channel1, long_message)
 
 
@@ -93,6 +95,7 @@ def test_message_send_v2_InputError():
 def test_message_send_v2_send_one():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    data = retrieve_data()
 
     assert message_send_v2(user1, channel1, "Hello")['message_id'] ==\
         data['channels'][channel1]['messages'][0]['message_id']
@@ -103,6 +106,7 @@ def test_message_send_v2_user_sends_identical_messages():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
+    data = retrieve_data()
 
     first_message_id = message_send_v2(user1, channel1, "Hello")['message_id']
     second_message_id = message_send_v2(user1, channel1, "Hello")['message_id']
@@ -119,9 +123,13 @@ def test_message_send_v2_multiple_users_multiple_messages():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
-    channel_invite_v1(user1, channel1, user2)
+    u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2) 
+
+    channel_invite_v1(u_id1, channel1, u_id2)
 
     send_x_messages(user1, user2, channel1, 10)
+
+    data = retrieve_data()
 
     assert data['channels'][channel1]['messages'][0]['message'] == "1"
     assert data['channels'][channel1]['messages'][5]['message'] == "6"
@@ -134,15 +142,20 @@ def test_message_send_v2_multiple_users_multiple_messages_message_id():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
-    channel_invite_v1(user1, channel1, user2)
+    u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2) 
+
+    channel_invite_v1(u_id1, channel1, u_id2)
 
     data = retrieve_data()
     message_count = 0
     while message_count < 100:
         message_num = message_count + 1
         if message_count % 2 == 0:
-            message_id = message_send_v2(user1, channel1, str(message_num))
+            message_id = message_send_v2(user1, channel1, str(message_num))['message_id']
         else:
-            message_id = message_send_v2(user2, channel1, str(message_num))
+            message_id = message_send_v2(user2, channel1, str(message_num))['message_id']
         assert message_id == data['channels'][channel1]['messages'][message_count]['message_id']
         message_count += 1
+
+# Same user sends the identical message to two different channels
+# Message ids should be different
