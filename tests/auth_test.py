@@ -34,7 +34,6 @@ def test_auth_email_format():
 
 def test_auth_login_v1(test_users):
     loginResponse = auth_login_v1('user1@email.com', 'User1_pass!')
-    assert loginResponse['token']
     assert loginResponse['auth_user_id'] == test_users['login1']['auth_user_id']
 
     with pytest.raises(InputError):
@@ -47,7 +46,6 @@ def test_auth_register_v1():
 
     registerDict = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     assert data['users'][registerDict['auth_user_id']]['handle_str'] == 'bobbuilder'
-    assert registerDict['token']
 
     with pytest.raises(InputError):
         auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)

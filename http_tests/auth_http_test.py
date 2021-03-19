@@ -1,6 +1,6 @@
 from src.server import APP
 from src.error import InputError
-from tests.base_http_test import *
+from http_tests import *
 import requests
 
 # client and app are pytest fixtures
