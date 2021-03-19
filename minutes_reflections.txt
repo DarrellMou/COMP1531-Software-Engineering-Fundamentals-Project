@@ -1,4 +1,4 @@
-﻿COMP1531 ASSIGNMENT 
+COMP1531 ASSIGNMENT 
 Meeting Minutes and Reflection
 
 ITERATION 1
@@ -223,4 +223,11 @@ ACTIONS:
 TO-DO: 
 -   Work out uniform architecture.
 -   Work on new functions.
+
+
+Tutorial - Friday 19/03/21
+
+TO-DO: 
+-   Finish draft functions by next Wednesday meeting at 8:30pm  
+
 
