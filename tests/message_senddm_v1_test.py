@@ -26,7 +26,7 @@ def setup_user():
 # listing channels with invalid token
 def test_message_senddm_not_dmmember():
 
-    users = set_up_data()
+    users = setup_user()
 
     dm1 = dm_create_v1(users['user1']['token'], users['user2'])
 
@@ -36,7 +36,7 @@ def test_message_senddm_not_dmmember():
 # Message more than 1000 characters
 def test_message_senddm_too_long():
 
-    users = set_up_data()
+    users = setup_user()
 
     dm1 = dm_create_v1(users['user1']['token'], users['user2'])
 
@@ -62,7 +62,7 @@ def test_message_senddm_too_long():
 # Standard send dm
 def test_message_senddm_standard():
 
-    users = set_up_data()
+    users = setup_user()
 
     dm1 = dm_create_v1(users['user1']['token'], users['user2'])
 
