@@ -157,5 +157,31 @@ def test_message_send_v2_multiple_users_multiple_messages_message_id():
         assert message_id == data['channels'][channel1]['messages'][message_count]['message_id']
         message_count += 1
 
+
 # Same user sends the identical message to two different channels
 # Message ids should be different
+def test_message_send_v2_identical_message_to_2_channels():
+    setup = set_up_data()
+    user1, channel1 = setup['user1'], setup['channel1']
+
+    u_id1 = auth_decode_token(user1)
+    channel2 = channels_create_v1(u_id1, 'Channel2', True)['channel_id']
+
+
+    message_count = 0
+    while message_count < 10:
+        message_num = message_count + 1
+        message_send_v2(user1, channel1, str(message_num))
+        message_send_v2(user1, channel2, str(message_num))
+        message_count += 1
+
+    data = retrieve_data()
+
+    assert data['channels'][channel1]['messages'][0]['message_id'] !=\
+        data['channels'][channel2]['messages'][0]['message_id']
+
+    assert data['channels'][channel1]['messages'][5]['message_id'] !=\
+        data['channels'][channel2]['messages'][5]['message_id']
+
+    assert data['channels'][channel1]['messages'][9]['message_id'] !=\
+        data['channels'][channel2]['messages'][9]['message_id']
