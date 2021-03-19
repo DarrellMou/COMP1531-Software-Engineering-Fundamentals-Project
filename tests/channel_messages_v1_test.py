@@ -3,7 +3,7 @@ import pytest
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v1, channel_invite_v1
 from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v1
+from src.auth import auth_register_v1, auth_token_ok, auth_decode_token
 from src.channels import channels_create_v1
 
 

@@ -78,7 +78,7 @@ def test_channels_create_no_name():
 
     users = setup_user()
 
-    channel_id4 = channels_create_v1(users['user1'][token], "", True)
+    channel_id4 = channels_create_v1(users['user1']['token'], "", True)
 
     # ensure channels_listall returns correct values
     channel_list = channels_listall_v1(users['user3']['token'])

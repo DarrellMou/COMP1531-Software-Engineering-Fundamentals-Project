@@ -3,6 +3,7 @@ import uuid
 
 from src.error import InputError
 from src.error import AccessError
+from src.auth import auth_token_ok, auth_decode_token
 
 def channels_list_v1(auth_user_id):
     data = retrieve_data()
