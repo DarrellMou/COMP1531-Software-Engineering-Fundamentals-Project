@@ -3,8 +3,9 @@ import pytest
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v1
 from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v2
+from src.auth import auth_register_v1
 from src.channels import channels_create_v1
+from src.message import message_send_v2
 
 
 ###############################################################################
@@ -25,13 +26,13 @@ def set_up_data():
     reset_data()
     
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = auth_register_v2('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v2('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
     channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
 
     setup = {
-        'user1': user1['token'],
-        'user2': user2['token'],
+        'user1': user1['auth_user_id'],
+        'user2': user2['auth_user_id'],
         'channel1': channel1['channel_id']
     }
 
@@ -75,7 +76,7 @@ def test_message_send_v2_InputError():
     
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
-    for len(long_message) < 1001:
+    while len(long_message) < 1001:
         long_message = long_message + "a" 
 
     # user1 tries to send a message that is too long to channel 1

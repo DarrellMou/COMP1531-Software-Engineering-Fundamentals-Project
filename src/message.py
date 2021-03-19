@@ -1,6 +1,9 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
-from src.auth import auth_token_ok, auth_token_decode
+from src.auth import auth_token_ok, auth_decode_token
+from uuid import uuid4
+from datetime import datetime
+
 
 def message_send_v2(token, channel_id, message):
     data = retrieve_data()
@@ -18,11 +21,28 @@ def message_send_v2(token, channel_id, message):
     if user_id not in data['channels'][channel_id]['all_members']:
         raise AccessError("The user corresponding to the given token is not in the channel")
 
-    
 
+    # Creating a unique id for our message_id. The chances of uuid4 returning
+    # the same time is infinitesimally small.
+    # ASSUMPTION: int(uuid4()) will never reproduce the same id
+    unique_message_id = int(uuid4())
+    # Creating a timestamp for our time_created key for our messages dictionary
+    # which is based on unix time (epoch/POSIX time)
+    time_created_timestamp = round(datetime.now().timestamp())
+
+    # Create a dictionary which we will append to our messages list in our channel
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': time_created_timestamp,
+    }
+
+    # Append our message dictionary to the messages list
+    data['channels'][channel_id]['messages'].append(message)
 
     return {
-        'message_id': 1,
+        'message_id': unique_message_id
     }
 
 def message_remove_v1(token, message_id):
