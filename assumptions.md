@@ -43,3 +43,6 @@
 
 ## data 
 * Owner_members are also part of all_members.
+
+## auth_register_v2
+* finishing registration does not automatically log the user in afterwards, registration and login are two separate steps.
