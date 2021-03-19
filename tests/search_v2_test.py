@@ -2,7 +2,7 @@ import pytest
 from src.data import reset_data, retrieve_data
 from src.error import InputError, AccessError
 from src.message import message_send_v2
-from src.search import search_v2
+from src.other import search_v2
 
 def setup_user():
     reset_data()
@@ -37,7 +37,10 @@ def test_search_standard():
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
     message_send_v2(users['user2']['token'], channel_id1, 'A message in channels')
 
-    assert len(search_v2(user['user2']['token'], 'A message in no channels')) == 2
+    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
+
+    assert len(search_v2(user['user2']['token'], 'message')) == 3
 
 def test_search_case_sensitive():
     users = setup_user()
@@ -72,4 +75,3 @@ def test_search_too_long():
          GUI), YourTeam Pty Ltd (a team of talented misfits completing COMP1531 in \
          21T1), who will build the backend python server and possibly assist in the \
          GUI later in the project")
-         
