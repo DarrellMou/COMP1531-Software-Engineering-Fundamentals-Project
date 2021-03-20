@@ -1,9 +1,13 @@
+import src.data
+#import data
+
 def clear_v1():
-    data = {
+    src.data.data = src.data.retrieve_data()
+    src.data.data = {
         "users" : {},
         "channels" : {}
     }
-    return data
+    return src.data.data
 
 def search_v1(auth_user_id, query_str):
     return {

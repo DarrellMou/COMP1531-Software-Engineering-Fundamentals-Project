@@ -1,9 +1,11 @@
+
 from src.error import InputError 
 from src.data import retrieve_data
 '''
 # For testing
 from error import InputError 
 from data import retrieve_data
+from other import clear_v1
 '''
 import re
 import itertools
@@ -92,3 +94,17 @@ def auth_register_v1(email, password, name_first, name_last):
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
         return {'auth_user_id' : new_auth_user_id}
+
+'''
+data = retrieve_data()
+auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
+print(data)
+data = clear_v1()
+print("\n")
+print("\n")
+print("\n")
+print("\n")
+print("\n")
+auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
+print(data)
+'''
