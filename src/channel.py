@@ -4,6 +4,25 @@ from src.auth import auth_token_ok, auth_token_decode
 #from data import data, retrieve_data
 #from error import AccessError, InputError
 
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# A function to check whether a message with given message_id is removed
+def is_message_removed(msg_id):
+    data = retrieve_data()
+    count = 0
+    while count < len(data['messages']):
+        if data['messages'][count]['message_id'] == msg_id:
+            if data['messages'][count]['is_removed']:
+                return True
+        count += 1
+    return False
+
+
+
+
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
 def channel_invite_v1(auth_user_id, channel_id, u_id):
@@ -130,6 +149,11 @@ def channel_messages_v2(token, channel_id, start):
     # starting our index with the given start
     count = 0
     for message in messages_list:
+        # Check to see if the message has been removed and if it has then
+        # skip it
+        if is_message_removed(message['message_id']):
+            continue
+        
         # Starting off at the start index, add up to 50 messages to the list
         # in the messages dictionary
         if count >= start and count < (start + 50):
