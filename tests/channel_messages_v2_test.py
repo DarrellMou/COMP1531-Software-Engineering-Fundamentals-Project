@@ -3,7 +3,7 @@ import pytest
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v1
 from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v1
+from src.auth import auth_register_v1, auth_decode_token
 from src.channels import channels_create_v1
 
 
@@ -29,7 +29,7 @@ def set_up_data():
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v1(user1['token'], 'Channel1', True)
+    channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
 
     setup = {
         'user1': user1['token'],
@@ -54,8 +54,9 @@ def add_1_message(user1, channel1):
 def add_x_messages(user1, user2, channel1, num_messages):
     data = retrieve_data()
 
+    u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2)
     # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v1(user1, channel1, user2)
+    channel_invite_v1(u_id1, channel1, u_id2)
 
     # Physically creating num_messages amount of messages
     # The most recent message is at the beginning of the list as per spec

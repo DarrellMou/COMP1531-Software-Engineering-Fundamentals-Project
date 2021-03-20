@@ -113,14 +113,14 @@ def channel_messages_v2(token, channel_id, start):
     if not auth_token_ok(token):
         raise AccessError("The given token is not valid")
 
+    # Check to see if the given channel_id is a valid channel
+    if channel_id not in data['channels']:
+        raise InputError("Channel id is not valid")
+
     # Check to see if the given user (token) is actully in the given channel
     user_id = auth_decode_token(token)
     if user_id not in data['channels'][channel_id]['all_members']:
         raise AccessError("The user corresponding to the given token is not in the channel")
-
-    # Check to see if the given channel_id is a valid channel
-    if channel_id not in data['channels']:
-        raise InputError("Channel id is not valid")
 
     
     # Check to see if the given start value is larger than the number of
