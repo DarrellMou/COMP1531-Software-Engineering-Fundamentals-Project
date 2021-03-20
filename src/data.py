@@ -62,22 +62,24 @@ data = {
             ],
         },
     },
-    'messages' : {
-        4650166837: {
+    'messages' : [
+        {
+            'message_id': 4650166837,
             'u_id': 46541861546,
             'message': "Random message",
             'time_created': 753159468,
             'channel_id': 416514684,
             'is_removed': False
         },
-        789416137: {
+        {
+            'message_id': 789416137,
             'u_id': 1234567846,
             'message': "Random message",
             'time_created': 521159468,
             'channel_id': 316514684,
             'is_removed': False
         },
-    },
+    ],
 }
 
 

@@ -52,6 +52,15 @@ def send_x_messages(user1, user2, channel1, num_messages):
     
     return data
 
+def send_x_messages_two_channels(user, channel1, channel2, num_messages):
+    data = retrieve_data()
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        message_send_v2(user, channel1, str(message_num))
+        message_send_v2(user, channel2, str(message_num))
+        message_count += 1
+    return data
 
 
 ###############################################################################
@@ -168,20 +177,53 @@ def test_message_send_v2_identical_message_to_2_channels():
     channel2 = channels_create_v1(u_id1, 'Channel2', True)['channel_id']
 
 
-    message_count = 0
-    while message_count < 10:
-        message_num = message_count + 1
-        message_send_v2(user1, channel1, str(message_num))
-        message_send_v2(user1, channel2, str(message_num))
-        message_count += 1
+    send_x_messages_two_channels(user1, channel1, channel2, 10)
 
     data = retrieve_data()
 
-    assert data['channels'][channel1]['messages'][0]['message_id'] !=\
-        data['channels'][channel2]['messages'][0]['message_id']
+    m_id0_ch1 = data['channels'][channel1]['messages'][0]['message_id']
+    m_id0_ch2 = data['channels'][channel2]['messages'][0]['message_id']
+    m_id5_ch1 = data['channels'][channel1]['messages'][5]['message_id']
+    m_id5_ch2 = data['channels'][channel2]['messages'][5]['message_id']
+    m_id9_ch1 = data['channels'][channel1]['messages'][9]['message_id']
+    m_id9_ch2 = data['channels'][channel2]['messages'][9]['message_id']
 
-    assert data['channels'][channel1]['messages'][5]['message_id'] !=\
-        data['channels'][channel2]['messages'][5]['message_id']
+    assert m_id0_ch1 != m_id0_ch2
+    assert m_id5_ch1 != m_id5_ch2
+    assert m_id9_ch1 != m_id9_ch2
 
-    assert data['channels'][channel1]['messages'][9]['message_id'] !=\
-        data['channels'][channel2]['messages'][9]['message_id']
+# Test if message_send also appends message to the data['messages'] list
+def test_message_send_v2_appends_to_data_messages():
+    setup = set_up_data()
+    user1, channel1 = setup['user1'], setup['channel1']
+
+    u_id1 = auth_decode_token(user1)
+    channel2 = channels_create_v1(u_id1, 'Channel2', True)['channel_id']
+    
+    send_x_messages_two_channels(user1, channel1, channel2, 10)
+    
+    data = retrieve_data()
+    assert len(data['messages']) == 20
+
+
+# Test if data['messages'] list is in order
+def test_message_send_v2_data_messages_in_order():
+    setup = set_up_data()
+    user1, channel1 = setup['user1'], setup['channel1']
+
+    u_id1 = auth_decode_token(user1)
+    channel2 = channels_create_v1(u_id1, 'Channel2', True)['channel_id']
+
+    send_x_messages_two_channels(user1, channel1, channel2, 10)
+    
+    data = retrieve_data()
+
+    m_id0_ch1 = data['channels'][channel1]['messages'][0]
+    m_id0_ch2 = data['channels'][channel2]['messages'][0]
+    m_id5_ch1 = data['channels'][channel1]['messages'][5]
+    m_id5_ch2 = data['channels'][channel2]['messages'][5]
+    m_id9_ch1 = data['channels'][channel1]['messages'][9]['message_id']
+    m_id9_ch2 = data['channels'][channel2]['messages'][9]['message_id']
+
+    assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
+    assert data['messages'][0]['message'] == m_id0_ch1['message']

@@ -31,15 +31,26 @@ def message_send_v2(token, channel_id, message):
     time_created_timestamp = round(datetime.now().timestamp())
 
     # Create a dictionary which we will append to our messages list in our channel
-    message_dictionary = {
+    channel_message_dictionary = {
         'message_id': unique_message_id,
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
     }
 
-    # Append our message dictionary to the messages list
-    data['channels'][channel_id]['messages'].append(message_dictionary)
+    # Create a dictionary which we will append to our data['messages'] list
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': time_created_timestamp,
+        'channel_id': channel_id,
+        'is_removed': False,
+    }
+
+    # Append our dictionaries to their appropriate lists
+    data['channels'][channel_id]['messages'].append(channel_message_dictionary)
+    data['messages'].append(message_dictionary)
 
     return {
         'message_id': unique_message_id
