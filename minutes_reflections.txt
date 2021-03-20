@@ -178,17 +178,11 @@ ACTIONS:
 REFLECTIONS
 
 -	Start earlier and read the spec carefully.
-
 -	Make use of social platforms and update each other frequently.
-
 -	Attend all meetings that are proposed.
-
 -	Don’t leave code to last minute.
-
 -   Utilise proper Git practices.
-
 -   Utilise Git Taskboard more and consistently check board.
-
 -   Better commit comments.
 
 
@@ -201,13 +195,9 @@ Week 4 Friday - Allocation of work
 
 Meeting - Wednesday 17/03/21
 
-
-Duration	8:30pm - 
-
+Duration	8:30pm - 11:00pm
 Platform	Discord
-
 Attendees	Darrell, Brendan, Winston, Nikki, Kellen
-
 
 UPDATES:
 -	Winston implemented token helper functions to auth. 
