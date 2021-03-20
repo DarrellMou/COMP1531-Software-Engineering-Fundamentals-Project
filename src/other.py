@@ -4,8 +4,6 @@ from src.auth import auth_token_ok, auth_decode_token
 
 def clear_v1():
 
-    data = retrieve_data()
-
     data = {
         "users" : {},
         "channels" : {}
@@ -85,7 +83,7 @@ def admin_user_remove_v1(token, u_id):
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:
-            user['name_first'] : 'Removed user',
+            user['name_first'].replace(user['name_first'], 'Removed user')
             user['is_removed'] == True
 
     return {}
