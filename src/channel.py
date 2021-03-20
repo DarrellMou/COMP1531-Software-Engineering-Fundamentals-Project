@@ -1,6 +1,6 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
-from src.auth import auth_token_ok, auth_token_decode
+from src.auth import auth_token_ok, auth_decode_token
 #from data import data, retrieve_data
 #from error import AccessError, InputError
 
