@@ -22,6 +22,7 @@ def setup_user():
         'user5' : a_u_id5
     }
 
+# Testing for query when a user is not in the channel
 def test_search_no_channel():
     users = setup_user()
     channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
@@ -29,6 +30,7 @@ def test_search_no_channel():
 
     assert len(search_v2(user['user2']['token'], 'A message in no channels')) == 0
 
+# Testing the standard case in returning queries for a user in both a channel and a dm
 def test_search_standard():
     users = setup_user()
     channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
@@ -42,6 +44,8 @@ def test_search_standard():
 
     assert len(search_v2(user['user2']['token'], 'message')) == 3
 
+# Assumption: search_v2 is case sensitive
+# Testing the function returns nothing evne when its the same letters
 def test_search_case_sensitive():
     users = setup_user()
     channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
@@ -52,6 +56,7 @@ def test_search_case_sensitive():
 
     assert len(search_v2(user['user2']['token'], 'Channels')) == 0
 
+# Testing a query of more than 1000 characters
 def test_search_too_long():
     users = setup_user()
     channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
@@ -75,3 +80,45 @@ def test_search_too_long():
          GUI), YourTeam Pty Ltd (a team of talented misfits completing COMP1531 in \
          21T1), who will build the backend python server and possibly assist in the \
          GUI later in the project")
+
+# Testing that search_v2 no longer returns the query in the channel the user left
+def test_search_leave_channel():
+    users = setup_user()
+    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    message_send_v2(users['user1']['token'], channel_id1, 'Welcome to channel')
+
+    channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
+    message_send_v2(users['user2']['token'], channel_id1, 'Hi channel')
+
+    channel_join_v2(users['user3']['token'], channel_id1)
+    message_send_v2(users['user3']['token'], channel_id1, 'Hi channel!')
+
+    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
+
+    assert len(search_v2(user['user2']['token'], 'channel')) == 4
+
+    channel_leave_v1(users['user2']['token'], channel_id1)
+
+    assert len(search_v2(user['user2']['token'], 'channel')) == 1
+
+# Testing that search_v2 no longer returns the query in the dm the user left
+def test_search_leave_dm():
+    users = setup_user()
+    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    message_send_v2(users['user1']['token'], channel_id1, 'Welcome to channel')
+
+    channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
+    message_send_v2(users['user2']['token'], channel_id1, 'Hi channel')
+
+    channel_join_v2(users['user3']['token'], channel_id1)
+    message_send_v2(users['user3']['token'], channel_id1, 'Hi channel!')
+
+    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
+
+    assert len(search_v2(user['user2']['token'], 'channel')) == 4
+
+    dm_leave_v1(users['user2']['token'], dm_id1)
+
+    assert len(search_v2(user['user2']['token'], 'channel')) == 3

@@ -14,7 +14,7 @@ def search_v2(auth_user_id, query_str):
     data = retrieve_data()
 
     # InputError occurs when query_str is longer than 1000 characters
-    if len(query_str) > 1000: raise InputError("Channel name cannot be longer than 20 characters")
+    if len(query_str) > 1000: raise InputError("Query cannot be longer than 1000 characters")
 
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
