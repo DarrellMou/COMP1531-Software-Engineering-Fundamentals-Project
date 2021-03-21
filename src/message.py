@@ -127,9 +127,64 @@ def message_remove_v2(token, message_id):
             msg['is_removed'] = True
 
     return {
-}
+    }
 
 def message_edit_v2(token, message_id, message):
+    data = retrieve_data()
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError("The given token is not valid")
+
+    # Check if the message_id given is already deleted
+    for message_dict in data['messages']:
+        if message_dict['message_id'] == message_id:
+            if message_dict['is_removed'] == True:
+                raise InputError("Message (based on id) no longer exists")
+    #result = [True for x in data['messages'] if x['message_id'] == message_id and x['is_removed']]
+    #if result[0]: raise InputError("Message (based on id) no longer exists")
+
+    # Check if the message is within the character limits
+    if len(message) > 1000:
+        raise InputError("The message exceeds 1000 characters")
+
+
+    # Check to see if the user trying to remove the message sent the message
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dreams_owner, is_owner = True, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    for member in data['channels'][ch_id]['owner_members']:
+        if given_id == member:
+            is_ch_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
+    #return AccessErrorConditions
+    if not any(AccessErrorConditions):
+        raise AccessError("User is not dreams owner or channel owner and did not send the message")
+    
+
+    # Remove the message if the new message is an empty string
+    if message == "":
+        message_remove_v2(token, message_id)
+    
+    # Otherwise, update the message in both data['messages'] and the channel
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            ch_id = msg['channel_id']
+            msg['message'] = message
+    for ch_msg in data['channels'][ch_id]['messages']:
+        if ch_msg['message_id'] == message_id:
+            ch_msg['message'] = message
+
     return {
     }
 
