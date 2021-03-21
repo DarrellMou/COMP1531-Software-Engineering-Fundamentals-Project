@@ -34,7 +34,7 @@ def set_up_data():
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
     channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
-    channel_invite_v1(user1['auth_user_id'], channel1, user2['auth_user_id'])
+    channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
 
     setup = {
         'user1': user1['token'],
@@ -122,7 +122,7 @@ def test_message_remove_v2_remove_one():
     m_dict1 = data['channels'][channel1]['messages'][1]
     m_dict2 = data['channels'][channel1]['messages'][2]
     
-    answer == {
+    answer = {
         'messages': [m_dict2, m_dict1],
         'start': 0,
         'end': -1
@@ -184,8 +184,8 @@ def test_message_remove_v2_owner_removes_message():
     data = reset_data()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Thomas', 'Tankengine')
-    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
+    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)['channel_id']
     channel_invite_v1(user2['auth_user_id'], channel1, user3['auth_user_id'])
 
     # user3 sends 3 messages and user2 removes the very first message sent
@@ -204,7 +204,7 @@ def test_message_remove_v2_owner_removes_message():
         'end': -1
     }
 
-    assert channel_messages_v2(user2, channel1, 0) == answer
+    assert channel_messages_v2(user2['token'], channel1, 0) == answer
 
 
 # Testing the removal of a message by the owner of dreams when the owner did
@@ -213,8 +213,8 @@ def test_message_remove_v2_dream_owner_removes_message():
     data = reset_data()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Thomas', 'Tankengine')
-    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
+    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)['channel_id']
     channel_invite_v1(user2['auth_user_id'], channel1, user3['auth_user_id'])
 
     # user3 sends 3 messages and user1 (dreams owner) who is not in the channel
@@ -234,7 +234,7 @@ def test_message_remove_v2_dream_owner_removes_message():
         'end': -1
     }
 
-    assert channel_messages_v2(user2, channel1, 0) == answer
+    assert channel_messages_v2(user2['token'], channel1, 0) == answer
 
 
 # Testing the removal of a message by the owner of dreams when the owner did
@@ -243,8 +243,8 @@ def test_message_remove_v2_dream_owner_removes_message_in_channel():
     data = reset_data()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Thomas', 'Tankengine')
-    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
+    channel1 = channels_create_v1(user2['auth_user_id'], 'Channel1', True)['channel_id']
     channel_invite_v1(user2['auth_user_id'], channel1, user3['auth_user_id'])
     channel_invite_v1(user2['auth_user_id'], channel1, user1['auth_user_id'])
 
@@ -265,7 +265,7 @@ def test_message_remove_v2_dream_owner_removes_message_in_channel():
         'end': -1
     }
 
-    assert channel_messages_v2(user2, channel1, 0) == answer
+    assert channel_messages_v2(user2['token'], channel1, 0) == answer
 
 
 # Testing the removal of the same message in 2 different channels (different
@@ -275,7 +275,7 @@ def test_message_remove_v2_remove_same_msg_diff_channels():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     u_id2 = auth_decode_token(user2)
-    channel2 = channels_create_v1(u_id2, 'Channel2', True)
+    channel2 = channels_create_v1(u_id2, 'Channel2', True)['channel_id']
 
     data = retrieve_data()
     # Have user2 send the same message to channel1 and channel2 and then
@@ -287,5 +287,16 @@ def test_message_remove_v2_remove_same_msg_diff_channels():
     message_remove_v2(user2, m_id_ch1)
     message_remove_v2(user2, m_id_ch2)
 
-    assert data['channels'][channel1]['messages'] == []
-    assert data['channels'][channel1]['messages'] == []
+    ans1 = {
+        'messages': [],
+        'start': 0,
+        'end': -1
+    }
+    ans2 = {
+        'messages': [],
+        'start': 0,
+        'end': -1
+    }
+
+    assert channel_messages_v2(user2, channel1, 0) == ans1
+    assert channel_messages_v2(user2, channel2, 0) == ans2
