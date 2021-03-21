@@ -58,3 +58,15 @@ def test_auth_login_api_invalid(client):
 	json_data_login = response_login.get_json()
 	assert json_data_login['token']
 	assert json_data_login['auth_user_id']
+
+def test_auth_logout_api(client):
+	response_register = client.post('/register', json={'email':'1238293@outlook.com', 'password':'123123kjdfd', 'first_name':'winston', 'last_name':'lin'})
+	json_data_register = response_register.get_json() # or just json
+	token_kept_by_client = json_data_register['token']
+
+	response_logout = client.post('/logout', json={'token':token_kept_by_client})
+	assert response_logout.json['is_success'] == True
+
+	# logout again with the same token, it is an invalid action since we've already logged out
+	response_logout2 = client.post('/logout', json={'token':token_kept_by_client})
+	assert response_logout.json['is_success'] == False
