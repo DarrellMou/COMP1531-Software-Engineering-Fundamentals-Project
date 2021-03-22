@@ -55,31 +55,43 @@ def admin_user_remove_v1(token, u_id):
     if u_id not in data['users']: raise InputError("Invalid User")
 
     # Checks if authorised user is an owner
-    if data['users'][auth_user_id]['permission_id'] == 1: raise AccessError("Not an admin user")
+    if data['users'][auth_user_id]['permission_id'] == 2: raise AccessError("Not an admin user")
 
-    admin = 0
     # Checks if the user is the currently the only owner
-    for permission in data['users'][auth_user_id][permission_id]:
+    admin_flag = 0
+    for permission in data['users']['auth_user_id']['permission_id']:
         if permission = 2:
-            admin += 1
-    if admin < 1: raise InputError("The user is currently the only owner")
+            admin_flag += 1
+    if admin_flag < 1: raise InputError("The user is currently the only owner")
 
     # Replace channel message with 'Removed user'
-    for channel in data['channels']:
-        for member in data['channels'][channel]['all_members']:
-            if member == auth_user_id:
-                for message in data['channels'][channel]['messages']:
-                    message['message'].replace(message['message'], 'Removed user')
-                    message['is_removed'] == True
+    for channel in data['channels']:      
+        # If the user is the only owner of the channel
+        owner_flag = 0
+        member_flag = False
+        for member in channel['owner_members']:
+            owner_flag += 1
+            if member == u_id: member_flag = True
+        if member_flag == True and owner_flag == 1:
+            raise InputError("The user is the only owner of a channel")
+
+        for member in channel['all_members']:
+            if member == u_id:
+                for message in channel['messages']:
+                    if message['u_id'] == u_id:
+                        message['message'].replace(message['message'], 'Removed user')
+                        message['is_removed'] == True
 
     # Replace dm message with 'Removed user'
     for dm in data['dms']:
-        for member in data['dms'][dm]['members']:
-            if member == auth_user_id:
-                for message in data['dm'][dm]['messages']['message']:
-                    message['message'].replace(message['message'], 'Removed user')
-                    message['is_removed'] == True
+        for member in dm['members']:
+            if member == u_id:
+                for message in dm['messages']:
+                    if message['u_id'] == u_id:
+                        message['message'].replace(message['message'], 'Removed user')
+                        message['is_removed'] == True   
 
+    # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:

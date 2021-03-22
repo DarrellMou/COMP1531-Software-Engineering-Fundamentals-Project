@@ -27,7 +27,7 @@ def setup_user():
 def test_channels_listall_invalid_user():
 
     with pytest.raises(AccessError):
-        channels_listall_v1("invalid a_u_id")
+        channels_listall_v1("Invalid a_u_id")
 
 # listing channels with none created
 def test_channels_listall_empty():
