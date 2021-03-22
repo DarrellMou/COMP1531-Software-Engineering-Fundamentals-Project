@@ -196,7 +196,7 @@ def test_message_edit_v2_edit_multiple():
 
 
 # Editing all messages in the channel
-def test_message_edit_v2_edit_multiple():
+def test_message_edit_v2_edit_all_messages():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -242,7 +242,7 @@ def test_message_edit_v2_edit_multiple():
     m_dict4 = {
         'message_id': msg4['message_id'],
         'u_id': msg4['u_id'],
-        'message': 'Goodbye',
+        'message': 'Bye',
         'time_created': msg4['time_created'],
     }
 
@@ -388,7 +388,7 @@ def test_message_edit_v2_edit_removes_1_msg():
 
 # Editing multiple messages and replacing them with empty string to see if it
 # removes the message
-def test_message_edit_v2_edit_removes_1_msg():
+def test_message_edit_v2_edit_removes_multiple_msg():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
