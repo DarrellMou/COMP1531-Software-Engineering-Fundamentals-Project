@@ -60,7 +60,7 @@ def admin_user_remove_v1(token, u_id):
     # Checks if the user is the currently the only owner
     admin_flag = 0
     for permission in data['users']['auth_user_id']['permission_id']:
-        if permission = 2:
+        if permission = 1:
             admin_flag += 1
     if admin_flag < 1: raise InputError("The user is currently the only owner")
 
@@ -99,3 +99,35 @@ def admin_user_remove_v1(token, u_id):
             user['is_removed'] == True
 
     return {}
+
+def admin_userpermission_change_v1(token, u_id, permission_id):
+    data = retrieve_data()
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError("Invalid User")
+    auth_user_id = auth_decode_token(token)
+
+    # Check if u_id exists
+    if u_id not in data['users']: raise InputError("Invalid User")
+
+    # Checks if authorised user is an owner
+    if not data['users'][auth_user_id]['permission_id'] == 1: raise AccessError("Not an admin user")
+
+    # Checks if permission_id refers to a value permission
+    if not permission_id == 1 or not permission_id == 2: raise InputError("Not a value permission")
+
+    # Checks if the user is the currently the only owner
+    admin_flag = 0
+    for permission in data['users']['auth_user_id']['permission_id']:
+        if permission = 1:
+            admin_flag += 1
+    if admin_flag < 1: raise InputError("The user is currently the only owner")
+
+    # Changes u_id permission into global owner
+    if permission_id == 1:
+        data['users'][u_id]['permission_id'] == 1
+    
+    # Changes u_id permission into global member
+    elif permission_id == 2:
+        data['users'][u_id]['permission_id'] == 2
+

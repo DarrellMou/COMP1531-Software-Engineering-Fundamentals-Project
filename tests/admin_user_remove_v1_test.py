@@ -5,7 +5,7 @@ from src.channel import channel_join_v1, channel_messages_v2
 from src.channels import channels_create_v1, channels_listall_v1
 from src.error import InputError, AccessError
 from src.data import reset_data
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_messages_v1
 from src.message import message_send_v2, message_senddm_v1
 from src.other import clear_v1, admin_user_remove_v1
 from src.user import user_profile_v2
@@ -56,7 +56,7 @@ def test_admin_user_remove_only_owner():
     with pytest.raises(InputError):
         admin_user_remove_v1(users['user1']['token'], users['user1']['u_id'])
 
-# Checks invalid removal as user is the only owner
+# Checks invalid removal as user is the only channel owner
 def test_admin_user_remove_only_channel_owner():
     users = setup_user()
     users['user1']['token']['permission_id'] == 1
