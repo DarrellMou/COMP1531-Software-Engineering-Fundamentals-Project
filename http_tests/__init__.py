@@ -16,3 +16,6 @@ def client(app_for_testing):
     return app_for_testing.test_client()
 
 
+@pytest.fixture(autouse=True)
+def reset():
+	reset_data()
