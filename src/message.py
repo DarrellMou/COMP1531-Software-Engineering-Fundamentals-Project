@@ -26,7 +26,33 @@ def get_channel_id(message_id):
         if msg['message_id'] == message_id:
             return msg['channel_id']
 
+# Given a message_id return the message within that message_id
+def get_message(message_id):
+    data = retrieve_data()
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            return msg['message']
 
+# Given a message_id, return whether the message is a shared message or not
+def get_share_status(message_id):
+    data = retrieve_data()
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            return msg['was_shared']
+
+
+# Given a message, return a tab in front of the relevant lines
+def tab_given_message(msg):
+    count = 0
+    msg_len = len(msg)
+    for n in range(0, msg_len):
+        if msg[n] == msg[n + 1] == msg[n + 2] == '"' and count != 0.5:
+            count = 0.5
+        if count == 0.5 and msg[n] == '\n':
+            count = 1
+        if count == 1 and msg[n] == '\n':
+            msg = msg[0:n] + "\n    " +  msg[(n + 1):msg_len]
+    return msg
 
 
 ###############################################################################
@@ -39,16 +65,17 @@ def message_send_v2(token, channel_id, message):
 
     # Check to see if token is valid
     if not auth_token_ok(token):
-        raise AccessError("The given token is not valid")
+        raise AccessError(description="The given token is not valid")
 
     # Check to see if the message is too long
     if len(message) > 1000:
-        raise InputError("The message exceeds 1000 characters")
+        raise InputError(description="The message exceeds 1000 characters")
     
     # Check to see if the given user (from token) is actully in the given channel
     user_id = auth_decode_token(token)
     if user_id not in data['channels'][channel_id]['all_members']:
-        raise AccessError("The user corresponding to the given token is not in the channel")
+        raise AccessError(description=\
+            "The user corresponding to the given token is not in the channel")
 
 
     # Creating a unique id for our message_id. The chances of uuid4 returning
@@ -74,7 +101,9 @@ def message_send_v2(token, channel_id, message):
         'message': message,
         'time_created': time_created_timestamp,
         'channel_id': channel_id,
+        'dm_id': -1,
         'is_removed': False,
+        'was_shared': False,
     }
 
     # Append our dictionaries to their appropriate lists
@@ -96,9 +125,7 @@ def message_remove_v2(token, message_id):
     for message_dict in data['messages']:
         if message_dict['message_id'] == message_id:
             if message_dict['is_removed'] == True:
-                raise InputError("Message (based on id) no longer exists")
-    #result = [True for x in data['messages'] if x['message_id'] == message_id and x['is_removed']]
-    #if result[0]: raise InputError("Message (based on id) no longer exists")
+                raise InputError(description="Message (based on id) no longer exists")
     
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
@@ -120,7 +147,8 @@ def message_remove_v2(token, message_id):
     AccessErrorConditions = [is_owner, did_user_send]
     #return AccessErrorConditions
     if not any(AccessErrorConditions):
-        raise AccessError("User is not dreams owner or channel owner and did not send the message")
+        raise AccessError(description=\
+            "User is not dreams owner or channel owner and did not send the message")
 
     for msg in data['messages']:
         if msg['message_id'] == message_id:
@@ -140,13 +168,11 @@ def message_edit_v2(token, message_id, message):
     for message_dict in data['messages']:
         if message_dict['message_id'] == message_id:
             if message_dict['is_removed'] == True:
-                raise InputError("Message (based on id) no longer exists")
-    #result = [True for x in data['messages'] if x['message_id'] == message_id and x['is_removed']]
-    #if result[0]: raise InputError("Message (based on id) no longer exists")
+                raise InputError(description="Message (based on id) no longer exists")
 
     # Check if the message is within the character limits
     if len(message) > 1000:
-        raise InputError("The message exceeds 1000 characters")
+        raise InputError(description="The message exceeds 1000 characters")
 
 
     # Check to see if the user trying to remove the message sent the message
@@ -169,7 +195,8 @@ def message_edit_v2(token, message_id, message):
     AccessErrorConditions = [is_owner, did_user_send]
     #return AccessErrorConditions
     if not any(AccessErrorConditions):
-        raise AccessError("User is not dreams owner or channel owner and did not send the message")
+        raise AccessError(description=\
+            "User is not dreams owner or channel owner and did not send the message")
     
 
     # Remove the message if the new message is an empty string
@@ -187,6 +214,37 @@ def message_edit_v2(token, message_id, message):
 
     return {
     }
+
+
+
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+    data = retrieve_data()
+    u_id = auth_decode_token(token)
+    og_message = get_message(og_message_id)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Check if the user is actually in the channel/dm they are trying to share to
+    if channel_id != -1 and u_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError(description=\
+            "User is not in the channel that they are trying to share to")
+    if dm_id != -1 and u_id not in data['channels'][dm_id]['all_members']:
+        raise AccessError(description=\
+            "User is not in the channel that they are trying to share to")
+
+    if not get_share_status(og_message_id):
+        shared_message = message + '\n\n"""\n' + og_message + '\n"""'
+    else:
+        shared_message = message + '\n\n"""\n' + tab_given_message(og_message) + '\n"""'
+
+    if channel_id != -1:
+        shared_message_id = message_send_v2(token, channel_id, shared_message)['message_id']
+    #else:
+        #shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
+
+    return {shared_message_id}
 
 '''
 data = reset_data()
