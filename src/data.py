@@ -62,6 +62,26 @@ data = {
             ],
         },
     },
+    'dms': {
+        1691360831: {
+            'name': 'dms1',
+            'members': [35746842521, 11753764853],
+            'messages' : [
+                {
+                    'message_id': 12354122383,
+                    'u_id': 35746842521,
+                    'message': 'Hello World1',
+                    'time_created': 45132806512,
+                },
+                {
+                    'message_id': 123156231064,
+                    'u_id': 11753764853,
+                    'message': 'Hello World2',
+                    'time_created': 68741450315603,
+                },
+            ],
+        }
+    },
     'messages' : [
         {
             'message_id': 4650166837,
@@ -78,8 +98,8 @@ data = {
             'u_id': 1234567846,
             'message': "Random message",
             'time_created': 521159468,
-            'channel_id': 316514684,
-            'dm_id': -1,
+            'channel_id': -1,
+            'dm_id': 1691360831,
             'is_removed': False,
             'was_shared': False,
         },

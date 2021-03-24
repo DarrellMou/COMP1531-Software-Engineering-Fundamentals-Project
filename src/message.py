@@ -273,6 +273,62 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 
     return {'shared_message_id': shared_message_id}
 
+
+def message_senddm_v1(token, dm_id, message):
+    data = retrieve_data()
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Check to see if the message is too long
+    if len(message) > 1000:
+        raise InputError(description="The message exceeds 1000 characters")
+    
+    # Check to see if the given user (from token) is actully in the given dm
+    user_id = auth_decode_token(token)
+    if user_id not in data['dms'][dm_id]['members']:
+        raise AccessError(description=\
+            "The user corresponding to the given token is not in the dm")
+
+
+    # Creating a unique id for our message_id
+    unique_message_id = int(uuid4())
+    # Creating a timestamp for our time_created key for our messages dictionary
+    # which is based on unix time (epoch/POSIX time)
+    time_created_timestamp = round(datetime.now().timestamp())
+
+    # Create a dictionary which we will append to our messages list in our dm
+    dm_message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': time_created_timestamp,
+    }
+
+    # Create a dictionary which we will append to our data['messages'] list
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': time_created_timestamp,
+        'channel_id': -1,
+        'dm_id': dm_id,
+        'is_removed': False,
+        'was_shared': False,
+    }
+
+    # Append our dictionaries to their appropriate lists
+    data['dms'][dm_id]['messages'].append(dm_message_dictionary)
+    data['messages'].append(message_dictionary)
+    #f = open("demofile3.txt", "w")
+    #f.write(data)
+
+    return {
+        'message_id': unique_message_id
+    }
+
+
 '''
 data = reset_data()
 
