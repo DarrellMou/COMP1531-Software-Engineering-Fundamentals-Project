@@ -69,3 +69,11 @@ def test_check_auth_permissions():
     assert data['users'][users['user3']['auth_user_id']]['permission_id'] == 2
     assert data['users'][users['user4']['auth_user_id']]['permission_id'] == 2
     assert data['users'][users['user5']['auth_user_id']]['permission_id'] == 2
+
+def test_encode_decode_token():
+    users = setup_user()
+
+    token = encode_token(users['user1'])
+    assert isinstance(token, bytes) == True
+    assert decode_token(token) == users['users1']
+    assert decode_token('whatisthis') == 'invalid token, log in again'
