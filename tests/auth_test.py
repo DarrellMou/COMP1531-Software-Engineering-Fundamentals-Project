@@ -3,6 +3,7 @@ import pytest
 from src.error import InputError
 from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
 from src.data import reset_data, retrieve_data
+import time
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
@@ -75,10 +76,14 @@ def test_check_auth_permissions(test_users):
     assert data['users'][test_users['login5']['auth_user_id']]['permission_id'] == 2
 
 def test_encode_decode_token(test_users):
-    token = auth_encode_token(test_users['login1'])
+    token = auth_encode_token(test_users['login1']['auth_user_id'])
     assert isinstance(token, str) == True
-    assert auth_decode_token(token) == test_users['login1']
+    assert auth_decode_token(token) == test_users['login1']['auth_user_id']
     assert auth_decode_token('whatisthis') == 'invalid token, log in again'
+
+    time.sleep(6)
+    assert auth_decode_token(token) == 'Session expired, log in again'
+
 
 def test_auth_token_ok():
     token = auth_encode_token(123)
