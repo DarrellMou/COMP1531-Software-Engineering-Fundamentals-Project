@@ -4,10 +4,10 @@ from src.auth import auth_register_v1
 from src.channel import channel_join_v1
 from src.channels import channels_create_v1, channels_listall_v1
 from src.error import InputError, AccessError
-from src.data import reset_data
+from src.other import clear_v1
 
 def setup_user():
-    reset_data()
+    clear_v1()
 
     # a_u_id* has two fields: token and auth_user_id
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')

@@ -2,15 +2,16 @@ import pytest
 
 from src.error import InputError
 from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
-from src.data import reset_data, retrieve_data
+from src.data import retrieve_data
+from src.other import clear_v1
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
-#from data import reset_data, retrieve_data
+#from data import clear_v1, retrieve_data
 
 @pytest.fixture
 def test_users():
-    reset_data()
+    clear_v1()
 
     dict1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     dict2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
@@ -43,7 +44,8 @@ def test_auth_login_v1(test_users):
         auth_login_v1('jsfdsfdsds123.con', '123456') # invalid email format 
 
 def test_auth_register_v1():
-    data = reset_data()
+    clear_v1()
+    data = retrieve_data()
 
     registerDict = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     assert data['users'][registerDict['auth_user_id']]['handle_str'] == 'bobbuilder'
