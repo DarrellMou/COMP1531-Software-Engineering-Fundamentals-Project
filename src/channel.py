@@ -200,7 +200,10 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
 
     # All error checks passed, continue on to add owner
     data['channels'][channel_id]['owner_members'].append(u_id)
-
+    # If added owner is not already a member, add to members list
+    if user_id not in data['channels'][channel_id]['members']:
+        data['channels'][channel_id]['members'].append(u_id)
+    
     return {
     }
 
