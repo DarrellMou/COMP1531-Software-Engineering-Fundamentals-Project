@@ -68,6 +68,7 @@ def test_auth_login_api_invalid(client):
 	json_data_register = response_register.get_json() # or just json
 	assert response_register.status_code == 201
 	assert response_register.content_type == 'application/json'
+	assert json_data_register['token']
 
 	# if credentials don't match, handled by customized exception handler 
 	response_login = client.post('/login', json={'email':'12382193@outlook.com', 'password':'123123kjdf'})
