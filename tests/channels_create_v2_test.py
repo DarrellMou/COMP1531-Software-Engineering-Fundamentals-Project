@@ -6,6 +6,7 @@ from src.channels import channels_create_v1, channels_listall_v1
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
+'''
 def setup_user():
     clear_v1()
 
@@ -23,7 +24,7 @@ def setup_user():
         'user4' : a_u_id4,
         'user5' : a_u_id5
     }
-
+'''
 
 # error when creating a channel with an invalid token
 def test_channels_create_access_error():
@@ -33,9 +34,9 @@ def test_channels_create_access_error():
 
 
 # error when creating a channel name longer than 20 characters
-def test_channels_create_input_error():
+def test_channels_create_input_error(setup_user):
     
-    users = setup_user()
+    users = setup_user
 
     # public channel with namesize > 20 characters
     with pytest.raises(InputError):
@@ -47,18 +48,18 @@ def test_channels_create_input_error():
 
 
 # assert channel id is an integer
-def test_channels_create_return_value():
+def test_channels_create_return_value(setup_user):
     
-    users = setup_user()
+    users = setup_user
 
     channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
     assert isinstance(channel_id1['channel_id'], int)
 
 
 # create channels of the same name
-def test_channels_create_same_name():
+def test_channels_create_same_name(setup_user):
 
-    users = setup_user()
+    users = setup_user
 
     channel_id2 = channels_create_v1(users['user1']['token'], "Public Channel", True)
     channel_id3 = channels_create_v1(users['user1']['token'], "Public Channel", True)
@@ -74,9 +75,9 @@ def test_channels_create_same_name():
 
 
 # create channel with no name 
-def test_channels_create_no_name():
+def test_channels_create_no_name(setup_user):
 
-    users = setup_user()
+    users = setup_user
 
     channel_id4 = channels_create_v1(users['user1']['token'], "", True)
 
