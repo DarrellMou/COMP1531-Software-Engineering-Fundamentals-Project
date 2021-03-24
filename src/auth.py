@@ -31,7 +31,7 @@ def auth_email_format(email):
 
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
-def auth_login_v1(email, password):  
+def auth_login_v2(email, password):  
 
     data = retrieve_data()
 
@@ -51,7 +51,7 @@ def auth_login_v1(email, password):
 
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
-def auth_register_v1(email, password, name_first, name_last):
+def auth_register_v2(email, password, name_first, name_last):
 
     data = retrieve_data()
     # Checks for invalid email format

@@ -1,17 +1,16 @@
 import pytest
 
-from src.auth import auth_register_v1
-from src.channel import channel_addowner_v1, channel_invite_v1, channel_join_v1, channel_messages_v2
-from src.channels import channels_create_v1, channels_listall_v1
+from src.auth import auth_register_v2
+from src.channel import channel_addowner_v1, channel_invite_v2, channel_join_v2, channel_messages_v2
+from src.channels import channels_create_v2, channels_listall_v2
 from src.error import InputError, AccessError
-from src.data import reset_data
 from src.dm import dm_create_v1, dm_messages_v1
 from src.message import message_send_v2, message_senddm_v1
 from src.other import clear_v1, admin_user_remove_v1
 from src.user import user_profile_v2
 
 def setup_user():
-    reset_data()
+    clear_v1()
 
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')

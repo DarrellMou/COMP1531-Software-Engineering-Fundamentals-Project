@@ -1,19 +1,18 @@
 from src.error import InputError 
-from src.data import retrieve_data
+#from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
+import src.data
 
 def clear_v1():
-
-    data = {
+    src.data.data = {
         "users" : {},
         "channels" : {}
     }
-    
-    return data
+    return {}
 
 def search_v2(auth_user_id, query_str):
     
-    data = retrieve_data()
+    src.data.data = retrieve_data()
 
     # InputError occurs when query_str is longer than 1000 characters
     if len(query_str) > 1000: raise InputError("Query cannot be longer than 1000 characters")
@@ -45,7 +44,7 @@ def search_v2(auth_user_id, query_str):
 
 def admin_user_remove_v1(token, u_id):
 
-    data = retrieve_data()
+    src.data.data = retrieve_data()
 
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError("Invalid User")
@@ -60,7 +59,7 @@ def admin_user_remove_v1(token, u_id):
     # Checks if the user is the currently the only owner
     admin_flag = 0
     for permission in data['users']['auth_user_id']['permission_id']:
-        if permission = 1:
+        if permission == 1:
             admin_flag += 1
     if admin_flag < 1: raise InputError("The user is currently the only owner")
 
@@ -119,7 +118,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     # Checks if the user is the currently the only owner
     admin_flag = 0
     for permission in data['users']['auth_user_id']['permission_id']:
-        if permission = 1:
+        if permission == 1:
             admin_flag += 1
     if admin_flag < 1: raise InputError("The user is currently the only owner")
 
