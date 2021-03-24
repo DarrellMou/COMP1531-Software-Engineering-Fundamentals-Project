@@ -1,4 +1,3 @@
-from src.server import APP
 from src.error import InputError
 from http_tests import *
 import requests

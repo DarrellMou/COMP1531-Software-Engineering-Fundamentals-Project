@@ -1,6 +1,7 @@
 import pytest
 
-from src import create_app
+from src.server import create_app
+from src.data import reset_data
 
 # a new app instance for every test
 @pytest.fixture

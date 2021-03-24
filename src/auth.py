@@ -1,6 +1,5 @@
 from src.error import InputError 
 from src.data import retrieve_data
-from src.server import APP
 
 import datetime
 import jwt
