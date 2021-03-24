@@ -69,7 +69,9 @@ data = {
             'message': "Random message",
             'time_created': 753159468,
             'channel_id': 416514684,
-            'is_removed': False
+            'dm_id': -1,
+            'is_removed': False,
+            'was_shared': False,
         },
         {
             'message_id': 789416137,
@@ -77,7 +79,9 @@ data = {
             'message': "Random message",
             'time_created': 521159468,
             'channel_id': 316514684,
-            'is_removed': False
+            'dm_id': -1,
+            'is_removed': False,
+            'was_shared': False,
         },
     ],
 }
