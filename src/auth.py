@@ -21,7 +21,7 @@ import uuid
 # registered in src/__init__.py
 bp = Blueprint('auth', __name__, url_prefix='/')
 
-session = set() # can't use {} lmaooo
+blacklist = set()
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -132,6 +132,9 @@ returns auth_user_id for others to use
 def auth_decode_token(token):
     try:
         payload = jwt.decode(token, SECRET, algorithms=['HS256'])
+        auth_user_id = payload['sub']
+        if auth_user_id in blacklist:
+            return 'User has logged out'
 
         return payload['sub']
     except jwt.ExpiredSignatureError:
@@ -186,7 +189,17 @@ def auth_login_v2():
         responseObj['token'] = token
 
         session.add(responseObj['auth_user_id'])
+@bp.route('logout', methods=['POST'])
+def auth_logout_v1():
+    if auth_token_ok(request.json['token']) == True:
+        auth_user_id = auth_decode_token(request.json['token'])
+        blacklist.add(auth_user_id)
+
+        responseObj = {'is_success':True}
         return make_response(jsonify(responseObj)), 201
+    else:
+        responseObj = {'is_success':False}
+        return make_response(jsonify(responseObj)), 408
 
     except InputError as e:
         responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1, 'error_msg' : e}
