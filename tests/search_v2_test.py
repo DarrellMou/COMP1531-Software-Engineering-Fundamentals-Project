@@ -1,13 +1,16 @@
 import pytest
-from src.data import reset_data, retrieve_data
+from src.data import retrieve_data
 from src.error import InputError, AccessError
-from src.message import message_send_v2
-from src.other import search_v2
+from src.channel import channel_invite_v2, channel_leave_v1
+from src.channels import channels_create_v2
+from src.dm import dm_create_v1, dm_leave_v1
+from src.message import message_send_v2, message_senddm_v1
+from src.other import clear_v1, search_v2
 
 def setup_user():
-    reset_data()
+    clear_v1()
 
-    # a_u_id* has two fields: token and auth_user_id
+    # a_u_id has two fields: token and auth_user_id
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
     a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
@@ -25,7 +28,7 @@ def setup_user():
 # Testing for query when a user is not in the channel
 def test_search_no_channel():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
 
     assert len(search_v2(user['user2']['token'], 'A message in no channels')) == 0
@@ -33,7 +36,7 @@ def test_search_no_channel():
 # Testing the standard case in returning queries for a user in both a channel and a dm
 def test_search_standard():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
 
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
@@ -48,7 +51,7 @@ def test_search_standard():
 # Testing the function returns nothing evne when its the same letters
 def test_search_case_sensitive():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
 
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
@@ -59,7 +62,7 @@ def test_search_case_sensitive():
 # Testing a query of more than 1000 characters
 def test_search_too_long():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
 
     with pytest.raises(InputError):
@@ -84,7 +87,7 @@ def test_search_too_long():
 # Testing that search_v2 no longer returns the query in the channel the user left
 def test_search_leave_channel():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'Welcome to channel')
 
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
@@ -105,7 +108,7 @@ def test_search_leave_channel():
 # Testing that search_v2 no longer returns the query in the dm the user left
 def test_search_leave_dm():
     users = setup_user()
-    channel_id1 = channels_create_v1(users['user1']['token'], "Public Channel", True)
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1, 'Welcome to channel')
 
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])

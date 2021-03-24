@@ -1,5 +1,4 @@
 import pytest
-from src.data import reset_data
 
 from src.error import InputError
 from src.error import AccessError
@@ -8,13 +7,14 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v1
 from src.channel import channel_invite_v1
 from src.channel import channel_details_v1
+from src.other import clear_v1
 
 # Include fixtures?
 # After required functions are implemented
 
 # Typical case
 def test_function():
-    reset_data()
+    clear_v1()
 
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') # returns auth_user_id e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') # returns auth_user_id e.g.
@@ -45,7 +45,7 @@ def test_function():
 
 # Channel_details printing a lot of data
 def test_many_channel_members():
-    reset_data()
+    clear_v1()
     
     a_u_id_list = []
     # Runs auth_register_v1 10 times, appends auth_user_id return value to a_u_id_list
@@ -121,7 +121,7 @@ def test_many_channel_members():
     }
 
 def test_multiple_channels():
-    reset_data()
+    clear_v1()
     
     a_u_id_list = []
     # Runs auth_register_v1 10 times, appends auth_user_id return value to a_u_id_list
@@ -216,7 +216,7 @@ def test_multiple_channels():
 
 # Channel_details given channel id belonging to a non-existent channel
 def test_invalid_channel_id():
-    reset_data()
+    clear_v1()
     
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     with pytest.raises(InputError):
@@ -224,7 +224,7 @@ def test_invalid_channel_id():
 
 # Channel_details executed by user not in given channel
 def test_unauthorized_user():
-    reset_data()
+    clear_v1()
     
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.

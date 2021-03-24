@@ -1,13 +1,14 @@
 from src.error import InputError 
 from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
+import src.data
 
 def clear_v1():
-    data = {
+    src.data.data = {
         "users" : {},
         "channels" : {}
     }
-    return data
+    return {}
 
 def search_v2(auth_user_id, query_str):
     
