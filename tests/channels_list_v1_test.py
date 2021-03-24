@@ -1,6 +1,6 @@
 import pytest
-from src.data import reset_data
 from src.data import retrieve_data
+from src.other import clear_v1
 
 from src.error import InputError
 from src.error import AccessError
@@ -15,7 +15,7 @@ from src.channels import channels_list_v1
 
 #Standard Case, only part of one channel as owner
 def test_standard_owner():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
@@ -33,7 +33,7 @@ def test_standard_owner():
 
 #Standard Case pt2, only part of one channel as regular member
 def test_standard_regmember():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
@@ -52,7 +52,7 @@ def test_standard_regmember():
 
 #Case where a user is a part of multiple channels as owner
 def test_multiple_channels_owner():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created, owner: user1
@@ -95,7 +95,7 @@ def test_multiple_channels_owner():
 
 #Case where a user is a part of multiple channels as owner
 def test_multiple_channels_regmember():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created, owner: user1
@@ -144,7 +144,7 @@ def test_multiple_channels_regmember():
 
 #Test where the user is a part of multiple channels as an owner and regular member
 def test_multiple_channels_mixed():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created, owner: user1
@@ -190,7 +190,7 @@ def test_multiple_channels_mixed():
 
 #Case where user is a member of no channels
 def test_memberless():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
 
     # Expect an empty list
