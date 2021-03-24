@@ -1,5 +1,6 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
+from src.auth import auth_token_ok, auth_decode_token
 #from data import data, retrieve_data
 #from error import AccessError, InputError
 
@@ -29,12 +30,16 @@ def channel_invite_v1(token, channel_id, u_id):
 
 # Given a Channel with ID channel_id that the authorised user is part of
 # Provides basic details about the channel
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v1(token, channel_id):
 
     data = retrieve_data()
 
     # Checks if given channel_id is valid
     if channel_id not in data['channels']: raise InputError
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
 
     # Checks if the auth_user is in channel
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
