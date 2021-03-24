@@ -1,6 +1,6 @@
 import pytest
-from src.data import reset_data
 from src.data import retrieve_data
+from src.other import clear_v1
 
 from src.error import InputError
 from src.error import AccessError
@@ -15,7 +15,7 @@ from src.channels import channels_list_v1
 
 #Standard Case, pass expected
 def test_standard():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
@@ -33,7 +33,7 @@ def test_standard():
 
 #Case where a user joins multiple channels
 def test_multiple_channels_joined():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created
@@ -65,7 +65,7 @@ def test_multiple_channels_joined():
 
 #Case where multiple users join one channel
 def test_multiple_joiners():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     a_u_id3 = auth_register_v1('temp3@gmail.com','password3','first3','last3') #auth_user_id3 created
@@ -111,7 +111,7 @@ def test_multiple_joiners():
 
 #Case where user attempts to join a private channel (Access Error)
 def test_private_channel():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', False) #Private channel created
@@ -121,7 +121,7 @@ def test_private_channel():
 
 #Case where channel_join is given the id of a non-existent channel
 def test_invalid_channel():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
