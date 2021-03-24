@@ -6,14 +6,15 @@ from src.auth import auth_token_ok, auth_decode_token
 
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v1(token, channel_id, u_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
     if channel_id not in data['channels']: raise InputError
 
-    # Checks if user exists
-    if u_id not in data['users']: raise InputError
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
 
     # Checks if the auth_user is in channel
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
