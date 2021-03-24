@@ -5,7 +5,7 @@ from src.channel import channel_messages_v2, channel_invite_v1
 from src.data import reset_data, retrieve_data, data
 from src.auth import auth_register_v1, auth_decode_token
 from src.channels import channels_create_v1
-from src.message import message_send_v2, message_remove_v2, message_edit_v2
+from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_share_v1
 
 
 ###############################################################################
@@ -60,9 +60,9 @@ def test_message_share_v1_AccessError():
 
     u_id1 = auth_decode_token(user1)
 
-    channel3 = channels_create_v1(u_id1, "ch3, True)['channel_id']
+    channel3 = channels_create_v1(u_id1, "ch3", True)['channel_id']
 
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         assert message_share_v1(user2, m_id, "Optional Message", channel3, -1)
 
 
@@ -78,6 +78,8 @@ def test_message_share_v1_share_one_to_channel():
     m_id = message_send_v2(user1, channel1, "Hello")['message_id']
 
     shared_m_id = message_share_v1(user2, m_id, "Shared Message 1", channel2, -1)['shared_message_id']
+
+    data = retrieve_data()
 
     assert data['messages'][1]['message_id'] == shared_m_id
     assert data['messages'][1]['message'] == 'Shared Message 1\n\n"""\nHello\n"""'
@@ -99,16 +101,17 @@ def test_message_share_v1_share_one_multiple_times():
     shared_m_id1 = message_share_v1(user2, m_id, "Shared Message 1", channel2, -1)['shared_message_id']
     shared_m_id2 = message_share_v1(user2, shared_m_id1, "Shared Message 2", channel1, -1)['shared_message_id']
     shared_m_id3 = message_share_v1(user2, shared_m_id2, "Shared Message 3", channel2, -1)['shared_message_id']
+    
+    data = retrieve_data()
 
     assert data['messages'][0]['message_id'] == m_id
     assert data['messages'][0]['message'] == "Hello"
     assert data['messages'][1]['message_id'] == shared_m_id1
     assert data['messages'][1]['message'] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert data['messages'][3]['message_id'] == shared_m_id3
-    assert data['messages'][3]['message'] == 'Shared Message 3\n\n"""\nShared Message 2\n\n    """\
-        \n    Shared Message\n\n        """\n        Hello\n        """\n    """\n"""'
+    assert data['messages'][3]['message'] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
     assert data['channels'][channel1]['messages'][0]['message_id'] == m_id
-    assert data['channels'][channel2]['messages'][0]['message_id'] == shared_m_id
+    assert data['channels'][channel2]['messages'][1]['message_id'] == shared_m_id3
     assert data['channels'][channel2]['messages'][1]['message'] == data['messages'][3]['message']
     assert len(data['channels'][channel2]['messages']) == 2
     assert len(data['channels'][channel1]['messages']) == 2
@@ -116,7 +119,7 @@ def test_message_share_v1_share_one_multiple_times():
 
 
 # Sharing to the same channel
-def test_message_share_v1_share_one_multiple_times():
+def test_message_share_v1_share_one_multiple_times_same_channel():
     setup = set_up_data()
     user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
     m_id = message_send_v2(user1, channel1, "Hello")['message_id']
@@ -124,16 +127,17 @@ def test_message_share_v1_share_one_multiple_times():
     shared_m_id1 = message_share_v1(user2, m_id, "Shared Message 1", channel1, -1)['shared_message_id']
     shared_m_id2 = message_share_v1(user2, shared_m_id1, "Shared Message 2", channel1, -1)['shared_message_id']
     shared_m_id3 = message_share_v1(user2, shared_m_id2, "Shared Message 3", channel1, -1)['shared_message_id']
+    
+    data = retrieve_data()
 
     assert data['messages'][0]['message_id'] == m_id
     assert data['messages'][0]['message'] == "Hello"
     assert data['messages'][1]['message_id'] == shared_m_id1
     assert data['messages'][1]['message'] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert data['messages'][3]['message_id'] == shared_m_id3
-    assert data['messages'][3]['message'] == 'Shared Message 3\n\n"""\nShared Message 2\n\n    """\
-        \n    Shared Message\n\n        """\n        Hello\n        """\n    """\n"""'
+    assert data['messages'][3]['message'] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
     assert data['channels'][channel1]['messages'][0]['message_id'] == m_id
-    assert data['channels'][channel1]['messages'][0]['message_id'] == shared_m_id
+    assert data['channels'][channel1]['messages'][1]['message_id'] == shared_m_id1
     assert data['channels'][channel1]['messages'][3]['message'] == data['messages'][3]['message']
     assert len(data['channels'][channel1]['messages']) == 4
     assert len(data['messages']) == 4
