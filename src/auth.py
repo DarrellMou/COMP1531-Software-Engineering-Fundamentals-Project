@@ -7,6 +7,7 @@ import hashlib
 from flask import jsonify, request, Blueprint, abort, make_response
 
 SECRET = 'CHAMPAGGNE?'
+TOKEN_DURATION=5 # 5 seconds
 
 '''
 # For testing
@@ -93,14 +94,11 @@ def auth_register_v1(email, password, name_first, name_last):
     }
 
     # Check to see if the handle is unique
-    if any(new_handle == data['users'][user]['handle_str']\
-    for user in data['users']):
+    if any(new_handle == data['users'][user]['handle_str'] for user in data['users']):
         # If the handle already exists, append with a number starting from 0
         for epilogue in itertools.count(0, 1):
-            if(not any((new_handle + str(epilogue)) ==\
-            data['users'][user]['handle_str'] for user in data['users'])):
-                data['users'][new_auth_user_id]['handle_str'] =\
-                new_handle + str(epilogue)
+            if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
+                data['users'][new_auth_user_id]['handle_str'] = new_handle + str(epilogue)
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
@@ -110,20 +108,20 @@ def auth_register_v1(email, password, name_first, name_last):
 Generate and return an expirable token based on auth_user_id
 """
 def auth_encode_token(auth_user_id):
-    try:
-        payload = {
-            'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=30)),
-            'iat' : datetime.datetime.utcnow(),
-            'sub' : auth_user_id
-        }
+    # try:
+    payload = {
+        'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=TOKEN_DURATION)),
+        'iat' : datetime.datetime.utcnow(),
+        'sub' : auth_user_id
+    }
 
-        return jwt.encode(
-            payload,
-            SECRET,
-            algorithm='HS256'
-        )
-    except Exception as e: # catch all kinds of exception
-        return e
+    return jwt.encode(
+        payload,
+        SECRET,
+        algorithm='HS256'
+    )
+    # except Exception as e: # catch all kinds of exception
+    #     return e
 
 """
 returns auth_user_id for others to use 
@@ -140,8 +138,6 @@ def auth_decode_token(token):
         return 'Session expired, log in again'
     except jwt.InvalidTokenError:
         return 'invalid token, log in again'
-    except jwt.InvalidTokenError as e:
-        return e
 
 # check before using auth_token_decode
 def auth_token_ok(token):
@@ -161,19 +157,14 @@ def auth_register_v2():
         responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
         return make_response(jsonify(responseObj)), 408
 
-    try:
-        # responseObj is a dict with 'token' and 'auth_user_id'
-        responseObj = auth_register_v1(request.json['email'], request.json['password'], 
-                            request.json['first_name'], request.json['last_name'])
-        
-        token = auth_encode_token(responseObj['auth_user_id'])
-        responseObj['token'] = token 
-        session.add(responseObj['auth_user_id'])
-        return make_response(jsonify(responseObj)), 201
+    # responseObj is a dict with 'token' and 'auth_user_id'
+    responseObj = auth_register_v1(request.json['email'], request.json['password'], 
+                        request.json['first_name'], request.json['last_name'])
+    
+    token = auth_encode_token(responseObj['auth_user_id'])
+    responseObj['token'] = token 
 
-    except InputError as e:
-        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1, 'error_msg' : e}
-        return make_response(jsonify(responseObj)), 402 # just random status codes, come back later呵呵
+    return make_response(jsonify(responseObj)), 201
 
 
 @bp.route('login', methods=['POST'])
@@ -182,12 +173,15 @@ def auth_login_v2():
         responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
         return make_response(jsonify(responseObj)), 408
 
-    try:
-        responseObj = auth_login_v1(request.json['email'], request.json['password'])
-        token = auth_encode_token(responseObj['auth_user_id'])
-        responseObj['token'] = token
+    responseObj = auth_login_v1(request.json['email'], request.json['password'])
+    token = auth_encode_token(responseObj['auth_user_id'])
+    responseObj['token'] = token
+    if responseObj['auth_user_id'] in blacklist:
+        blacklist.remove(responseObj['auth_user_id'])
 
-        session.add(responseObj['auth_user_id'])
+    return make_response(jsonify(responseObj)), 201
+
+
 @bp.route('logout', methods=['POST'])
 def auth_logout_v1():
     if auth_token_ok(request.json['token']) == True:
@@ -200,6 +194,3 @@ def auth_logout_v1():
         responseObj = {'is_success':False}
         return make_response(jsonify(responseObj)), 408
 
-    except InputError as e:
-        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1, 'error_msg' : e}
-        return make_response(jsonify(responseObj)), 402
