@@ -43,16 +43,40 @@ def get_share_status(message_id):
 
 # Given a message, return a tab in front of the relevant lines
 def tab_given_message(msg):
-    count = 0
     msg_len = len(msg)
+    index = 0
+    for n in range(0, len(msg)):
+        if msg[n] == msg[n + 1] == msg[n + 2] == '"':
+            index = n - 2
+            break
+    beginning_of_string = msg[0:index]
+    to_be_changed_str = msg[index:]
+    changed_string = to_be_changed_str.replace("\n", "\n    ")
+
+    tabbed_msg = beginning_of_string + changed_string
+    return tabbed_msg
+
+
+    '''
     for n in range(0, msg_len):
-        if msg[n] == msg[n + 1] == msg[n + 2] == '"' and count != 0.5:
-            count = 0.5
+        if msg[n] == msg[n + 1] == msg[n + 2] == '"':
+            if count == 0:
+                count = 0.5
         if count == 0.5 and msg[n] == '\n':
             count = 1
         if count == 1 and msg[n] == '\n':
-            msg = msg[0:n] + "\n    " +  msg[(n + 1):msg_len]
+            msg = msg[0:n] + "\n    " +  msg[(n + 1):len(msg)]
     return msg
+    '''
+
+'''
+# Given a message_id, return its index in data['messages']
+def get_message_index(message_id):
+    data = retrieve_data()
+    i = 0
+    while i < len(data['messages']):
+        if data['messages']['message_id'] = 
+'''
 
 
 ###############################################################################
@@ -109,6 +133,8 @@ def message_send_v2(token, channel_id, message):
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
+    #f = open("demofile3.txt", "w")
+    #f.write(data)
 
     return {
         'message_id': unique_message_id
@@ -241,10 +267,11 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 
     if channel_id != -1:
         shared_message_id = message_send_v2(token, channel_id, shared_message)['message_id']
+        data['messages'][len(data['messages']) - 1]['was_shared'] = True
     #else:
         #shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
 
-    return {shared_message_id}
+    return {'shared_message_id': shared_message_id}
 
 '''
 data = reset_data()
