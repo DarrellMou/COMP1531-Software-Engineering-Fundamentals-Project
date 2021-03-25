@@ -1,3 +1,4 @@
+'''
 import pytest
 
 from src.server import APP
@@ -26,3 +27,4 @@ def test_auth_register_dup_error_route(client):
 	with pytest.raises(InputError):
 		response = client.post('/register', json={'email':'test12345@gmail.com', 'password':'dskfjnsdkjf', 'first_name':'winston', 'last_name':'lin'})
 
+'''
