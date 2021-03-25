@@ -210,10 +210,16 @@ def message_edit_v2(token, message_id, message):
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
             msg['message'] = message
-    for ch_msg in data['channels'][ch_id]['messages']:
-        if ch_msg['message_id'] == message_id:
-            ch_msg['message'] = message
+    if ch_id != -1:
+        for ch_msg in data['channels'][ch_id]['messages']:
+            if ch_msg['message_id'] == message_id:
+                ch_msg['message'] = message
+    else:
+        for dm_msg in data['dms'][dm_id]['messages']:
+            if dm_msg['message_id'] == message_id:
+                dm_msg['message'] = message
 
     return {
     }
