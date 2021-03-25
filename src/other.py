@@ -2,6 +2,7 @@ def clear_v1():
     data = {
         "users" : {},
         "channels" : {},
+        "dms": {},
         "messages" : []
     }
     return data
