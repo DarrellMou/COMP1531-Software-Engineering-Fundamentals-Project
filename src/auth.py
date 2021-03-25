@@ -1,7 +1,10 @@
+
 from src.error import InputError 
 from src.data import retrieve_data
-from src.server import APP
-
+'''
+from error import InputError 
+from data import retrieve_data
+'''
 import datetime
 import jwt
 import hashlib 
@@ -141,17 +144,3 @@ def auth_token_ok(token):
     else:
         return True
 
-@APP.route('/register', methods=['POST'])
-def auth_register_route():
-    if not request.json or not 'email' in request.json or not 'password' in request.json or not 'first_name' in request.json or not 'last_name' in request.json:
-        abort(400)
-
-    try:
-        responseObj = auth_register_v1(request.json['email'], request.json['password'], 
-                            request.json['first_name'], request.json['last_name'])
-        session.add(responseObj['auth_user_id'])
-        return make_response(jsonify(responseObj)), 201
-
-    except InputError as e:
-        responseObj = {'status' : 'input error'}
-        return make_response(jsonify(responseObj)), 402

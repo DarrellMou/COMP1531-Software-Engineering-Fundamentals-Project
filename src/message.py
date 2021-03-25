@@ -10,6 +10,7 @@ from error import AccessError, InputError
 from auth import auth_token_ok, auth_decode_token, auth_register_v1
 from uuid import uuid4
 from datetime import datetime
+
 from channel import channel_invite_v1
 from channels import channels_create_v1
 '''
@@ -290,7 +291,6 @@ def message_senddm_v1(token, dm_id, message):
     if user_id not in data['dms'][dm_id]['members']:
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
-
 
     # Creating a unique id for our message_id
     unique_message_id = int(uuid4())
