@@ -1,8 +1,9 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
 from src.data import reset_data, retrieve_data
+import time
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
@@ -34,7 +35,6 @@ def test_auth_email_format():
 
 def test_auth_login_v1(test_users):
     loginResponse = auth_login_v1('user1@email.com', 'User1_pass!')
-    assert loginResponse['token']
     assert loginResponse['auth_user_id'] == test_users['login1']['auth_user_id']
 
     with pytest.raises(InputError):
@@ -47,7 +47,6 @@ def test_auth_register_v1():
 
     registerDict = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     assert data['users'][registerDict['auth_user_id']]['handle_str'] == 'bobbuilder'
-    assert registerDict['token']
 
     with pytest.raises(InputError):
         auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)
@@ -77,7 +76,18 @@ def test_check_auth_permissions(test_users):
     assert data['users'][test_users['login5']['auth_user_id']]['permission_id'] == 2
 
 def test_encode_decode_token(test_users):
-    token = auth_encode_token(test_users['login1'])
+    token = auth_encode_token(test_users['login1']['auth_user_id'])
     assert isinstance(token, str) == True
-    assert auth_decode_token(token) == test_users['login1']
+    assert auth_decode_token(token) == test_users['login1']['auth_user_id']
     assert auth_decode_token('whatisthis') == 'invalid token, log in again'
+
+    time.sleep(6)
+    assert auth_decode_token(token) == 'Session expired, log in again'
+
+
+def test_auth_token_ok():
+    token = auth_encode_token(123)
+    assert auth_token_ok(token) == True
+    bad_token = 'edaeddawedead'
+    assert auth_token_ok(bad_token) == False
+
