@@ -1,4 +1,6 @@
 
+from flask import jsonify, request, Blueprint, make_response
+
 from src.data import data, retrieve_data, reset_data
 from src.error import AccessError, InputError
 
@@ -11,8 +13,27 @@ from error import AccessError, InputError
 
 from auth import auth_token_ok, auth_decode_token, auth_register_v1
 '''
+
+# bp stands for blueprint, they are components of the DREAMS communication tool
+bp = Blueprint('dm', __name__, url_prefix='/')
+
 # Creates dm given list of users
-def dm_create_v1(token, u_ids):
+@bp.route('create', methods=['POST'])
+def dm_create_v1():
+
+    # firstly check if the client has indeed sent token and u_ids to us
+    # if any of these required fields are missing, raise an InputError
+    # just an example
+    if not request.json['token'] or not request.json['u_ids']:
+        raise InputError
+
+
+    # here we get the parameters from the request sent from the client
+    # turn it from json to python dictionary to use
+    token = request.json['token']
+    u_ids = request.json['u_ids']
+
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -43,7 +64,8 @@ def dm_create_v1(token, u_ids):
         'members': users_list
     }   
 
-    return {'dm_id': dm_id, 'dm_name': dm_name}
+    # send back the dictionary as a json to the client
+    return make_response(jsonify({'dm_id': dm_id, 'dm_name': dm_name}))
 
 # Returns details of given dm
 def dm_details_v1(token, dm_id):
@@ -141,8 +163,23 @@ def dm_invite_v1(token, dm_id, u_id):
 
     return {}
 
+
 # Given a DM ID, the user is removed as a member of this DM
-def dm_leave_v1(token, dm_id):
+# http method is POST
+@bp.route('leave', methods=['POST'])
+def dm_leave_v1():
+
+    # firstly check if the client has indeed sent token and dm_id to us
+    # if any of these required fields are missing, raise an InputError
+    if not request.json['token'] or not request.json['dm_id']:
+        raise InputError
+
+    # here we get the parameters from the request sent from the client
+    # turn it from json to python dictionary to use
+    token = request.json['token']
+    dm_id = request.json['dm_id']
+
+
     data = retrieve_data()
 
     # Checks if token exists
