@@ -10,6 +10,7 @@ from data import data, retrieve_data, reset_data
 from error import AccessError, InputError
 
 from auth import auth_token_ok, auth_decode_token, auth_register_v1
+from message import message_senddm_v1
 '''
 # Creates dm given list of users
 def dm_create_v1(token, u_ids):
@@ -158,3 +159,16 @@ def dm_leave_v1(token, dm_id):
     data['dms'][dm_id]['members'].remove(auth_user_id)
 
     return {}
+
+'''
+data = reset_data()
+
+user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+
+dm_id = message_senddm_v1(user1['token'], dm1, "Hey")
+
+print(data)
+'''
+

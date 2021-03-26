@@ -1,6 +1,14 @@
+
 from src.error import InputError 
 from src.data import retrieve_data
+<<<<<<< HEAD
 
+=======
+'''
+from error import InputError 
+from data import retrieve_data
+'''
+>>>>>>> nikki/message_senddm_v1
 import datetime
 import jwt
 import hashlib 
@@ -147,6 +155,7 @@ def auth_token_ok(token):
     else:
         return True
 
+<<<<<<< HEAD
 # wrapper
 def auth_password_hash(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -201,3 +210,5 @@ def auth_logout_v1():
         responseObj = {'status' : 'input error'}
         return make_response(jsonify(responseObj)), 402
 >>>>>>> brendan/message_edit_v2
+=======
+>>>>>>> nikki/message_senddm_v1
