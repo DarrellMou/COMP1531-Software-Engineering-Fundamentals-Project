@@ -6,6 +6,7 @@ from src.auth import blacklist, auth_decode_token, auth_token_ok
 
 # client and app are pytest fixtures
 def test_auth_register_api_valid(client):
+
 	response = client.post('/register', json={'email':'12382193@outlook.com', 'password':'123123kjdfd', 'first_name':'winston', 'last_name':'lin'})
 	json_data = response.get_json() # or just json
 
@@ -14,7 +15,6 @@ def test_auth_register_api_valid(client):
 
 	assert json_data['token'] and json_data['token'] != ''
 	assert json_data['auth_user_id'] and json_data['auth_user_id'] != -1
-
 
 def test_auth_register_api_invalid_missing_args(client):
 	response = client.post('/register', json={'password':'jkdfnkfdsfd1213s', 'first_name':'winston', 'last_name':'lin'})
