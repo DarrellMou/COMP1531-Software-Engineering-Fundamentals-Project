@@ -104,7 +104,7 @@ def test_multiple_channels_regmember():
     chid4 = channels_create_v1([a_u_id1]['token'], 'channel4', True) #Public channel4 created, owner: user1
     chid5 = channels_create_v1([a_u_id1]['token'], 'channel5', True) #Public channel5 created, owner: user1
     chid6 = channels_create_v1([a_u_id1]['token'], 'channel6', True) #Public channel6 created, owner: user1
-    chid7 = channels_create_v1([a_u_id1]['token']], 'channel7', True) #Public channel7 created, owner: user1
+    chid7 = channels_create_v1([a_u_id1]['token'], 'channel7', True) #Public channel7 created, owner: user1
     channel_join_v1([a_u_id2]['token'], chid2['channel_id']) #User 2 joins channel 2 as regular member
     channel_join_v1([a_u_id2]['token'], chid3['channel_id']) #User 2 joins channel 3 as regular member
     channel_join_v1([a_u_id2]['token'], chid4['channel_id']) #User 2 joins channel 4 as regular member
