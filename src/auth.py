@@ -195,4 +195,3 @@ def auth_logout_v1():
         responseObj = {'is_success':False}
         return make_response(jsonify(responseObj)), 408
 
-
