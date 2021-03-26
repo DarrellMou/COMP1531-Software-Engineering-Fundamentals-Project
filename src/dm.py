@@ -142,7 +142,7 @@ def dm_invite_v1(token, dm_id, u_id):
 
     return {}
 
-
+'''
 data = reset_data()
 
 user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
@@ -152,5 +152,5 @@ dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 dm_id = message_senddm_v1(user1['token'], dm1, "Hey")
 
 print(data)
-
+'''
 
