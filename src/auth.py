@@ -195,3 +195,9 @@ def auth_logout_v1():
         responseObj = {'is_success':False}
         return make_response(jsonify(responseObj)), 408
 
+<<<<<<< HEAD
+=======
+    except InputError as e:
+        responseObj = {'status' : 'input error'}
+        return make_response(jsonify(responseObj)), 402
+>>>>>>> brendan/message_edit_v2
