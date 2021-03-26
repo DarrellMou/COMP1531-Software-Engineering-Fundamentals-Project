@@ -143,15 +143,21 @@ def dm_invite_v1(token, dm_id, u_id):
 
     return {}
 
-'''
-data = reset_data()
+# Given a DM ID, the user is removed as a member of this DM
+def dm_leave_v1(token, dm_id):
+    data = retrieve_data()
 
-user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
 
-dm_id = message_senddm_v1(user1['token'], dm1, "Hey")
+    # Checks if dm_id is valid
+    if dm_id not in data['dms']: raise InputError
 
-print(data)
-'''
+    # Checks if user belongs in dm
+    if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
+
+    data['dms'][dm_id]['members'].remove(auth_user_id)
+
+    return {}
 

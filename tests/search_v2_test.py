@@ -17,21 +17,21 @@ from src.other import clear_v1, search_v2
 def test_search_no_channel(setup_user):
     users = setup_user
     channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
-    message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
+    message_send_v2(users['user1']['token'], channel_id1, "A message in no channels")
 
-    assert len(search_v2(user['user2']['token'], 'A message in no channels')) == 0
+    assert len(search_v2(users['user2']['token'], "A message in no channels")) == 0
 
 # Testing the standard case in returning queries for a user in both a channel and a dm
 def test_search_standard(setup_user):
     users = setup_user
     channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
-    message_send_v2(users['user1']['token'], channel_id1, 'A message in no channels')
+    message_send_v2(users['user1']['token'], channel_id1, "A message in no channels")
 
     channel_invite_v2(users['user1']['token'], channel_id1, users['user2']['auth_user_id'])
-    message_send_v2(users['user2']['token'], channel_id1, 'A message in channels')
+    message_send_v2(users['user2']['token'], channel_id1, "A message in channels")
 
     dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
-    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
+    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], "A message in channels")
 
     assert len(search_v2(user['user2']['token'], 'message')) == 3
 
