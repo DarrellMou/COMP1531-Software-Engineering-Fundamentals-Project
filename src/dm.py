@@ -41,7 +41,8 @@ def dm_create_v1(token, u_ids):
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
-        'members': users_list
+        'members': users_list,
+        'messages': []
     }   
 
     return {'dm_id': dm_id, 'dm_name': dm_name}
