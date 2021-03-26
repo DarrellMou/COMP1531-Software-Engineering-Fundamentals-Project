@@ -184,7 +184,7 @@ def channel_join_v2(token, channel_id):
     user_id = auth_decode_token(token)
     return channel_join_v1(user_id, channel_id)
 
-def channel_addowner_v1(auth_user_id, channel_id, u_id):
+def channel_addowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
@@ -199,12 +199,18 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
     data['users'][user_id]['permission_id'] != 1): raise AccessError
 
     # All error checks passed, continue on to add owner
+    
+    # If u_id is not already a member of channel, add as member first
+    if u_id not in data['channels'][channel_id]['all_members']:
+        data['channels'][channel_id]['all_members'].append(u_id)
+    
+    # Add as member
     data['channels'][channel_id]['owner_members'].append(u_id)
 
     return {
     }
 
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
