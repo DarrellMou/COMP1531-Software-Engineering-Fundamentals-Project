@@ -1,7 +1,7 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
-#from data import data, retrieve_data
-#from error import AccessError, InputError
+from src.auth import auth_decode_token
+
 
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
