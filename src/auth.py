@@ -45,7 +45,7 @@ def auth_login_v1(email, password):
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
         if email == data_email and auth_password_hash(password) == data_password:
-            return {'auth_user_id' : key_it}        
+            return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it)}        
     raise InputError
 
 
@@ -103,7 +103,7 @@ def auth_register_v1(email, password, name_first, name_last):
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
-        return {'auth_user_id' : new_auth_user_id}
+        return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
 
 """
 Generate and return an expirable token based on auth_user_id
@@ -162,8 +162,8 @@ def auth_register_v2():
     responseObj = auth_register_v1(request.json['email'], request.json['password'], 
                         request.json['first_name'], request.json['last_name'])
     
-    token = auth_encode_token(responseObj['auth_user_id'])
-    responseObj['token'] = token 
+    # token = auth_encode_token(responseObj['auth_user_id'])
+    # responseObj['token'] = token 
 
     return make_response(jsonify(responseObj)), 201
 
@@ -175,8 +175,8 @@ def auth_login_v2():
         return make_response(jsonify(responseObj)), 408
 
     responseObj = auth_login_v1(request.json['email'], request.json['password'])
-    token = auth_encode_token(responseObj['auth_user_id'])
-    responseObj['token'] = token
+    # token = auth_encode_token(responseObj['auth_user_id'])
+    # responseObj['token'] = token
     if responseObj['auth_user_id'] in blacklist:
         blacklist.remove(responseObj['auth_user_id'])
 
