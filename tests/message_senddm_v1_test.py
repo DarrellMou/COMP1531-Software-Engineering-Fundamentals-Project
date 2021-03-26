@@ -12,7 +12,7 @@ from src.message import message_senddm_v1
 #                                 ASSUMPTIONS                                 #
 ###############################################################################
 
-# Messages that are sent using message_send_dm are appended to the message list
+# Messages that are sent using message_senddm are appended to the message list
 # within the dm
 
 
@@ -71,7 +71,7 @@ def send_x_messages_two_dms(user, dm1, dm2, num_messages):
 # Testing for when the user is not part of the dm (testing Access Error)
 def test_message_senddm_v1_AccessError():
     setup = set_up_data()
-    user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
+    user1, user3 = setup['user1'], setup['user3']
     
     # user2 who is not a part of dm1 tries to send message 
     # - should raise an access error
