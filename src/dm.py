@@ -1,5 +1,5 @@
 
-from src.data import data, retrieve_data, reset_data
+from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 
 from src.auth import auth_token_ok, auth_decode_token
@@ -41,7 +41,8 @@ def dm_create_v1(token, u_ids):
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
-        'members': users_list
+        'members': users_list,
+        'messages': []
     }   
 
     return {'dm_id': dm_id, 'dm_name': dm_name}
@@ -139,24 +140,6 @@ def dm_invite_v1(token, dm_id, u_id):
     if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
 
     data['dms'][dm_id]['members'].append(u_id)
-
-    return {}
-
-# Given a DM ID, the user is removed as a member of this DM
-def dm_leave_v1(token, dm_id):
-    data = retrieve_data()
-
-    # Checks if token exists
-    if not auth_token_ok(token): raise AccessError
-    auth_user_id = auth_decode_token(token)
-
-    # Checks if dm_id is valid
-    if dm_id not in data['dms']: raise InputError
-
-    # Checks if user belongs in dm
-    if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
-
-    data['dms'][dm_id]['members'].remove(auth_user_id)
 
     return {}
 

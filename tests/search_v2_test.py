@@ -1,7 +1,7 @@
 import pytest
 from src.data import retrieve_data
 from src.error import InputError, AccessError
-from src.channel import channel_invite_v1, #channel_leave_v1
+from src.channel import channel_invite_v1 #channel_leave_v1
 from src.channels import channels_create_v2
 from src.dm import dm_create_v1, dm_leave_v1
 from src.message import message_send_v2, message_senddm_v1

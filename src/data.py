@@ -1,6 +1,4 @@
 
-from src.other import clear_v1
-
 # Iteration 1 test data
 data = {
     'users' : {
