@@ -90,7 +90,8 @@ def auth_register_v1(email, password, name_first, name_last):
         'email' : email,
         'password' : auth_password_hash(password),
         'handle_str' : '',
-        'permission_id': permission_id
+        'permission_id': permission_id,
+        'dms': [],
     }
 
     # Check to see if the handle is unique
