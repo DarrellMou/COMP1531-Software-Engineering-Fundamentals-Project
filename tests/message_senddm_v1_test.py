@@ -31,7 +31,7 @@ def set_up_data():
     user3 = auth_register_v1('bing.bao@email.com', 'password123', 'Bing', 'Bao')
     dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
-    setup = {
+    return {
         'user1': user1['token'],
         'user2': user2['token'],
         'user3': user3['token'],
