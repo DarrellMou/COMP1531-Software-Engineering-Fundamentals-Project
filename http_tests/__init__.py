@@ -84,23 +84,7 @@ def setup_user_data(client, setup_user_dict):
 
     user5 = setup_user_dict['user5_dict']
     user5_details = client.post('/register', json=user5).get_json()
-    '''
-
-    user1 = setup_user_dict['user1_dict']
-    user1_details = client.post('/register', json=user1)
-
-    user2 = setup_user_dict['user2_dict']
-    user2_details = client.post('/register', json=user2)
-
-    user3 = setup_user_dict['user3_dict']
-    user3_details = client.post('/register', json=user3)
-
-    user4 = setup_user_dict['user4_dict']
-    user4_details = client.post('/register', json=user4)
-
-    user5 = setup_user_dict['user5_dict']
-    user5_details = client.post('/register', json=user5)
-    '''
+    
     return {
         'user1' : user1_details,
         'user2' : user2_details,
