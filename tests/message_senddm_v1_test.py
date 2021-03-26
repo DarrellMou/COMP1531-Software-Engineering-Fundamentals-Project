@@ -37,6 +37,7 @@ def set_up_data():
         'user3': user3['token'],
         'dm1': dm1['dm_id']
     }
+    return setup
 
 def send_x_messages(user1, user2, dm1, num_messages):
     data = retrieve_data()
@@ -71,7 +72,7 @@ def send_x_messages_two_dms(user, dm1, dm2, num_messages):
 # Testing for when the user is not part of the dm (testing Access Error)
 def test_message_senddm_v1_AccessError():
     setup = set_up_data()
-    user1, user3 = setup['user1'], setup['user3']
+    user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
     
     # user2 who is not a part of dm1 tries to send message 
     # - should raise an access error
@@ -106,7 +107,7 @@ def test_message_senddm_v1_send_one():
 
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
-    assert message_senddm_v1(usm1er1, d, "Hello")['message_id'] ==\
+    assert message_senddm_v1(user1, dm1, "Hello")['message_id'] ==\
         data['dms'][dm1]['messages'][0]['message_id']
 
 
@@ -131,8 +132,9 @@ def test_message_senddm_v1_user_sends_identical_messages():
 def test_message_senddm_v1_multiple_users_multiple_messages():
     setup = set_up_data()
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    u_id2 = auth_decode_token(user2)
 
-    dm_invite_v1(user1['token'], dm1, user2['auth_user_id'])
+    dm_invite_v1(user1, dm1, u_id2)
 
     send_x_messages(user1, user2, dm1, 10)
 
@@ -148,8 +150,9 @@ def test_message_senddm_v1_multiple_users_multiple_messages():
 def test_message_senddm_v1_multiple_users_multiple_messages_message_id():
     setup = set_up_data()
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    u_id2 = auth_decode_token(user2)
 
-    dm_invite_v1(user1['token'], dm1, user2['auth_user_id'])
+    dm_invite_v1(user1, dm1, u_id2)
 
     data = retrieve_data()
     message_count = 0
@@ -168,8 +171,9 @@ def test_message_senddm_v1_multiple_users_multiple_messages_message_id():
 def test_message_senddm_v1_identical_message_to_2_dms():
     setup = set_up_data()
     user1, dm1, user3 = setup['user1'], setup['dm1'], setup['user3']
+    u_id3 = auth_decode_token(user3)
 
-    dm2 = dm_create_v1(user1['token'], [user3['auth_user_id']])['dm_id']
+    dm2 = dm_create_v1(user1, [u_id3])['dm_id']
 
 
     send_x_messages_two_dms(user1, dm1, dm2, 10)
@@ -191,8 +195,9 @@ def test_message_senddm_v1_identical_message_to_2_dms():
 def test_message_senddm_v1_appends_to_data_messages():
     setup = set_up_data()
     user1, dm1, user3 = setup['user1'], setup['dm1'], setup['user3']
+    u_id3 = auth_decode_token(user3)
 
-    dm2 = dm_create_v1(user1['token'], [user3['auth_user_id']])['dm_id']
+    dm2 = dm_create_v1(user1, [u_id3])['dm_id']
     
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
@@ -203,11 +208,10 @@ def test_message_senddm_v1_appends_to_data_messages():
 # Test if data['messages'] list is in order
 def test_message_senddm_v1_data_messages_in_order():
     setup = set_up_data()
-    user1 = setup['user1']
-    dm1 = setup['dm1']
-    user3 = setup['user3']
+    user1, dm1, user3 = setup['user1'], setup['dm1'], setup['user3']
+    u_id3 = auth_decode_token(user3)
 
-    dm2 = dm_create_v1(user1['token'], [user3['auth_user_id']])['dm_id']
+    dm2 = dm_create_v1(user1, [u_id3])['dm_id']
 
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
