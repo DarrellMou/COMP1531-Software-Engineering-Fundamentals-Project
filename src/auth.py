@@ -51,12 +51,7 @@ def auth_login_v2(email, password):
 
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
-<<<<<<< HEAD
-def auth_register_v2(email, password, name_first, name_last):
-
-=======
 def auth_register_v1(email, password, name_first, name_last):
->>>>>>> nikki/search_v2
     data = retrieve_data()
 
     # Checks for invalid email format
