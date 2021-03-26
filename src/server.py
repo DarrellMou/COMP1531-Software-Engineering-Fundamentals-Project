@@ -32,8 +32,9 @@ def create_app():
     app.config['TRAP_HTTP_EXCEPTIONS'] = True
     app.register_error_handler(Exception, defaultHandler)
 
-    from src import auth
+    from src import auth, channels
     app.register_blueprint(auth.bp)
+    app.register_blueprint(channels.bp)
     # add more blueprints here from channel, message, etc
 
     return app

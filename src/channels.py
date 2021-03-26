@@ -102,11 +102,17 @@ def channels_create_v2(token, name, is_public):
 
 @bp.route('create', methods=['POST'])
 def create_channels():
+
+    if not request.json['token'] or not request.json['name']:
+        raise InputError
+
     token = request.json['token']
     name = request.json['name']
     is_public = bool(request.json['is_public'])
 
-    return dumps(channels_create_v2(token, name, is_public))
+    responseObj = channels_create_v2(token, name, is_public)
+
+    return make_response(jsonify(responseObj))
 
 @bp.route('listall', methods=['GET'])
 def listall_channels():
