@@ -33,7 +33,7 @@ def channels_list_v1(auth_user_id):
     }
 
 # Provide a list of all channels (and their associated details)
-def channels_listall_v1(token):
+def channels_listall_v2(token):
 
     data = retrieve_data()
     
@@ -57,7 +57,7 @@ def channels_listall_v1(token):
 
 
 # Creates a new channel with that name that is either a public or private channel
-def channels_create_v1(token, name, is_public):
+def channels_create_v2(token, name, is_public):
 
     data = retrieve_data()
 
