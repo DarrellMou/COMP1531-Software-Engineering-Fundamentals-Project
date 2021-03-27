@@ -47,8 +47,12 @@ def search_v2(token, query_str):
                     # query_str is a substring of message 
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
+<<<<<<< HEAD
                 break
     
+=======
+
+>>>>>>> nikki/search_v2
     return collection_messages
 
 def admin_user_remove_v1(token, u_id):
@@ -102,6 +106,16 @@ def admin_user_remove_v1(token, u_id):
                         message['is_removed'] == True   
                 del(member)
                 break
+<<<<<<< HEAD
+=======
+
+    # Replace any messages from u_id with 'Removed user'
+    for message in data['messages']:
+        if message['u_id'] == u_id:
+            message['message'].replace(message['message'], 'Removed user')
+            message['is_removed'] == True   
+            break
+>>>>>>> nikki/search_v2
 
     # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
@@ -109,7 +123,7 @@ def admin_user_remove_v1(token, u_id):
         if user == u_id:
             user['name_first'].replace(user['name_first'], 'Removed user')
             user['is_removed'] == True
-
+    
     return {}
 
 def admin_userpermission_change_v1(token, u_id, permission_id):
