@@ -23,7 +23,7 @@ def setup_user():
         'user5' : a_u_id5
     }
 
-# listing channels with invalid auth_user_id
+# listing channels with invalid token
 def test_channels_listall_invalid_user():
 
     with pytest.raises(AccessError):
@@ -34,17 +34,17 @@ def test_channels_listall_empty():
 
     users = setup_user()
 
-    assert channels_listall_v1(users['user3']['auth_user_id']) == {'channels': []}
+    assert channels_listall_v1(users['user3']['token']) == {'channels': []}
 
 # listing a single channel
 def test_channels_listall_single():
 
     users = setup_user()
 
-    channel_id3 = channels_create_v1(users['user3']['auth_user_id'], 'Public3', True)
+    channel_id3 = channels_create_v1(users['user3']['token'], 'Public3', True)
 
     # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
+    channel_list = channels_listall_v1(users['user3']['token'])
 
     assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public3'
@@ -54,12 +54,12 @@ def test_channels_listall_multiple():
 
     users = setup_user()
 
-    channel_id3 = channels_create_v1(users['user3']['auth_user_id'], 'Public3', True)
-    channel_id4 = channels_create_v1(users['user2']['auth_user_id'], 'Private4', False)
-    channel_id5 = channels_create_v1(users['user1']['auth_user_id'], 'Public5', True)
+    channel_id3 = channels_create_v1(users['user3']['token'], 'Public3', True)
+    channel_id4 = channels_create_v1(users['user2']['token'], 'Private4', False)
+    channel_id5 = channels_create_v1(users['user1']['token'], 'Public5', True)
 
     # ensure channels_listall returns correct values
-    channel_list = channels_listall_v1(users['user3']['auth_user_id'])
+    channel_list = channels_listall_v1(users['user3']['token'])
 
     assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public3'

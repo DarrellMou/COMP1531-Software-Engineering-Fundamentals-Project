@@ -1,4 +1,6 @@
 from src.other import clear_v1
+#from other import clear_v1
+
 
 # Iteration 1 test data
 data = {
@@ -81,7 +83,29 @@ data = {
                 },
             ],
         }
-    }
+    },
+    'messages' : [
+        {
+            'message_id': 4650166837,
+            'u_id': 46541861546,
+            'message': "Random message",
+            'time_created': 753159468,
+            'channel_id': 416514684,
+            'dm_id': -1,
+            'is_removed': False,
+            'was_shared': False,
+        },
+        {
+            'message_id': 789416137,
+            'u_id': 1234567846,
+            'message': "Random message",
+            'time_created': 521159468,
+            'channel_id': -1,
+            'dm_id': 1691360831,
+            'is_removed': False,
+            'was_shared': False,
+        },
+    ],
 }
 
 

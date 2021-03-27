@@ -10,6 +10,7 @@ from data import data, retrieve_data, reset_data
 from error import AccessError, InputError
 
 from auth import auth_token_ok, auth_decode_token, auth_register_v1
+from message import message_senddm_v1
 '''
 # Creates dm given list of users
 def dm_create_v1(token, u_ids):
@@ -40,7 +41,8 @@ def dm_create_v1(token, u_ids):
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
-        'members': users_list
+        'members': users_list,
+        'messages': []
     }   
 
     return {'dm_id': dm_id, 'dm_name': dm_name}
