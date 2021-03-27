@@ -12,14 +12,14 @@ data = {
             'permission_id': 1,
             'notifications' : [
                 {
-                    'channel_id': 14723573315,
-                    'dm_id': -1,
-                    'notification_message': 'first_name2last_name added you to channel1',
+                    'channel_id' : 14723573315,
+                    'dm_id' : -1,
+                    'notification_message' : 'first_name2last_name added you to channel1',
                 },
                 {
-                    'channel_id': -1,
-                    'dm_id': 4561328123,
-                    'notification_message': 'first_name2last_name reacted to your message in channel1',
+                    'channel_id' : -1,
+                    'dm_id' : 4561328123,
+                    'notification_message' : 'first_name2last_name reacted to your message in channel1',
                 },
             ]
         },
@@ -32,14 +32,14 @@ data = {
             'permission_id': 2,
             'notifications' : [
                 {
-                    'channel_id': 14723573315,
-                    'dm_id': -1,
-                    'notification_message': 'first_name1last_name added you to channel1',
+                    'channel_id' : 14723573315,
+                    'dm_id' : -1,
+                    'notification_message' : 'first_name1last_name added you to channel1',
                 },
                 {
-                    'channel_id': -1,
-                    'dm_id': 4561328124,
-                    'notification_message': 'first_name1last_name reacted to your message in channel1',
+                    'channel_id' : -1,
+                    'dm_id' : 4561328124,
+                    'notification_message' : 'first_name1last_name reacted to your message in channel1',
                 },
             ]
         },
