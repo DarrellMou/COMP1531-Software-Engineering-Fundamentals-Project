@@ -93,6 +93,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'permission_id': permission_id,
         # Initialise notifications list
         'notifications' : [],
+        'dms': [],
     }
 
     # Check to see if the handle is unique
@@ -196,3 +197,6 @@ def auth_logout_v1():
         responseObj = {'is_success':False}
         return make_response(jsonify(responseObj)), 408
 
+    except InputError as e:
+        responseObj = {'status' : 'input error'}
+        return make_response(jsonify(responseObj)), 402
