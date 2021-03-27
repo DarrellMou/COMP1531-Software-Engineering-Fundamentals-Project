@@ -1,7 +1,7 @@
 import json
 
 def clear_v1():
-    src.data.data = {
+    data = {
         "users" : {},
         "channels" : {},
         "dms" : {},
