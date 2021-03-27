@@ -209,7 +209,7 @@ def channel_join_v1(auth_user_id, channel_id):
     # Checks if the auth_user is in channel, if not proceed, otherwise do nothing
     if auth_user_id not in data['channels'][channel_id]['all_members']:
         # Checks if channel is public, if true proceed, if false raise error
-        if (data['channels'][channel_id]['is_public']):
+        if (data['channels'][channel_id]['is_public']) or data['users'][auth_user_id]['permission_id'] == 1:
             #Add user to all_members pool in channel
             data['channels'][channel_id]['all_members'].append(auth_user_id)
         else: raise AccessError
@@ -221,7 +221,7 @@ def channel_join_v2(token, channel_id):
     user_id = auth_decode_token(token)
     return channel_join_v1(user_id, channel_id)
 
-def channel_addowner_v1(auth_user_id, channel_id, u_id):
+def channel_addowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
 

@@ -1,3 +1,8 @@
+'''
+from error import InputError, AccessError 
+from data import data, retrieve_data
+from auth import auth_token_ok, auth_decode_token, auth_register_v1
+'''
 from src.error import InputError, AccessError 
 from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
@@ -115,20 +120,15 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     if not data['users'][auth_user_id]['permission_id'] == 1: raise AccessError("Not an admin user")
 
     # Checks if permission_id refers to a value permission
-    if not permission_id == 1 or not permission_id == 2: raise InputError("Not a value permission")
+    if not (permission_id == 1 or permission_id == 2): raise InputError("Not a value permission")
 
     # Checks if the user is the currently the only owner
-    admin_flag = 0
-    for permission in data['users']['auth_user_id']['permission_id']:
-        if permission == 1:
-            admin_flag += 1
-    if admin_flag < 1: raise InputError("The user is currently the only owner")
+    if permission_id == 2:
+        admin_flag = 0
+        for user in data['users']:
+            if data['users'][user]['permission_id'] == 1:
+                admin_flag += 1
+        if admin_flag <= 1: raise InputError("The user is currently the only owner")
 
-    # Changes u_id permission into global owner
-    if permission_id == 1:
-        data['users'][u_id]['permission_id'] == 1
-    
-    # Changes u_id permission into global member
-    elif permission_id == 2:
-        data['users'][u_id]['permission_id'] == 2
+    data['users'][u_id]['permission_id'] = permission_id
 
