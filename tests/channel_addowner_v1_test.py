@@ -125,7 +125,7 @@ def test_invalid_channel():
     reset_data()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
+    channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
     with pytest.raises(InputError):
         channel_addowner_v1(a_u_id1['token'], -1111, a_u_id2['auth_user_id'])
 
