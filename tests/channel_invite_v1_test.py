@@ -5,7 +5,7 @@ from src.error import AccessError
 
 from src.auth import auth_register_v1
 from src.channels import channels_create_v1
-from src.channel import channel_invite_v1
+from src.channel import channel_invite_v2
 from src.channel import channel_details_v1
 from src.other import clear_v1
 
