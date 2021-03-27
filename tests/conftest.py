@@ -1,7 +1,6 @@
 import pytest
 from src.auth import auth_register_v1
 from src.other import clear_v1
-import src.data
 
 @pytest.fixture
 def reset():
