@@ -1,13 +1,15 @@
-from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
+
+import json
 #from data import data, retrieve_data
 #from error import AccessError, InputError
 
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
 def channel_invite_v2(token, channel_id, u_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Checks if given channel_id is valid
     if channel_id not in data['channels']: raise InputError
@@ -17,14 +19,17 @@ def channel_invite_v2(token, channel_id, u_id):
     auth_user_id = auth_decode_token(token)
 
     # Checks if the auth_user is in channel
-    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
+    if auth_user_id not in data['channels'][f"{channel_id}"]['all_members']: raise AccessError
 
     # Appends new user to given channel
     # Assume no duplicate entries allowed
     # Assume no inviting themselves
     # Assume inviting people outside channel only
     # if not any(user == u_id for user in data['channels'][channel_id]['all_members']):
-    data['channels'][channel_id]['all_members'].append(u_id)
+    data['channels'][f"{channel_id}"]['all_members'].append(u_id)
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
     return {}
 
