@@ -8,7 +8,7 @@ from src.auth import auth_token_ok, auth_decode_token
 import json
 
 def clear_v1():
-    src.data.data = {
+    data = {
         "users" : {},
         "channels" : {},
         "dms" : {},
