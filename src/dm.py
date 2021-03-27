@@ -169,18 +169,18 @@ def dm_messages_v1(token, dm_id, start):
     if not auth_token_ok(token):
         raise AccessError("The given token is not valid")
 
-    # Check to see if the given channel_id is a valid channel
+    # Check to see if the given dm_id is a valid dm
     if dm_id not in data['dms']:
         raise InputError("dm_id is not valid")
 
-    # Check to see if the given user (token) is actully in the given channel
+    # Check to see if the given user (token) is actully in the given dm
     user_id = auth_decode_token(token)
     if user_id not in data['dms'][dm_id]['members']:
         raise AccessError("The user corresponding to the given token is not in the dm")
 
     
     # Check to see if the given start value is larger than the number of
-    # messages in the given channel
+    # messages in the given dm
     num_messages = len(data['dms'][dm_id]['messages'])
     if start > num_messages:
         raise InputError("Inputted starting index is larger than the current number of messages in the dm")
@@ -192,13 +192,13 @@ def dm_messages_v1(token, dm_id, start):
         'end': 0
     }
 
-    # Get our current channel
+    # Get our current dm
     dm = data['dms'][dm_id]
-    # ASSUMPTION: messages are APPENDED to our message list within the channel
+    # ASSUMPTION: messages are APPENDED to our message list within the dm
     # key of our data dictionary
-    # Reverse the order of the channel messages so the most recent message
+    # Reverse the order of the dm messages so the most recent message
     # appears in index 0 and the least recent in the last index
-    messages_list = channel['messages'][::-1]
+    messages_list = dm['messages'][::-1]
 
 
     # Loop through our list and return up to 50 of the most recent messages
@@ -221,7 +221,7 @@ def dm_messages_v1(token, dm_id, start):
     # should return (start + 50)
     if len(messages_dict['messages']) != 50:
         messages_dict['end'] = -1
-    # If the number of messages in the channel minus the given start divided
+    # If the number of messages in the dm minus the given start divided
     # by 50 returns 1, this mean the most recent message has been returned
     elif (num_messages - start) / 50 == 1:
         messages_dict['end'] = -1
