@@ -38,6 +38,7 @@ def search_v2(token, query_str):
                     # query_str is a substring of message 
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
+                break
     
     for dm in data['dms']:
         for member in data['dms'][dm]['members']:
@@ -46,6 +47,7 @@ def search_v2(token, query_str):
                     # query_str is a substring of message 
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
+                break
     
     return collection_messages
 
@@ -87,6 +89,8 @@ def admin_user_remove_v1(token, u_id):
                     if message['u_id'] == u_id:
                         message['message'].replace(message['message'], 'Removed user')
                         message['is_removed'] == True
+                del(member)
+                break
 
     # Replace dm message with 'Removed user'
     for dm in data['dms']:
@@ -96,6 +100,8 @@ def admin_user_remove_v1(token, u_id):
                     if message['u_id'] == u_id:
                         message['message'].replace(message['message'], 'Removed user')
                         message['is_removed'] == True   
+                del(member)
+                break
 
     # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'

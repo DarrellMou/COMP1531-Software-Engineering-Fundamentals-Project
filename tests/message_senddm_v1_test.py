@@ -227,7 +227,3 @@ def test_message_senddm_v1_data_messages_in_order():
 
     assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
     assert data['messages'][0]['message'] == m_id0_ch1['message']
-<<<<<<< HEAD
-'''
-=======
->>>>>>> nikki/message_senddm_v1
