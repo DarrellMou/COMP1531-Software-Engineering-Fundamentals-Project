@@ -4,6 +4,7 @@ from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
+import re
 '''
 from data import data, retrieve_data, reset_data
 from error import AccessError, InputError
@@ -135,6 +136,30 @@ def message_send_v2(token, channel_id, message):
     data['messages'].append(message_dictionary)
     #f = open("demofile3.txt", "w")
     #f.write(data)
+
+    # Create notification if someone is tagged
+    tag = re.search("^@.* ", message)
+    if tag != None:
+        tag = tag[1:-1]
+        tagged = 0
+
+        # Search for the tagged user within all_members and get their auth_id
+        for member in data['channels'][channel_id]['all_members']:
+            if (tag == data['users'][member]['handle_str']):
+                tagged = member
+        
+        notification = {
+        'channel_id' : channel_id,
+        'dm_id' : -1,
+        ('notification_message' : (str(data['users'][user_id]['handle_str'])
+        + " tagged you in " + str(data['channels'][channel_id]['name']))
+        + ":" + str(message[0:20]))
+        }
+        # Make sure notification list is len 20
+        if len(data['users'][tagged]['notifications']) == 20:
+            data['users'][tagged]['notifications'].pop(0)
+        # Append new notification to end of list
+        data['users'][tagged]['notifications'].append(notification)
 
     return {
         'message_id': unique_message_id
