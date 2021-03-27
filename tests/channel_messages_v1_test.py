@@ -94,7 +94,7 @@ def test_channel_messages_v1_AccessError():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add 1 message to channel1
-    data = add_1_message(user1, channel1)
+    add_1_message(user1, channel1)
 
     # auth_user_id: 2 is not part of channel_1 - should raise an access error
     with pytest.raises(AccessError):
@@ -104,10 +104,10 @@ def test_channel_messages_v1_AccessError():
 # Testing for when an invalid channel_id is used (testing input error)
 def test_channel_messages_v1_InputError_invalid_channel():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     
     # Add 1 message to channel1
-    data = add_1_message(user1, channel1)
+    add_1_message(user1, channel1)
 
     # 2 is an invalid channel_id in this case
     with pytest.raises(InputError):
@@ -117,10 +117,10 @@ def test_channel_messages_v1_InputError_invalid_channel():
 # Testing for when an invalid start is used (start > num messages in channel)
 def test_channel_messages_v1_InputError_invalid_start():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
 
     # Add 1 message to channel1
-    data = add_1_message(user1, channel1) # Only has 1 message
+    add_1_message(user1, channel1) # Only has 1 message
 
     with pytest.raises(InputError):
         assert channel_messages_v1(user1, channel1, 2)
@@ -136,7 +136,7 @@ def test_channel_messages_v1_InputError_invalid_start():
 # ASSUMPTION: No messages mean that the most recent message has been returned - therefore end = -1
 def test_channel_messages_v1_no_messages():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
 
     assert channel_messages_v1(user1, channel1, 0) ==\
     {'messages': [], 'start': 0, 'end': -1}, "No messages - should return end: -1"
@@ -145,9 +145,9 @@ def test_channel_messages_v1_no_messages():
 # Testing to see if the function is working for a single message
 def test_channel_messages_v1_1_message():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
 
-    data = add_1_message(user1, channel1)
+    add_1_message(user1, channel1)
 
     assert channel_messages_v1(user1, channel1, 0)['start'] == 0,\
     "Start should not change"
@@ -168,7 +168,7 @@ def test_channel_messages_v1_50_messages():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 50 messages
-    data = add_x_messages(user1, user2, channel1, 50)
+    add_x_messages(user1, user2, channel1, 50)
 
     assert channel_messages_v1(user1, channel1, 0)['start'] == 0,\
     "Start should not change"
@@ -196,7 +196,7 @@ def test_channel_messages_v1_100_messages_start_50():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 100 messages
-    data = add_x_messages(user1, user2, channel1, 100)
+    add_x_messages(user1, user2, channel1, 100)
 
     assert channel_messages_v1(user1, channel1, 50)['start'] == 50,\
     "Start should not change"
@@ -221,7 +221,7 @@ def test_channel_messages_start_is_last_message():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 10 messages
-    data = add_x_messages(user1, user2, channel1, 10)
+    add_x_messages(user1, user2, channel1, 10)
 
     assert channel_messages_v1(user1, channel1, 9)['start'] == 9,\
     "Start should not change"
@@ -243,7 +243,7 @@ def test_start_equals_num_messages():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 10 messages
-    data = add_x_messages(user1, user2, channel1, 10)
+    add_x_messages(user1, user2, channel1, 10)
 
     assert channel_messages_v1(user1, channel1, 10)['start'] == 10,\
     "Start should not change"
@@ -262,7 +262,7 @@ def test_channel_messages_v1_48_messages():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 48 messages with the message just being the message id
-    data = add_x_messages(user1, user2, channel1, 48)
+    add_x_messages(user1, user2, channel1, 48)
 
     assert channel_messages_v1(user1, channel1, 0)['start'] == 0,\
         "Start should not change"
@@ -282,7 +282,7 @@ def test_channel_messages_v1_51_messages_start_0():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
-    data = add_x_messages(user1, user2, channel1, 51)
+    add_x_messages(user1, user2, channel1, 51)
 
     assert channel_messages_v1(user1, channel1, 0)['start'] == 0,\
         "Start should not change"
@@ -302,7 +302,7 @@ def test_channel_messages_v1_51_messages_start_50():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
-    data = add_x_messages(user1, user2, channel1, 51)
+    add_x_messages(user1, user2, channel1, 51)
 
     assert channel_messages_v1(user1, channel1, 50)['start'] == 50,\
         "Start should not change"
@@ -322,7 +322,7 @@ def test_channel_messages_v1_111_messages_start_0():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1'] 
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    data = add_x_messages(user1, user2, channel1, 111)
+    add_x_messages(user1, user2, channel1, 111)
 
     assert channel_messages_v1(user1, channel1, 0)['start'] == 0,\
         "Start should not change"
@@ -349,7 +349,7 @@ def test_channel_messages_v1_111_messages_start_50():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    data = add_x_messages(user1, user2, channel1, 111)
+    add_x_messages(user1, user2, channel1, 111)
 
     assert channel_messages_v1(user1, channel1, 50)['start'] == 50,\
         "Start should not change"
@@ -376,7 +376,7 @@ def test_channel_messages_v1_111_messages_start_100():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    data = add_x_messages(user1, user2, channel1, 111)
+    add_x_messages(user1, user2, channel1, 111)
 
     assert channel_messages_v1(user1, channel1, 100)['start'] == 100,\
         "Start should not change"
@@ -403,7 +403,7 @@ def test_channel_messages_v1_start_21():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    data = add_x_messages(user1, user2, channel1, 111)
+    add_x_messages(user1, user2, channel1, 111)
 
     assert channel_messages_v1(user1, channel1, 21)['start'] == 21,\
         "Start should not change"
@@ -428,7 +428,7 @@ def test_channel_messages_v1_start_21_end_neg1():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id 
-    data = add_x_messages(user1, user2, channel1, 50)
+    add_x_messages(user1, user2, channel1, 50)
 
     assert channel_messages_v1(user1, channel1, 21)['start'] == 21,\
         "Start should not change"

@@ -36,7 +36,7 @@ def test_multiple_channels_joined():
     clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created
+    channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel1 created
     chid2 = channels_create_v1(a_u_id1['auth_user_id'], 'channel2', True) #Public channel2 created
     chid3 = channels_create_v1(a_u_id1['auth_user_id'], 'channel3', True) #Public channel3 created
     chid4 = channels_create_v1(a_u_id1['auth_user_id'], 'channel4', True) #Public channel4 created
@@ -113,7 +113,7 @@ def test_multiple_joiners():
 def test_private_channel():
     clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
     chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', False) #Private channel created
 
     with pytest.raises(AccessError):
@@ -123,8 +123,8 @@ def test_private_channel():
 def test_invalid_channel():
     clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    chid1 = channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
+    auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    channels_create_v1(a_u_id1['auth_user_id'], 'channel1', True) #Public channel created
 
     with pytest.raises(InputError):
         channel_join_v1('auth_user_id2', 123) #Channel_id2 doesn't exist
