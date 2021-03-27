@@ -316,7 +316,6 @@ def message_senddm_v1(token, dm_id, message):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
 
-
     # Creating a unique id for our message_id
     unique_message_id = int(uuid4())
     # Creating a timestamp for our time_created key for our messages dictionary
