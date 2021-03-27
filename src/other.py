@@ -12,7 +12,7 @@ def clear_v1():
     }
     return {}
 
-def search_v2(auth_user_id, query_str):
+def search_v2(token, query_str):
     
     data = retrieve_data()
 

@@ -25,7 +25,7 @@ def is_message_removed(msg_id):
 
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
-def channel_invite_v1(token, channel_id, u_id):
+def channel_invite_v2(token, channel_id, u_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
@@ -184,7 +184,7 @@ def channel_leave_v1(auth_user_id, channel_id):
     }
 
 # Function that allows a member to add themselves to a channel given that it is public
-def channel_join_v1(auth_user_id, channel_id):
+def channel_join_v2(auth_user_id, channel_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid
