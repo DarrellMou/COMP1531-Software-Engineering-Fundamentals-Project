@@ -200,7 +200,7 @@ def channel_leave_v1(token, channel_id):
     }
 
 # Function that allows a member to add themselves to a channel given that it is public
-def channel_join_v2(auth_user_id, channel_id):
+def channel_join_v1(auth_user_id, channel_id):
     data = retrieve_data()
 
     # Checks if given channel_id is valid

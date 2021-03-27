@@ -19,7 +19,7 @@ def clear_v1():
 
 def search_v2(token, query_str):
     
-    src.data.data = retrieve_data()
+    data = retrieve_data()
 
     # InputError occurs when query_str is longer than 1000 characters
     if len(query_str) > 1000: raise InputError("Query cannot be longer than 1000 characters")
@@ -34,18 +34,18 @@ def search_v2(token, query_str):
     for channel in data['channels']:
         for member in data['channels'][channel]['all_members']:
             if member == auth_user_id:
-                for message in data['channels'][channel]['messages']['message']:
+                for message in data['channels'][channel]['messages']:
                     # query_str is a substring of message 
-                    if query_str in message:
-                        collection_messages.append(message)
+                    if query_str in message['message']:
+                        collection_messages.append(message['message'])
     
     for dm in data['dms']:
         for member in data['dms'][dm]['members']:
             if member == auth_user_id:
-                for message in data['dm'][dm]['messages']['message']:
+                for message in data['dms'][dm]['messages']:
                     # query_str is a substring of message 
-                    if query_str in message:
-                        collection_messages.append(message)
+                    if query_str in message['message']:
+                        collection_messages.append(message['message'])
     
     return collection_messages
 

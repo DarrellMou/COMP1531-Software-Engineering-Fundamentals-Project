@@ -1,7 +1,7 @@
 import pytest
 from src.data import retrieve_data
 from src.error import InputError, AccessError
-from src.channel import channel_invite_v2, channel_join_v2 #channel_leave_v1
+from src.channel import channel_invite_v2, channel_join_v2, channel_leave_v1
 from src.channels import channels_create_v2
 from src.dm import dm_create_v1, dm_leave_v1
 from src.message import message_send_v2, message_senddm_v1
@@ -30,10 +30,10 @@ def test_search_standard(setup_user):
     channel_invite_v2(users['user1']['token'], channel_id1['channel_id'], users['user2']['auth_user_id'])
     message_send_v2(users['user2']['token'], channel_id1['channel_id'], "A message in channels")
 
-    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], "A message in channels")
 
-    assert len(search_v2(user['user2']['token'], 'message')) == 3
+    assert len(search_v2(users['user2']['token'], 'message')) == 3
 
 # Assumption: search_v2 is case sensitive
 # Testing the function returns nothing evne when its the same letters
@@ -45,7 +45,7 @@ def test_search_case_sensitive(setup_user):
     channel_invite_v2(users['user1']['token'], channel_id1['channel_id'], users['user2']['auth_user_id'])
     message_send_v2(users['user2']['token'], channel_id1['channel_id'], 'A message in channels')
 
-    assert len(search_v2(user['user2']['token'], 'Channels')) == 0
+    assert len(search_v2(users['user2']['token'], 'Channels')) == 0
 
 # Testing a query of more than 1000 characters
 def test_search_too_long(setup_user):
@@ -54,7 +54,7 @@ def test_search_too_long(setup_user):
     message_send_v2(users['user1']['token'], channel_id1['channel_id'], 'A message in no channels')
 
     with pytest.raises(InputError):
-        search_v2(user['user2']['token'], 'Channels', \
+        search_v2(users['user2']['token'], \
         "To manage the transition from trimesters to hexamesters in 2020, UNSW has \
          established a new focus on building an in-house digital collaboration and \
          communication tool for groups and teams to support the high intensity \
@@ -84,14 +84,14 @@ def test_search_leave_channel(setup_user):
     channel_join_v2(users['user3']['token'], channel_id1['channel_id'])
     message_send_v2(users['user3']['token'], channel_id1['channel_id'], 'Hi channel!')
 
-    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
 
-    assert len(search_v2(user['user2']['token'], 'channel')) == 4
+    assert len(search_v2(users['user2']['token'], 'channel')) == 4
 
-    #channel_leave_v1(users['user2']['token'], channel_id1)
+    channel_leave_v1(users['user2']['token'], channel_id1['channel_id'])
 
-    #assert len(search_v2(user['user2']['token'], 'channel')) == 1
+    assert len(search_v2(users['user2']['token'], 'channel')) == 1
 
 # Testing that search_v2 no longer returns the query in the dm the user left
 def test_search_leave_dm(setup_user):
@@ -105,11 +105,11 @@ def test_search_leave_dm(setup_user):
     channel_join_v2(users['user3']['token'], channel_id1['channel_id'])
     message_send_v2(users['user3']['token'], channel_id1['channel_id'], 'Hi channel!')
 
-    dm_id1 = dm_create_v1(users['user2']['token'], users['user3']['auth_user_id'])
+    dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
 
-    assert len(search_v2(user['user2']['token'], 'channel')) == 4
+    assert len(search_v2(users['user2']['token'], 'channel')) == 4
 
-    dm_leave_v1(users['user2']['token'], dm_id1)
+    dm_leave_v1(users['user2']['token'], dm_id1['dm_id'])
 
-    assert len(search_v2(user['user2']['token'], 'channel')) == 3
+    assert len(search_v2(users['user2']['token'], 'channel')) == 3
