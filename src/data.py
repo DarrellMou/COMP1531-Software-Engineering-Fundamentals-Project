@@ -1,4 +1,3 @@
-
 # Iteration 1 test data
 data = {
     'users' : {
@@ -9,6 +8,19 @@ data = {
             'password' : 'password1',
             'handle_str' : 'first_name1last_name',
             'permission_id': 1,
+            'is_removed': False,
+            'notifications' : [
+                {
+                    'channel_id': 14723573315,
+                    'dm_id': -1,
+                    'notification_message': 'Hello World1',
+                },
+                {
+                    'channel_id': -1,
+                    'dm_id': 4561328123,
+                    'notification_message': 'Hello World2',
+                },
+            ]
         },
         11753764853 : {
             'name_first' : 'first_name2',
@@ -17,6 +29,19 @@ data = {
             'password' : 'password2',
             'handle_str' : 'first_name2last_name',
             'permission_id': 2,
+            'is_removed': False,
+            'notifications' : [
+                {
+                    'channel_id': 14723573315,
+                    'dm_id': -1,
+                    'notification_message': 'Hello World3',
+                },
+                {
+                    'channel_id': -1,
+                    'dm_id': 4561328124,
+                    'notification_message': 'Hello World4',
+                },
+            ]
         },
     },
     'channels' : {
@@ -31,12 +56,14 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 123416589,
+                    'is_removed': False,
                 },
                 {
                     'message_id': 61510648893,
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 123456789,
+                    'is_removed': False,
                 },
             ]
         },
@@ -51,13 +78,15 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 45132806512,
+                    'is_removed': False,
                 },
                 {
                     'message_id': 123156231064,
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
-                },
+                    'is_removed': False,
+                }
             ],
         },
     },

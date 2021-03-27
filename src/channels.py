@@ -1,4 +1,5 @@
 from src.data import retrieve_data
+from src.auth import auth_decode_token
 import uuid
 
 from src.error import InputError, AccessError
@@ -41,6 +42,11 @@ def channels_list_v1(auth_user_id):
     return{
         'channels': channel_list
     }
+
+# 2nd version of channels list that requires authenticated token
+def channels_list_v2(token):
+    user_id = auth_decode_token(token)
+    return channels_list_v1(user_id)
 
 # Provide a list of all channels (and their associated details)
 def channels_listall_v2(token):

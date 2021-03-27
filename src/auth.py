@@ -1,3 +1,7 @@
+'''
+from error import InputError 
+from data import retrieve_data
+'''
 from src.error import InputError 
 from src.data import retrieve_data
 
@@ -31,7 +35,7 @@ def auth_email_format(email):
 
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
-def auth_login_v1(email, password):  
+def auth_login_v2(email, password):  
 
     data = retrieve_data()
 
