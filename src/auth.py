@@ -46,10 +46,6 @@ def auth_login_v1(email, password):
         data_email = data['users'][key_it]['email']
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
-        print(email)
-        print(data_email)
-        print(auth_password_hash(password))
-        print(data_password)
         if email == data_email and auth_password_hash(password) == data_password:
             return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it)}        
     raise InputError
