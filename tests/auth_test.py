@@ -7,6 +7,8 @@ from src.other import clear_v1
 
 import time
 
+from src.other import clear_v1
+import json
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
@@ -38,7 +40,7 @@ def test_auth_email_format():
 
 def test_auth_login_v1(test_users):
     loginResponse = auth_login_v1('user1@email.com', 'User1_pass!')
-    assert loginResponse['auth_user_id'] == test_users['login1']['auth_user_id']
+    assert loginResponse['auth_user_id'] == f"{test_users['login1']['auth_user_id']}"
 
     with pytest.raises(InputError):
         auth_login_v1('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
@@ -47,10 +49,11 @@ def test_auth_login_v1(test_users):
 
 def test_auth_register_v1():
     clear_v1()
-    data = retrieve_data()
 
     registerDict = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
-    assert data['users'][registerDict['auth_user_id']]['handle_str'] == 'bobbuilder'
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+    assert data['users'][f"{registerDict['auth_user_id']}"]['handle_str'] == 'bobbuilder'
 
     with pytest.raises(InputError):
         auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)
@@ -59,26 +62,30 @@ def test_auth_register_v1():
     with pytest.raises(InputError):
         auth_register_v1('sampleemail2@gmail.com', '12345', 'test', 'user1') # password too short, less than 6 chars
     with pytest.raises(InputError):
-        auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
+        auth_register_v1('sampleemail3@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
 
 def test_auth_register_v1_nonunique_handle():
     clear_v1()
-    data = retrieve_data()
-
+    
     r1 = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     r2 = auth_register_v1('example2@hotmail.com', 'password1', 'bob', 'builder')
 
-    assert data['users'][r1['auth_user_id']]['handle_str'] == 'bobbuilder'
-    assert data['users'][r2['auth_user_id']]['handle_str'] == 'bobbuilder0'
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
+    print(data['users'])
+    assert data['users'][f"{r1['auth_user_id']}"]['handle_str'] == 'bobbuilder'
+    assert data['users'][f"{r2['auth_user_id']}"]['handle_str'] == 'bobbuilder0'
 
 def test_check_auth_permissions(test_users):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
-    assert data['users'][test_users['login1']['auth_user_id']]['permission_id'] == 1 # admin
-    assert data['users'][test_users['login2']['auth_user_id']]['permission_id'] == 2 # non-admin
-    assert data['users'][test_users['login3']['auth_user_id']]['permission_id'] == 2 # etc
-    assert data['users'][test_users['login4']['auth_user_id']]['permission_id'] == 2
-    assert data['users'][test_users['login5']['auth_user_id']]['permission_id'] == 2
+    assert data['users'][f"{test_users['login1']['auth_user_id']}"]['permission_id'] == 1 # admin
+    assert data['users'][f"{test_users['login2']['auth_user_id']}"]['permission_id'] == 2 # non-admin
+    assert data['users'][f"{test_users['login3']['auth_user_id']}"]['permission_id'] == 2 # etc
+    assert data['users'][f"{test_users['login4']['auth_user_id']}"]['permission_id'] == 2
+    assert data['users'][f"{test_users['login5']['auth_user_id']}"]['permission_id'] == 2
 
 def test_encode_decode_token(test_users):
     token = auth_encode_token(test_users['login1']['auth_user_id'])

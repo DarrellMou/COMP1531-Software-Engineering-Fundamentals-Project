@@ -10,6 +10,8 @@ import jwt
 import hashlib 
 from flask import jsonify, request, Blueprint, abort, make_response
 
+import json
+
 SECRET = 'CHAMPAGGNE?'
 TOKEN_DURATION=5 # 5 seconds
 
@@ -35,9 +37,9 @@ def auth_email_format(email):
 
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
-def auth_login_v2(email, password):  
-
-    data = retrieve_data()
+def auth_login_v1(email, password):  
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Checks for invalid email format
     if auth_email_format(email) == False:
@@ -56,7 +58,8 @@ def auth_login_v2(email, password):
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Checks for invalid email format
     if auth_email_format(email) == False:
@@ -107,10 +110,15 @@ def auth_register_v1(email, password, name_first, name_last):
         for epilogue in itertools.count(0, 1):
             if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
                 data['users'][new_auth_user_id]['handle_str'] = new_handle + str(epilogue)
-                return {'auth_user_id' : new_auth_user_id}
+                with open("data.json", "w") as FILE:
+                    json.dump(data, FILE)
+                return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
+        with open("data.json", "w") as FILE:
+            json.dump(data, FILE)
         return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
+        
 
 """
 Generate and return an expirable token based on auth_user_id

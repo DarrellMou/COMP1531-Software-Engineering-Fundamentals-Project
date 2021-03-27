@@ -4,16 +4,29 @@ from data import data, retrieve_data
 from auth import auth_token_ok, auth_decode_token, auth_register_v1
 '''
 from src.error import InputError, AccessError 
-from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
-import src.data
+import json
 
 def clear_v1():
     src.data.data = {
         "users" : {},
         "channels" : {},
-        "dms": {},
+        "dms" : {},
         "messages" : []
+    }
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
+
+def search_v1(auth_user_id, query_str):
+    return {
+        'messages': [
+            {
+                'message_id': 1,
+                'auth_user_id': 1,
+                'message': 'Hello world',
+                'time_created': 1582426789,
+            }
+        ],
     }
     return {}
 
