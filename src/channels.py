@@ -6,7 +6,7 @@ from src.error import InputError, AccessError
 from src.auth import auth_token_ok, auth_decode_token
 
 from flask import jsonify, request, Blueprint, make_response
-from json import dumps
+import json
 # bp stands for blueprint, they are components of the DREAMS communication tool
 bp = Blueprint('channels', __name__, url_prefix='/')
 
@@ -50,8 +50,8 @@ def channels_list_v2(token):
 
 # Provide a list of all channels (and their associated details)
 def channels_listall_v2(token):
-
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
     
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
@@ -67,6 +67,9 @@ def channels_listall_v2(token):
         }
         channel_listall.append(channel_details)
 
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
+
     return {
         'channels': channel_listall
     }
@@ -74,8 +77,8 @@ def channels_listall_v2(token):
 
 # Creates a new channel with that name that is either a public or private channel
 def channels_create_v2(token, name, is_public):
-
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # InputError occurs when creating a channel name longer than 20 characters
     if len(name) > 20: raise InputError("Channel name cannot be longer than 20 characters")
@@ -96,6 +99,9 @@ def channels_create_v2(token, name, is_public):
         'messages' : [],
     }   
 
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
+
     return {
         'channel_id': channel_id
     }
@@ -114,11 +120,11 @@ def create_channels():
 
     responseObj = channels_create_v2(token, name, is_public)
 
-    return dumps(responseObj)
+    return json.dumps(responseObj)
 
 @bp.route('listall', methods=['GET'])
 def listall_channels():
     token = request.json['token']
 
-    return dumps(channels_listall_v2(token))
+    return json.dumps(channels_listall_v2(token))
 
