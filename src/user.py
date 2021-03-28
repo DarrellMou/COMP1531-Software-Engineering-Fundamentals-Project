@@ -38,25 +38,26 @@ def user_profile_v2():
             'handle_str'   : userDict['handle_str']
            }))
 
-def user_profile_v1(token, u_id):
-    return {
-        'user': {
-            'auth_user_id': 1,
-            'email': 'cs1531@cse.unsw.edu.au',
-            'name_first': 'Hayden',
-            'name_last': 'Jacobs',
-            'handle_str': 'haydenjacobs',
-        },
-    }
 
-def user_profile_setname_v1(token, name_first, name_last):
-    return {
-    }
+@bp.route('user/profile/setname/v2', methods=['PUT'])
+def user_profile_setname_v2():
 
-def user_profile_setemail_v1(token, email):
-    return {
-    }
+    data = retrieve_data()
 
-def user_profile_sethandle_v1(token, handle_str):
-    return {
-    }
+    token = request.json['token']
+    name_first = request.json['name_first']
+    name_last = request.json['name_last']
+
+    if len(name_first) not in range(1, 50) or len(name_last) not in range(1, 50):
+        raise InputError('invalid name length')
+
+    if not auth_token_ok(token):
+        raise InputError('invalid token')
+
+    auth_user_id = auth_decode_token(token)
+
+    if auth_user_id in data['users']:
+        data['users'][auth_user_id]['name_last'] = name_last
+        data['users'][auth_user_id]['name_first'] = name_first
+
+    return make_response(jsonify({}))
