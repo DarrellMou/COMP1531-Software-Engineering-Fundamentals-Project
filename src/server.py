@@ -57,8 +57,10 @@ if __name__ == "__main__":
     # load the database from .p only when we're actually running the server, 
     # for tests just use the default values in data.py
     if not os.path.isfile('database.p'):
-        print('WHERE IS DATABASE.p?')
-        quit() 
+        print('No database, creating one now')
+        f = open('database.p', 'wb')
+        pickle.dump(data, f)
+        f.close()
 
     f = open('database.p', 'rb')
     data = pickle.load(f)
