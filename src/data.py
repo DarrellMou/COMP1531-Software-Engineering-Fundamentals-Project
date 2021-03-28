@@ -1,7 +1,45 @@
 from src.other import clear_v1
+import pickle
 
 # Iteration 1 test data
-data = {
+
+#DBInited = False
+
+class ListeningDict(dict):
+    # override base class method
+    def __init__(self, initialDict):
+        # global DBInited
+        # if DBInited == False:
+        #     f = open('database.p', 'rb')
+        #     initialDict = pickle.load(f)
+        #     f.close()
+        #     DBInited = True
+
+        # recursively replace nested dictionaries with instance of ListeningDict
+        for k,v in initialDict.items():
+          if isinstance(v,dict):
+            initialDict[k] = ListeningDict(v)
+
+        # call super class method to perform the actual insertion
+        super().__init__(initialDict)
+
+    # override base class method
+    def __setitem__(self, item, value):
+        # replace all instances of dict with ListeningDict
+        if isinstance(value,dict):
+          value = ListeningDict(value)
+
+        # call superclass method 
+        super().__setitem__(item, value)
+
+        f=open('database.p', 'wb')
+        pickle.dump(data, f, 0)
+        f.close()
+
+
+# this initialization with some default values exists only because some previous tests depend on them
+# whatever, just leave it as default values in case database.p disappears or corrupted
+data = ListeningDict({
     'users' : {
         35746842521 : {
             'name_first' : 'first_name1',
@@ -62,7 +100,7 @@ data = {
             ],
         },
     },
-}
+})
 
 
 # Function to reset the data to default (assists in testing)
