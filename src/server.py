@@ -58,13 +58,12 @@ if __name__ == "__main__":
     # for tests just use the default values in data.py
     if not os.path.isfile('database.p'):
         print('No database, creating one now')
-        f = open('database.p', 'wb')
-        pickle.dump(data, f)
-        f.close()
+        with open("database.p", "wb") as FILE:
+            pickle.dump(data, FILE)
 
-    f = open('database.p', 'rb')
-    data = pickle.load(f)
-    f.close()
+
+    with open("database.p", "rb") as FILE:
+        pickle.load(FILE)
 
     APP = create_app()
     APP.run(port=config.port) # Do not edit this port

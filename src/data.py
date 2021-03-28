@@ -20,7 +20,7 @@ class ListeningDict(dict):
           if isinstance(v,dict):
             initialDict[k] = ListeningDict(v)
 
-        # call super class method to perform the actual insertion
+        # call super class method to perform the actual initialisation 
         super().__init__(initialDict)
 
     # override base class method
@@ -29,12 +29,12 @@ class ListeningDict(dict):
         if isinstance(value,dict):
           value = ListeningDict(value)
 
-        # call superclass method 
+        # call superclass method to perform actual setting
         super().__setitem__(item, value)
 
-        f=open('database.p', 'wb')
-        pickle.dump(data, f, 0)
-        f.close()
+        # write data to file, if there isn't a database, create one from the default below
+        with open("database.p", "wb") as FILE:
+            pickle.dump(data, FILE)
 
 
 # this initialization with some default values exists only because some previous tests depend on them
