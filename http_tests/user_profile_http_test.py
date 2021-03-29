@@ -62,7 +62,6 @@ def test_user_profile_setname(client):
 
 def test_user_profile_setname_invalid_token(client):
 	response = client.post('/register', json={'email':'example1@outlook.com', 'password':'1234567ABC', 'first_name':'example_firstname', 'last_name':'example_lastname'})
-	json_data_register = response.get_json() # or just json
 
 	response = client.put('/user/profile/setname/v2', json={'token' : 'somerandomThing', 'name_first' : 'changedFirstname', 'name_last' : 'changedLastname'})
 	json_data_setname = response.get_json() # or just json
