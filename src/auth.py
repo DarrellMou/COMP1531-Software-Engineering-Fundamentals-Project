@@ -56,21 +56,18 @@ def auth_login_v2(email, password):
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
-    data = retrieve_data()
 
+    data = retrieve_data()
     # Checks for invalid email format
     if auth_email_format(email) == False:
         raise InputError
-
     # Checks for an already existing email address
     elif any(email == data['users'][key_it]['email']\
     for key_it in data['users']):
         raise InputError
-
     # Ensuring password is over 5 characters
     elif len(password) < 6:
         raise InputError
-
     # Checks that name_first is not between 1 and 50 characters inclusively in length
     elif len(name_first) > 50 or len(name_first) < 1\
         or len(name_last) > 50 or len(name_last) < 1:
@@ -85,7 +82,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
-    # Type 1 is owner, Type 2 is member 
+    # type 1 is owner, type 2 is member 
     if not data['users']:
         permission_id = 1
     else:
