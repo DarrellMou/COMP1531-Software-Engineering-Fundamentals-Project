@@ -86,11 +86,10 @@ def admin_user_remove_v1(token, u_id):
         for member in data['channels'][channel]['all_members']:
             if u_id in data['channels'][channel]['all_members']:
                 for message in data['channels'][channel]['messages']:
-                    if data['channels'][channel]['messages'][message]['u_id'] == u_id:
-                        data['channels'][channel]['messages'][message]['message']. \
-                        replace(data['channels'][channel]['messages'][message]['message'], 'Removed user')
-                        data['dms'][dm]['messages'][message]['is_removed'] = True
-                del(data['channels'][channel]['all_members'][member])
+                    if message['u_id'] == u_id:
+                        message['message'].replace(message['message'], 'Removed user')
+                        message['is_removed'] = True
+                data['channels'][channel]['all_members'].remove(member)
                 break
 
     # Replace dm message with 'Removed user'
@@ -98,26 +97,26 @@ def admin_user_remove_v1(token, u_id):
         for member in data['dms'][dm]['members']:
             if u_id in data['dms'][dm]['members']:
                 for message in data['dms'][dm]['messages']:
-                    if data['dms'][dm]['messages'][message]['u_id'] == u_id:
-                        data['dms'][dm]['messages'][message]['message']. \
-                        replace(data['dms'][dm]['messages'][message]['message'], 'Removed user')
-                        data['dms'][dm]['messages'][message]['is_removed'] = True   
-                del(data['dms'][dm]['members'][member])
+                    if message['u_id'] == u_id:
+                        message['message'].replace(message['message'], 'Removed user')
+                        message['is_removed'] = True   
+                data['dms'][dm]['members'].remove(member)
                 break
 
     # Replace any messages from u_id with 'Removed user'
     for message in data['messages']:
-        if data['messages'][message]['u_id'] == u_id:
-            data['messages'][message]['message'].replace(data['messages'][message]['message'], 'Removed user')
-            data['messages'][message]['is_removed'] = True   
+        if message['u_id'] == u_id:
+            message['message'].replace(message['message'], 'Removed user')
+            message['is_removed'] = True   
             break
 
     # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
-        if data['users'][user]['u_id'] == u_id:
+        if user == u_id:
             data['users'][user]['name_first'].replace(data['users'][user]['name_first'], 'Removed user')
             data['users'][user]['is_removed'] = True
+            break
     
     return {}
 
