@@ -1,5 +1,6 @@
 import pytest
-
+import requests
+'''
 from src.server import create_app
 from src.other import clear_v1
 
@@ -19,7 +20,7 @@ def client(app_for_testing):
 @pytest.fixture(autouse=True)
 def reset():
 	clear_v1()
-
+'''
 
 @pytest.fixture
 def setup_user_dict(reset):
@@ -68,22 +69,22 @@ def setup_user_dict(reset):
 
 
 @pytest.fixture
-def setup_user_data(client, setup_user_dict):
+def setup_user_data(setup_user_dict):
     
     user1 = setup_user_dict['user1_dict']
-    user1_details = client.post('/register', json=user1).get_json()
+    user1_details = requests.post('/register', json=user1).get_json()
 
     user2 = setup_user_dict['user2_dict']
-    user2_details = client.post('/register', json=user2).get_json()
+    user2_details = requests.post('/register', json=user2).get_json()
 
     user3 = setup_user_dict['user3_dict']
-    user3_details = client.post('/register', json=user3).get_json()
+    user3_details = requests.post('/register', json=user3).get_json()
 
     user4 = setup_user_dict['user4_dict']
-    user4_details = client.post('/register', json=user4).get_json()
+    user4_details = requests.post('/register', json=user4).get_json()
 
     user5 = setup_user_dict['user5_dict']
-    user5_details = client.post('/register', json=user5).get_json()
+    user5_details = requests.post('/register', json=user5).get_json()
     
     return {
         'user1' : user1_details,

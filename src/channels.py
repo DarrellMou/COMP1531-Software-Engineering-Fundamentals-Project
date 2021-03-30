@@ -100,7 +100,7 @@ def channels_create_v2(token, name, is_public):
         'channel_id': channel_id
     }
 
-
+'''
 #################################################################################
 #                                API ROUTES                                     #
 #   * channels_list, channels_listall, channels_create                          #
@@ -122,4 +122,4 @@ def listall_channels():
     token = request.json['token']
 
     return json.dumps(channels_listall_v2(token))
-
+'''

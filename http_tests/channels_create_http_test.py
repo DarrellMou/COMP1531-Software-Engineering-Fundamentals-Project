@@ -1,5 +1,56 @@
 from http_tests import * # import fixtures for pytest
 
+import json
+import requests
+import pytest
+
+BASE_URL = 'http://127.0.0.1:8080/'
+
+def test_channels_create_access_error(setup_user_data):
+    users = setup_user_data
+
+    # Invalidate an existing token to guarantee a token is invalid 
+    invalid_token = users['user1']['token']
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+        'token': invalid_token
+    })
+
+    # Ensure AccessError
+    assert requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': invalid_token,
+        'name': 'Name',
+        'is_public': True,
+    }).status_code == 403
+
+
+# error when creating a channel name longer than 20 characters
+def test_channels_create_input_error(setup_user_data):
+    users = setup_user_data
+
+    # Invalidate an existing token to guarantee a token is invalid 
+    invalid_token = users['user1']['token']
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+        'token': invalid_token
+    })
+
+    # public channel with namesize > 20 characters
+    requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': invalid_token,
+        'name': 'wayyyytoolongggggoffffffaaaaaanameeeeeeee',
+        'is_public': True,
+    }).status_code == 400
+
+    # Ensure input error: private channel with namesize > 20 characters
+    requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': invalid_token,
+        'name': 'wayyyytoolongggggoffffffaaaaaanameeeeeeee',
+        'is_public': False,
+    }).status_code == 400
+
+
+
+
+'''
 def test_channels_create_access_error(client, setup_user_data):
     users = setup_user_data
 
@@ -115,7 +166,7 @@ def test_channels_create_valid_basic(client, setup_user_data):
     assert channel_details['all_members'][0]['u_id'] == users['user1']['u_id']
     assert channel_details['all_members'][0]['name_first'] == 'user1_first'
     assert channel_details['all_members'][0]['name_last'] == 'user1_last'
-
+'''
 
 
 
