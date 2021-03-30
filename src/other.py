@@ -79,12 +79,12 @@ def admin_user_remove_v1(token, u_id):
         member_flag = False
         for member in data['channels'][channel]['owner_members']:
             owner_flag += 1
-            if data['channels'][channel]['owner_members'][member]['u_id'] == u_id: member_flag = True
+            if u_id in data['channels'][channel]['owner_members']: member_flag = True
         if member_flag == True and owner_flag == 1:
             raise InputError("The user is the only owner of a channel")
 
         for member in data['channels'][channel]['all_members']:
-            if data['channels'][channel]['all_members'][member]['u_id'] == u_id:
+            if u_id in data['channels'][channel]['all_members']:
                 for message in data['channels'][channel]['messages']:
                     if data['channels'][channel]['messages'][message]['u_id'] == u_id:
                         data['channels'][channel]['messages'][message]['message']. \
@@ -96,7 +96,7 @@ def admin_user_remove_v1(token, u_id):
     # Replace dm message with 'Removed user'
     for dm in data['dms']:
         for member in data['dms'][dm]['members']:
-            if data['dms'][dm]['members'][member]['u_id'] == u_id:
+            if u_id in data['dms'][dm]['members']:
                 for message in data['dms'][dm]['messages']:
                     if data['dms'][dm]['messages'][message]['u_id'] == u_id:
                         data['dms'][dm]['messages'][message]['message']. \
