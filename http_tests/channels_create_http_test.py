@@ -77,12 +77,12 @@ def test_channels_create_no_name(client, setup_user_data):
         'token': users['user1']['token'],
         'name': "",
         'is_public': True,
-    }).json()
+    }).get_json()
 
     # ensure channels_listall returns correct values
-    channel_list = client.post('/listall', params={
+    channel_list = client.post('/listall', json={
         'token': users['user3']['token'],
-    }).json()
+    }).get_json()
 
     assert channel_list['channels'][0]['channel_id'] == channel_id1['channel_id']
     assert channel_list['channels'][0]['name'] == ''
@@ -95,18 +95,18 @@ def test_channels_create_valid_basic(client, setup_user_data):
     # Creating a basic public channel
     channel_id = client.post('/create', json={
         'token': users['user1']['token'],
-        'name': 'Basic Stuff',
+        'name': "Basic Stuff",
         'is_public': True,
-    }).json()
+    }).get_json()
 
     # Check that channels_create has returned a valid id (integer value)
     assert isinstance(channel_id['channel_id'], int)
 
     # Check that channel details have all been set correctly
-    channel_details = client.post('/details', params={
+    channel_details = client.post('/details', json={
         'token': users['user1']['token'],
         'channel_id': channel_id['channel_id'],
-    }).json()
+    }).get_json()
 
     assert channel_details['name'] == 'Basic Stuff'
     assert channel_details['owner_members'][0]['u_id'] == users['user1']['u_id']

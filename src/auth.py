@@ -1,7 +1,3 @@
-'''
-from error import InputError 
-from data import retrieve_data
-'''
 from src.error import InputError 
 from src.data import retrieve_data
 
@@ -9,8 +5,6 @@ import datetime
 import jwt
 import hashlib 
 from flask import jsonify, request, Blueprint, abort, make_response
-
-import json
 
 SECRET = 'CHAMPAGGNE?'
 TOKEN_DURATION=5 # 5 seconds
@@ -38,8 +32,8 @@ def auth_email_format(email):
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
 def auth_login_v1(email, password):  
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+
+    data = retrieve_data()
 
     # Checks for invalid email format
     if auth_email_format(email) == False:
@@ -51,29 +45,25 @@ def auth_login_v1(email, password):
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
         if email == data_email and auth_password_hash(password) == data_password:
-            return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it)}        
+            return {'auth_user_id' : key_it}        
     raise InputError
 
 
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
 
+    data = retrieve_data()
     # Checks for invalid email format
     if auth_email_format(email) == False:
         raise InputError
-
     # Checks for an already existing email address
     elif any(email == data['users'][key_it]['email']\
     for key_it in data['users']):
         raise InputError
-
     # Ensuring password is over 5 characters
     elif len(password) < 6:
         raise InputError
-
     # Checks that name_first is not between 1 and 50 characters inclusively in length
     elif len(name_first) > 50 or len(name_first) < 1\
         or len(name_last) > 50 or len(name_last) < 1:
@@ -88,7 +78,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
-    # Type 1 is owner, Type 2 is member 
+    # type 1 is owner, type 2 is member 
     if not data['users']:
         permission_id = 1
     else:
@@ -100,8 +90,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'email' : email,
         'password' : auth_password_hash(password),
         'handle_str' : '',
-        'permission_id': permission_id,
-        'dms': [],
+        'permission_id': permission_id
     }
 
     # Check to see if the handle is unique
@@ -110,15 +99,10 @@ def auth_register_v1(email, password, name_first, name_last):
         for epilogue in itertools.count(0, 1):
             if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
                 data['users'][new_auth_user_id]['handle_str'] = new_handle + str(epilogue)
-                with open("data.json", "w") as FILE:
-                    json.dump(data, FILE)
-                return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
+                return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
-        with open("data.json", "w") as FILE:
-            json.dump(data, FILE)
-        return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
-        
+        return {'auth_user_id' : new_auth_user_id}
 
 """
 Generate and return an expirable token based on auth_user_id
@@ -177,8 +161,8 @@ def auth_register_v2():
     responseObj = auth_register_v1(request.json['email'], request.json['password'], 
                         request.json['first_name'], request.json['last_name'])
     
-    # token = auth_encode_token(responseObj['auth_user_id'])
-    # responseObj['token'] = token 
+    token = auth_encode_token(responseObj['auth_user_id'])
+    responseObj['token'] = token 
 
     return make_response(jsonify(responseObj)), 201
 
@@ -190,8 +174,8 @@ def auth_login_v2():
         return make_response(jsonify(responseObj)), 408
 
     responseObj = auth_login_v1(request.json['email'], request.json['password'])
-    # token = auth_encode_token(responseObj['auth_user_id'])
-    # responseObj['token'] = token
+    token = auth_encode_token(responseObj['auth_user_id'])
+    responseObj['token'] = token
     if responseObj['auth_user_id'] in blacklist:
         blacklist.remove(responseObj['auth_user_id'])
 
@@ -209,4 +193,3 @@ def auth_logout_v1():
     else:
         responseObj = {'is_success':False}
         return make_response(jsonify(responseObj)), 408
-
