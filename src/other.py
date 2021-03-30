@@ -87,7 +87,7 @@ def admin_user_remove_v1(token, u_id):
             if u_id in data['channels'][channel]['all_members']:
                 for message in data['channels'][channel]['messages']:
                     if message['u_id'] == u_id:
-                        message['message'].replace(message['message'], 'Removed user')
+                        message['message'] = "Removed user"
                         message['is_removed'] = True
                 data['channels'][channel]['all_members'].remove(member)
                 break
@@ -98,7 +98,7 @@ def admin_user_remove_v1(token, u_id):
             if u_id in data['dms'][dm]['members']:
                 for message in data['dms'][dm]['messages']:
                     if message['u_id'] == u_id:
-                        message['message'].replace(message['message'], 'Removed user')
+                        message['message'] = "Removed user"
                         message['is_removed'] = True   
                 data['dms'][dm]['members'].remove(member)
                 break
