@@ -348,6 +348,31 @@ def message_senddm_v1(token, dm_id, message):
     #f = open("demofile3.txt", "w")
     #f.write(data)
 
+    # Create notification if someone is tagged
+    tag = re.search("^@.* ", message)
+    if tag != None:
+        tag = tag[1:-1]
+        tagged = 0
+
+        # Search for the tagged user within all_members and get their auth_id
+        for member in data['dms'][dm_id]['members']:
+            if (tag == data['users'][member]['handle_str']):
+                tagged = member
+        
+        notification = {
+        'channel_id' : -1,
+        'dm_id' : dm_id,
+        ('notification_message' : (str(data['users'][user_id]['handle_str'])
+        + " tagged you in " + str(data['dms'][dm_id]['name']))
+        + ":" + str(message[0:20]))
+        }
+        # Make sure notification list is len 20
+        if len(data['users'][tagged]['notifications']) == 20:
+            data['users'][tagged]['notifications'].pop(0)
+        # Append new notification to end of list
+        data['users'][tagged]['notifications'].append(notification)
+
+
     return {
         'message_id': unique_message_id
     }
