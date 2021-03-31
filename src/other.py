@@ -1,6 +1,14 @@
 import json
+import src.data
 
 def clear_v1():
+    src.data.data = {
+        "users" : {},
+        "channels" : {}
+    }
+    return {}
+
+    '''
     data = {
         "users" : {},
         "channels" : {},
@@ -9,7 +17,7 @@ def clear_v1():
     }
     with open("data.json", "w") as FILE:
         json.dump(data, FILE)
-
+'''
 def search_v2(token, query_str):
     
     data = retrieve_data()
