@@ -4,11 +4,11 @@ from src.channels import channels_create_v2, channels_listall_v2
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
-#################################################################################
-#                       Tests channels_create                                   #
-#   * uses pytest fixtures from src.conftest                                    #
-#                                                                               #                                                                      #
-#################################################################################
+######################### Tests channels_create ##########################
+                                                         
+#   * uses pytest fixtures from src.conftest                                    
+                                                                                                                                                 #
+##########################################################################
 
 # error when creating a channel with an invalid token
 def test_channels_create_access_error():
@@ -51,10 +51,10 @@ def test_channels_create_same_name(setup_user):
     # ensure channels_listall returns correct values
     channel_list = channels_listall_v2(users['user3']['token'])
 
-    assert channel_list['channels'][0]['channel_id'] == channel_id2['channel_id']
+    assert channel_list['channels'][0]['channel_id'] == f"{channel_id2['channel_id']}"
     assert channel_list['channels'][0]['name'] == 'Public Channel'
 
-    assert channel_list['channels'][1]['channel_id'] == channel_id3['channel_id']
+    assert channel_list['channels'][1]['channel_id'] == f"{channel_id3['channel_id']}"
     assert channel_list['channels'][1]['name'] == 'Public Channel'
 
 
@@ -68,7 +68,7 @@ def test_channels_create_no_name(setup_user):
     # ensure channels_listall returns correct values
     channel_list = channels_listall_v2(users['user3']['token'])
 
-    assert channel_list['channels'][0]['channel_id'] == channel_id4['channel_id']
+    assert channel_list['channels'][0]['channel_id'] == f"{channel_id4['channel_id']}"
     assert channel_list['channels'][0]['name'] == ''
 
     

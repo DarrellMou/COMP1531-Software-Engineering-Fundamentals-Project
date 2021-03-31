@@ -7,15 +7,19 @@ from src.error import InputError, AccessError
 from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
 import src.data
+import json
 
 def clear_v1():
-    src.data.data = {
+    #src.data.
+    data = {
         "users" : {},
         "channels" : {},
         "dms": {},
         "messages" : []
     }
-    return {}
+    #return {}
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
 def search_v2(token, query_str):
     
@@ -38,7 +42,6 @@ def search_v2(token, query_str):
                     # query_str is a substring of message 
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
-                break
     
     for dm in data['dms']:
         for member in data['dms'][dm]['members']:
@@ -47,7 +50,6 @@ def search_v2(token, query_str):
                     # query_str is a substring of message 
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
-                break
     
     return collection_messages
 
@@ -145,4 +147,3 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
         if admin_flag <= 1: raise InputError("The user is currently the only owner")
 
     data['users'][u_id]['permission_id'] = permission_id
-

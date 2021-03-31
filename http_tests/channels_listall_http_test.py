@@ -1,0 +1,87 @@
+from http_tests import * # import fixtures for pytest
+
+import json
+import requests
+import pytest
+
+BASE_URL = 'http://127.0.0.1:8080/'
+
+# error when listing channels with an invalid token
+def test_channels_listall_invalid_user(setup_user_data):
+    users = setup_user_data
+
+    # Invalidate an existing token to guarantee a token is invalid 
+    invalid_token = users['user1']['token']
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+        'token': invalid_token
+    })
+
+    # Ensure AccessError
+    assert requests.get(f'{BASE_URL}/channels/listall/v2', json={
+        'token': invalid_token,
+    }).status_code == 405
+
+# listing channels with none created
+def test_channels_listall_empty(setup_user_data):
+    users = setup_user_data
+
+    assert requests.get(f'{BASE_URL}/channels/listall/v2', json={
+        'token': users['user1']['token'],
+    }).json() == {'channels': []}
+
+# listing a single channel
+def test_channels_listall_single(setup_user_data):
+    users = setup_user_data
+
+    # Creating a basic public channel
+    channel_id = requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': users['user1']['token'],
+        'name': 'Basic Stuff',
+        'is_public': True,
+    }).json()
+
+    # ensure channels_listall returns correct values
+    channel_list = requests.get(f'{BASE_URL}/channels/listall/v2', json={
+        'token': users['user1']['token'],
+    }).json()
+
+    assert channel_list['channels'][0]['channel_id'] == channel_id['channel_id']
+    assert channel_list['channels'][0]['name'] == 'Basic Stuff'
+
+# listing multiple channels
+def test_channels_listall_multiple(setup_user_data):
+
+    users = setup_user_data
+
+    channel_id3 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': users['user3']['token'],
+        'name': 'Public3',
+        'is_public': True,
+    }).json()
+
+    channel_id4 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': users['user2']['token'],
+        'name': 'Private4',
+        'is_public': False,
+    }).json()
+
+    channel_id5 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+        'token': users['user1']['token'],
+        'name': 'Public5',
+        'is_public': True,
+    }).json()
+
+    # ensure channels_listall returns correct values
+    channel_list = requests.get(f'{BASE_URL}/channels/listall/v2', json={
+        'token': users['user1']['token'],
+    }).json()
+
+    assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
+    assert channel_list['channels'][0]['name'] == 'Public3'
+
+    assert channel_list['channels'][1]['channel_id'] == channel_id4['channel_id']
+    assert channel_list['channels'][1]['name'] == 'Private4'
+
+    assert channel_list['channels'][2]['channel_id'] == channel_id5['channel_id']
+    assert channel_list['channels'][2]['name'] == 'Public5'
+    

@@ -1,25 +1,13 @@
 import pytest
-
-from src.server import create_app
+import requests
+import json
 from src.other import clear_v1
 
-# a new app instance for every test
-@pytest.fixture
-def app_for_testing():
-    a = create_app()
-
-    yield a # generator
-
+BASE_URL = 'http://127.0.0.1:8080/'
 
 @pytest.fixture
-def client(app_for_testing):
-    return app_for_testing.test_client()
-
-
-@pytest.fixture(autouse=True)
 def reset():
-	clear_v1()
-
+    clear_v1()
 
 @pytest.fixture
 def setup_user_dict(reset):
@@ -68,39 +56,23 @@ def setup_user_dict(reset):
 
 
 @pytest.fixture
-def setup_user_data(client, setup_user_dict):
+def setup_user_data(setup_user_dict):
     
     user1 = setup_user_dict['user1_dict']
-    user1_details = client.post('/register', json=user1).get_json()
+    user1_details = requests.post(f"{BASE_URL}/auth/register/v2", json=user1).json()
 
     user2 = setup_user_dict['user2_dict']
-    user2_details = client.post('/register', json=user2).get_json()
+    user2_details = requests.post(f"{BASE_URL}/auth/register/v2", json=user2).json()
 
     user3 = setup_user_dict['user3_dict']
-    user3_details = client.post('/register', json=user3).get_json()
+    user3_details = requests.post(f"{BASE_URL}/auth/register/v2", json=user3).json()
 
     user4 = setup_user_dict['user4_dict']
-    user4_details = client.post('/register', json=user4).get_json()
+    user4_details = requests.post(f"{BASE_URL}/auth/register/v2", json=user4).json()
 
     user5 = setup_user_dict['user5_dict']
-    user5_details = client.post('/register', json=user5).get_json()
-    '''
-
-    user1 = setup_user_dict['user1_dict']
-    user1_details = client.post('/register', json=user1)
-
-    user2 = setup_user_dict['user2_dict']
-    user2_details = client.post('/register', json=user2)
-
-    user3 = setup_user_dict['user3_dict']
-    user3_details = client.post('/register', json=user3)
-
-    user4 = setup_user_dict['user4_dict']
-    user4_details = client.post('/register', json=user4)
-
-    user5 = setup_user_dict['user5_dict']
-    user5_details = client.post('/register', json=user5)
-    '''
+    user5_details = requests.post(f"{BASE_URL}/auth/register/v2", json=user5).json()
+    
     return {
         'user1' : user1_details,
         'user2' : user2_details,
