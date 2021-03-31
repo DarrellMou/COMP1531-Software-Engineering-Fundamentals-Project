@@ -5,10 +5,7 @@ import uuid
 from src.error import InputError, AccessError
 from src.auth import auth_token_ok, auth_decode_token
 
-from flask import jsonify, request, Blueprint, make_response
 from json import dumps
-# bp stands for blueprint, they are components of the DREAMS communication tool
-bp = Blueprint('channels', __name__, url_prefix='/')
 
 #################################################################################
 #                                FUNCTIONS                                      #
@@ -57,7 +54,6 @@ def channels_listall_v2(token):
     if not auth_token_ok(token): raise AccessError
     auth_user_id = auth_decode_token(token)
 
-
     # Create list of all channels
     channel_listall = []
     for channel in data['channels']:
@@ -99,24 +95,3 @@ def channels_create_v2(token, name, is_public):
     return {
         'channel_id': channel_id
     }
-
-#################################################################################
-#                                API ROUTES                                     #
-#   * channels_list, channels_listall, channels_create                          #
-#                                                                               #                                                                      #
-#################################################################################
-
-@bp.route('create', methods=['POST'])
-def create_channels():
-    token = request.json['token']
-    name = request.json['name']
-    is_public = bool(request.json['is_public'])
-
-    return dumps(channels_create_v2(token, name, is_public))
-
-@bp.route('listall', methods=['GET'])
-def listall_channels():
-    token = request.json['token']
-
-    return dumps(channels_listall_v2(token))
-
