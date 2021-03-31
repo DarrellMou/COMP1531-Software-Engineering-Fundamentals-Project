@@ -31,12 +31,15 @@ def channel_invite_v2(token, channel_id, u_id):
 
     data = retrieve_data()
 
-    # Checks if given channel_id is valid
-    if channel_id not in data['channels']: raise InputError
-
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
     auth_user_id = auth_decode_token(token)
+
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']: raise InputError
+
+    # Checks if u_id is valid
+    if u_id not in data['users']: raise InputError
 
     # Checks if the auth_user is in channel
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
