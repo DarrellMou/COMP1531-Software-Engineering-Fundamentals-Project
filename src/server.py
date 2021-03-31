@@ -1,9 +1,16 @@
 import sys
 from json import dumps
-from flask import Flask, request
+import json
+from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS
+
 from src.error import InputError
 from src import config
+
+from src.other import clear_v1
+from src.auth import auth_register_v1
+from src.channels import channels_create_v2
+from src.channel import channel_invite_v2, channel_details_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -32,29 +39,32 @@ def echo():
         'data': data
     })
 
-@APP.route("/auth/login/v2", methods=['POST'])
-def channels_create_v2_flask():
-
-    payload = request.get_json()
-    email = payload['email']
-    password = payload['password']
-
-    return dumps(auth_login(email, password))
+# Initialize
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+    return {}
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_v2_flask(): 
-    if not request.json or not 'email' in request.json or not 'password' in request.json or not 'first_name' in request.json or not 'last_name' in request.json:
-        responseObj = {'status' : 'input error', 'token' : '', 'auth_user_id' : -1}
-        return make_response(jsonify(responseObj)), 408
+    data = request.get_json()
+    a_u_id = auth_register_v1(data['email'], data['password'], data['name_first'], data['name_last'])
 
-    # responseObj is a dict with 'token' and 'auth_user_id'
-    responseObj = auth_register_v1(request.json['email'], request.json['password'], 
-                        request.json['first_name'], request.json['last_name'])
-    
-    # token = auth_encode_token(responseObj['auth_user_id'])
-    # responseObj['token'] = token 
+    return json.dumps(a_u_id)
 
-    return make_response(jsonify(responseObj)), 201
+@APP.route('/channel/invite/v2', methods=['POST'])
+def channel_invite_v2_flask(): 
+    data = request.get_json()
+    channel_invite_v2(data["token"], data["channel_id"], data["u_id"])
+
+    return json.dumps({})
+
+@APP.route('/channel/details/v2', methods=['GET'])
+def channel_details_v2_flask(): 
+    data = request.get_json()
+    channel_details = channel_details_v2(data["token"], data["channel_id"])
+
+    return json.dumps(channel_details)
 
 @APP.route("/channels/create/v2", methods=['POST'])
 def channels_create_v2_flask():
