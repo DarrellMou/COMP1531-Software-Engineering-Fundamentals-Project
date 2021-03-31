@@ -7,15 +7,19 @@ from src.error import InputError, AccessError
 from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
 import src.data
+import json
 
 def clear_v1():
-    src.data.data = {
+    #src.data.
+    data = {
         "users" : {},
         "channels" : {},
         "dms": {},
         "messages" : []
     }
-    return {}
+    #return {}
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
 def search_v2(token, query_str):
     
