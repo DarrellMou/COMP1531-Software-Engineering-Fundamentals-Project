@@ -7,7 +7,7 @@ from src.other import clear_v1
 ######################### Tests channels_create ##########################
                                                          
 #   * uses pytest fixtures from src.conftest                                    
-                                                                                                                                                 #
+                                                                                                                                                
 ##########################################################################
 
 # error when creating a channel with an invalid token
