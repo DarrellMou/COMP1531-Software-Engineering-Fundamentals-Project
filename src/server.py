@@ -2,8 +2,13 @@ import sys
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
+
 from src.error import InputError
 from src import config
+
+from src.other import clear_v1
+from src.auth import auth_register_v1
+from src.dm import dm_create_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -32,5 +37,25 @@ def echo():
         'data': data
     })
 
+# Initialize
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+    return {}
+
+@APP.route('/auth/register/v2', methods=['POST'])
+def auth_register_v2_flask(): 
+    data = request.get_json()
+    a_u_id = auth_register_v1(data['email'], data['password'], data['name_first'], data['name_last'])
+
+    return json.dumps(a_u_id)
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create_v1_flask(): 
+    data = request.get_json()
+    dm_id = dm_create_v1(data["token"], data["u_ids"])
+
+    return json.dumps(dm_id)
+
 if __name__ == "__main__":
-    APP.run(port=config.port) # Do not edit this port
+    APP.run(port=config.port,debug=True) # Do not edit this port

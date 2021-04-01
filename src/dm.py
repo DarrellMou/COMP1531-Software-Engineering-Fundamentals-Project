@@ -1,5 +1,5 @@
 
-from src.data import data, retrieve_data, reset_data
+from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 
 from src.auth import auth_token_ok, auth_decode_token

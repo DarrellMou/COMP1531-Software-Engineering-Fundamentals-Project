@@ -4,7 +4,8 @@ import src.data
 def clear_v1():
     src.data.data = {
         "users" : {},
-        "channels" : {}
+        "channels" : {},
+        "dms" : {}
     }
     return {}
 
