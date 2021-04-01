@@ -24,6 +24,8 @@ def dm_create_body(user, u_ids):
 BASE_URL = 'http://127.0.0.1:6000'
 
 def test_function():
+    data = retrieve_data()
+
     requests.delete(f"{BASE_URL}/clear/v1")
     
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
@@ -39,3 +41,47 @@ def test_function():
         'dm_id': data['users'][a_u_id1['auth_user_id']]['dms'][0],
         'dm_name': 'first_name1last_name, first_name2last_name'
     }
+
+def test_multiple():
+    data = retrieve_data()
+
+    requests.delete(f"{BASE_URL}/clear/v1")
+
+    users = []
+    for i in range(5):
+        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        users.append(a_u_id.json())
+
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]))
+    dm0 = dm_id0.json()
+
+    assert dm0 == {
+        'dm_id': data['users'][a_u_id1['auth_user_id']]['dms'][0],
+        'dm_name': 'first_name1last_name, first_name2last_name, first_name3last_name, first_name4last_name, first_name5last_name'
+    }
+
+def test_invalid_token():
+    requests.delete(f"{BASE_URL}/clear/v1")
+    
+    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    user0 = a_u_id0.json()
+
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body({"token": 107531534827}, [user0]))
+    dm0 = dm_id0.json()
+
+    assert payload.json()["code"] == 403
+    assert payload.json()["name"] == "System Error"
+    assert payload.json()["message"] == "<p></p>"
+    
+def test_invalid_user():
+    requests.delete(f"{BASE_URL}/clear/v1")
+    
+    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    user0 = a_u_id0.json()
+
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [{"auth_user_id": 3295791357}]))
+    dm0 = dm_id0.json()
+
+    assert payload.json()["code"] == 400
+    assert payload.json()["name"] == "System Error"
+    assert payload.json()["message"] == "<p></p>"
