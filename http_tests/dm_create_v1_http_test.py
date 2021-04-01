@@ -2,8 +2,6 @@ import json
 import requests
 import urllib
 
-from src.data import retrieve_data
-
 # HELPER FUNCTIONS
 
 def user_body(num):
@@ -24,15 +22,13 @@ def dm_create_body(user, u_ids):
 def dm_details_body(user, dm):
     return {
         "token": user["token"],
-        "channel_id": dm["dm_id"]
+        "dm_id": dm["dm_id"]
     }
 
 
 BASE_URL = 'http://127.0.0.1:6000'
 
 def test_function():
-    data = retrieve_data()
-
     requests.delete(f"{BASE_URL}/clear/v1")
     
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
@@ -48,25 +44,22 @@ def test_function():
     dm_details = payload.json()
 
     assert dm_details == {
-        'name': 'first_name1last_name, first_name2last_name',
+        'name': 'first_name0last_name, first_name1last_name',
         'members': [
             {
-                'u_id': a_u_id1['auth_user_id'],
-                'name_first': 'first_name1',
-                'name_last': 'last_name1',
+                'u_id': user0['auth_user_id'],
+                'name_first': 'first_name0',
+                'name_last': 'last_name0',
             },
             {
-                'u_id': a_u_id2['auth_user_id'],
-                'name_first': 'first_name2',
-                'name_last': 'last_name2',
+                'u_id': user1['auth_user_id'],
+                'name_first': 'first_name1',
+                'name_last': 'last_name1',
             }
         ]
     }
 
-'''
 def test_multiple():
-    data = retrieve_data()
-
     requests.delete(f"{BASE_URL}/clear/v1")
 
     users = []
@@ -74,12 +67,41 @@ def test_multiple():
         a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], users[1], users[2], users[3], users[4]))
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]]))
     dm0 = dm_id0.json()
 
-    assert dm0 == {
-        'dm_id': data['users'][a_u_id1['auth_user_id']]['dms'][0],
-        'dm_name': 'first_name1last_name, first_name2last_name, first_name3last_name, first_name4last_name, first_name5last_name'
+    payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body(users[0], dm0))
+    dm_details = payload.json()
+
+    assert dm_details == {
+        'name': 'first_name0last_name, first_name1last_name, first_name2last_name, first_name3last_name, first_name4last_name',
+        'members': [
+            {
+                'u_id': users[0]['auth_user_id'],
+                'name_first': 'first_name0',
+                'name_last': 'last_name0',
+            },
+            {
+                'u_id': users[1]['auth_user_id'],
+                'name_first': 'first_name1',
+                'name_last': 'last_name1',
+            },
+            {
+                'u_id': users[2]['auth_user_id'],
+                'name_first': 'first_name2',
+                'name_last': 'last_name2',
+            },
+            {
+                'u_id': users[3]['auth_user_id'],
+                'name_first': 'first_name3',
+                'name_last': 'last_name3',
+            },
+            {
+                'u_id': users[4]['auth_user_id'],
+                'name_first': 'first_name4',
+                'name_last': 'last_name4',
+            },
+        ]
     }
 
 def test_invalid_token():
@@ -88,13 +110,16 @@ def test_invalid_token():
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body({"token": 107531534827}, [user0]))
+    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    user1 = a_u_id1.json()
+
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
     dm0 = dm_id0.json()
 
-    assert payload.json()["code"] == 403
-    assert payload.json()["name"] == "System Error"
-    assert payload.json()["message"] == "<p></p>"
-    
+    assert dm0["code"] == 403
+    assert dm0["name"] == "System Error"
+    assert dm0["message"] == "<p></p>"
+
 def test_invalid_user():
     requests.delete(f"{BASE_URL}/clear/v1")
     
@@ -104,7 +129,7 @@ def test_invalid_user():
     dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [{"auth_user_id": 3295791357}]))
     dm0 = dm_id0.json()
 
-    assert payload.json()["code"] == 400
-    assert payload.json()["name"] == "System Error"
-    assert payload.json()["message"] == "<p></p>"
-'''
+    assert dm0["code"] == 400
+    assert dm0["name"] == "System Error"
+    assert dm0["message"] == "<p></p>"
+    
