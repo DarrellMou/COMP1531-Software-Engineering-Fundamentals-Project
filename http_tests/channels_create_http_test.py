@@ -3,20 +3,21 @@ from http_tests import * # import fixtures for pytest
 import json
 import requests
 import pytest
+from src import config
 
-BASE_URL = 'http://127.0.0.1:8080/'
 
 def test_channels_create_access_error(setup_user_data):
     users = setup_user_data
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']
-    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+
+    requests.post(config.url + '/auth/logout/v1', json={
         'token': invalid_token
     })
 
     # Ensure AccessError
-    assert requests.post(f'{BASE_URL}/channels/create/v2', json={
+    assert requests.post(config.url + '/channels/create/v2', json={
         'token': invalid_token,
         'name': 'Name',
         'is_public': True,
@@ -28,19 +29,19 @@ def test_channels_create_input_error(setup_user_data):
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']
-    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+    requests.post(config.url + '/auth/logout/v1', json={
         'token': invalid_token
     })
 
     # Ensure input error: Public channel with namesize > 20 characters
-    requests.post(f'{BASE_URL}/channels/create/v2', json={
+    requests.post(config.url + '/channels/create/v2', json={
         'token': invalid_token,
         'name': 'wayyyytoolongggggoffffffaaaaaanameeeeeeee',
         'is_public': True,
     }).status_code == 400
 
     # Ensure input error: Private channel with namesize > 20 characters
-    requests.post(f'{BASE_URL}/channels/create/v2', json={
+    requests.post(config.url + '/channels/create/v2', json={
         'token': invalid_token,
         'name': 'wayyyytoolongggggoffffffaaaaaanameeeeeeee',
         'is_public': False,
@@ -50,21 +51,21 @@ def test_channels_create_input_error(setup_user_data):
 def test_channels_create_same_name(setup_user_data):
 
     users = setup_user_data
-
-    channel_id1 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    
+    channel_id1 = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user1']['token'],
         'name': "Public Channel",
         'is_public': True,
     }).json()
 
-    channel_id2 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id2 = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user2']['token'],
         'name': "Public Channel",
         'is_public': True,
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(f'{BASE_URL}/channels/listall/v2', json={
+    channel_list = requests.get(config.url + '/channels/listall/v2', json={
         'token': users['user3']['token'],
     }).json()
 
@@ -80,7 +81,7 @@ def test_channels_create_valid_basic(setup_user_data):
     users = setup_user_data
 
     # Creating a basic public channel
-    channel_id = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user1']['token'],
         'name': "Basic Stuff",
         'is_public': True,
@@ -90,16 +91,17 @@ def test_channels_create_valid_basic(setup_user_data):
     assert isinstance(channel_id['channel_id'], int)
 
     # Check that channel details have all been set correctly
-    channel_details = requests.post(f'{BASE_URL}/details', json={
+    channel_details = requests.get(config.url + '/channel/details/v2', json={
         'token': users['user1']['token'],
         'channel_id': channel_id['channel_id'],
     }).json()
+    print(channel_details)
 
     assert channel_details['name'] == 'Basic Stuff'
-    assert channel_details['owner_members'][0]['u_id'] == users['user1']['u_id']
+    assert channel_details['owner_members'][0]['u_id'] == users['user1']['auth_user_id']
     assert channel_details['owner_members'][0]['name_first'] == 'user1_first'
     assert channel_details['owner_members'][0]['name_last'] == 'user1_last'
-    assert channel_details['all_members'][0]['u_id'] == users['user1']['u_id']
+    assert channel_details['all_members'][0]['u_id'] == users['user1']['auth_user_id']
     assert channel_details['all_members'][0]['name_first'] == 'user1_first'
     assert channel_details['all_members'][0]['name_last'] == 'user1_last'
 
