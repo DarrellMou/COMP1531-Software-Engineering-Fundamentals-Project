@@ -6,7 +6,7 @@ import pytest
 from src import config
 
 # error when listing channels with an invalid token
-def test_channels_listall_invalid_user(setup_user_data):
+def test_message_senddm_access_error(setup_user_data):
     users = setup_user_data
 
     # Invalidate an existing token to guarantee a token is invalid 
@@ -16,7 +16,7 @@ def test_channels_listall_invalid_user(setup_user_data):
     })
 
     # Ensure AccessError
-    assert requests.get(config.url + '/channels/listall/v2', json={
+    assert requests.get(config.url + '/message/senddm/v1', json={
         'token': invalid_token,
     }).status_code == 403
 
