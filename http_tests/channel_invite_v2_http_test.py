@@ -35,7 +35,7 @@ def channel_details_body(user, channel):
 BASE_URL = 'http://127.0.0.1:6000'
 
 def test_function():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -75,7 +75,7 @@ def test_function():
     }
 
 def test_multiple():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     users = []
     for i in range(5):
@@ -130,7 +130,7 @@ def test_multiple():
     }
 
 def test_multiple_users_invite():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     users = []
     for i in range(5):
