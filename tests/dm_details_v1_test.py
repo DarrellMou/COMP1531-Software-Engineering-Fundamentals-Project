@@ -90,14 +90,6 @@ def test_invalid_token():
     with pytest.raises(AccessError):
         dm_details_v1(12345, dm_id['dm_id'])
 
-# dm_details given invalid dm_id
-def test_invalid_dm_id():
-    reset_data()
-    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
-
-    with pytest.raises(InputError):
-        dm_details_v1(a_u_id1['token'], 12345)
-
 # dm_details given invalid user(s)
 def test_invalid_user():
     clear_v1()
