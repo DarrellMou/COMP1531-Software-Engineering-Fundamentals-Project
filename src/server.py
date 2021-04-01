@@ -1,4 +1,5 @@
 import sys
+from json import dumps
 import json
 from flask import Flask, request
 from flask_cors import CORS
@@ -57,10 +58,10 @@ def dm_create_v1_flask():
 
     return json.dumps(dm_id)
 
-@APP.route('/dm/details/v2', methods=['GET'])
+@APP.route('/dm/details/v1', methods=['GET'])
 def dm_details_v2_flask(): 
     data = request.get_json()
-    cdm_details = dm_details_v1(data["token"], data["dm_id"])
+    dm_details = dm_details_v1(data["token"], data["dm_id"])
 
     return json.dumps(dm_details)
 
