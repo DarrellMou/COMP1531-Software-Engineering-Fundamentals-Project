@@ -5,8 +5,10 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 
-from src.auth import auth_login_v2, auth_register_v1, auth_logout_v1
+from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.channel import channel_details_v2
 from src.channels import channels_create_v2, channels_listall_v2
+from src.other import clear_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -41,7 +43,7 @@ def auth_login_v2_flask():
     email = payload['email']
     password = payload['password']
 
-    return dumps(auth_login_v2(email, password))
+    return dumps(auth_login_v1(email, password))
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def auth_register_route():
@@ -72,9 +74,23 @@ def channels_create_v2_flask():
 
 @APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall_v2_flask():
-    token = request.args.get('token')
+    payload = request.get_json()
+    token = payload['token']
 
     return dumps(channels_listall_v2(token))
+
+@APP.route("/channel/details/v2", methods=['GET'])
+def channel_details_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+
+    return dumps(channel_details_v2(token,channel_id))
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+    return {}
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
