@@ -16,12 +16,14 @@ def test_user_profile():
 	resp_profile = requests.get(config.url + 'user/profile/v2', params={'token' : json_data_register['token'], 'u_id' : json_data_register['auth_user_id']})
 	json_data_profile = json.loads(resp_profile.text)
 
-	assert json_data_profile == {
-            'auth_user_id' : json_data_register['auth_user_id'],
-            'email'        : 'exampleUserEmail@email.com',
-            'name_first'   : 'FIRSTNAME',
-            'name_last'    : 'LASTNAME',
-            'handle_str'   : 'firstnamelastname'
+	assert json_data_profile == {'user' : 
+				{
+	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'email'        : 'exampleUserEmail@email.com',
+	            'name_first'   : 'FIRSTNAME',
+	            'name_last'    : 'LASTNAME',
+	            'handle_str'   : 'firstnamelastname'
+	            }
            }
 
 
@@ -64,12 +66,14 @@ def test_user_profile_setname():
 
 	resp_profile = requests.get(config.url + 'user/profile/v2', params={'token' : json_data_register['token'], 'u_id' : json_data_register['auth_user_id']})
 	json_data_profile = json.loads(resp_profile.text)
-	assert json_data_profile == {
-            'auth_user_id' : json_data_register['auth_user_id'],
-            'email'        : 'exampleUserEmail@email.com',
-            'name_first'   : 'changedFirstname',
-            'name_last'    : 'changedLastname',
-            'handle_str'   : 'firstnamelastname'
+	assert json_data_profile == {'user' : 
+				{	
+	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'email'        : 'exampleUserEmail@email.com',
+	            'name_first'   : 'changedFirstname',
+	            'name_last'    : 'changedLastname',
+	            'handle_str'   : 'firstnamelastname'
+	            }
            }
 
 
@@ -109,12 +113,14 @@ def test_user_profile_setemail():
 	resp_profile = requests.get(config.url + 'user/profile/v2', params={'token' : json_data_register['token'], 'u_id' : json_data_register['auth_user_id']})
 	json_data_profile = json.loads(resp_profile.text)
 
-	assert json_data_profile == {
-            'auth_user_id' : json_data_register['auth_user_id'],
-            'email'        : 'changedEmail@outlook.com',
-            'name_first'   : 'FIRSTNAME',
-            'name_last'    : 'LASTNAME',
-            'handle_str'   : 'firstnamelastname'
+	assert json_data_profile == {'user' : 
+				{
+	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'email'        : 'changedEmail@outlook.com',
+	            'name_first'   : 'FIRSTNAME',
+	            'name_last'    : 'LASTNAME',
+	            'handle_str'   : 'firstnamelastname'
+	            }
            }
 
 
@@ -130,12 +136,14 @@ def test_user_profile_sethandle_v1():
 	resp_profile = requests.get(config.url + 'user/profile/v2', params={'token' : json_data_register['token'], 'u_id' : json_data_register['auth_user_id']})
 	json_data_profile = json.loads(resp_profile.text)
 
-	assert json_data_profile == {
-            'auth_user_id' : json_data_register['auth_user_id'],
-            'email'        : 'exampleUserEmail@email.com',
-            'name_first'   : 'FIRSTNAME',
-            'name_last'    : 'LASTNAME',
-            'handle_str'   : 'changedHandle'
+	assert json_data_profile == {'user' :
+				{
+            	'auth_user_id' : json_data_register['auth_user_id'],
+            	'email'        : 'exampleUserEmail@email.com',
+            	'name_first'   : 'FIRSTNAME',
+            	'name_last'    : 'LASTNAME',
+            	'handle_str'   : 'changedHandle'
+            	}
            }
 
 

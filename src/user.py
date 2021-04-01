@@ -28,12 +28,16 @@ def user_profile_v2(token, u_id):
 
     userDict = data['users'][auth_user_id]
 
-    return {
-            'auth_user_id' : auth_user_id,
-            'email'        : userDict['email'],
-            'name_first'   : userDict['name_first'],
-            'name_last'    : userDict['name_last'],
-            'handle_str'   : userDict['handle_str']
+    # if userDict['is_removed']:
+    #     return {'user' : {}}
+
+    return {'user' : {
+                'auth_user_id' : auth_user_id,
+                'email'        : userDict['email'],
+                'name_first'   : userDict['name_first'],
+                'name_last'    : userDict['name_last'],
+                'handle_str'   : userDict['handle_str']
+                }
            }
 
 
