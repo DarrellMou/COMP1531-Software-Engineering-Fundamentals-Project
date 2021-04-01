@@ -59,14 +59,14 @@ def dm_create_v1_flask():
     return json.dumps(dm_id)
 
 @APP.route('/dm/details/v1', methods=['GET'])
-def dm_details_v2_flask(): 
+def dm_details_v1_flask(): 
     data = request.get_json()
     dm_details = dm_details_v1(data["token"], data["dm_id"])
 
     return json.dumps(dm_details)
 
 @APP.route('/dm/list/v1', methods=['GET'])
-def dm_list_v2_flask(): 
+def dm_list_v1_flask(): 
     data = request.get_json()
     dm_list = dm_list_v1(data["token"])
 
