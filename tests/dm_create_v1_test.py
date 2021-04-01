@@ -2,10 +2,9 @@ import pytest
 
 from src.data import retrieve_data
 
-from src.error import InputError
-from src.error import AccessError
+from src.error import InputError, AccessError
 
-from src.auth import auth_register_v1, auth_decode_token
+from src.auth import auth_register_v1
 from src.dm import dm_create_v1
 from src.other import clear_v1
 
