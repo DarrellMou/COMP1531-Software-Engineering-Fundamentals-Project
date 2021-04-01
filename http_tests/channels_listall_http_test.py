@@ -3,8 +3,7 @@ from http_tests import * # import fixtures for pytest
 import json
 import requests
 import pytest
-
-BASE_URL = 'http://127.0.0.1:8080/'
+from src import config
 
 # error when listing channels with an invalid token
 def test_channels_listall_invalid_user(setup_user_data):
@@ -12,20 +11,20 @@ def test_channels_listall_invalid_user(setup_user_data):
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']
-    requests.post(f'{BASE_URL}/auth/logout/v1', json={
+    requests.post(config.url + '/auth/logout/v1', json={
         'token': invalid_token
     })
 
     # Ensure AccessError
-    assert requests.get(f'{BASE_URL}/channels/listall/v2', json={
+    assert requests.get(config.url + '/channels/listall/v2', json={
         'token': invalid_token,
-    }).status_code == 405
+    }).status_code == 403
 
 # listing channels with none created
 def test_channels_listall_empty(setup_user_data):
     users = setup_user_data
 
-    assert requests.get(f'{BASE_URL}/channels/listall/v2', json={
+    assert requests.get(config.url + '/channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json() == {'channels': []}
 
@@ -34,14 +33,14 @@ def test_channels_listall_single(setup_user_data):
     users = setup_user_data
 
     # Creating a basic public channel
-    channel_id = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Basic Stuff',
         'is_public': True,
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(f'{BASE_URL}/channels/listall/v2', json={
+    channel_list = requests.get(config.url + '/channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json()
 
@@ -50,29 +49,28 @@ def test_channels_listall_single(setup_user_data):
 
 # listing multiple channels
 def test_channels_listall_multiple(setup_user_data):
-
     users = setup_user_data
 
-    channel_id3 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id3 = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user3']['token'],
         'name': 'Public3',
         'is_public': True,
     }).json()
 
-    channel_id4 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id4 = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user2']['token'],
         'name': 'Private4',
         'is_public': False,
     }).json()
 
-    channel_id5 = requests.post(f'{BASE_URL}/channels/create/v2', json={
+    channel_id5 = requests.post(config.url + '/channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Public5',
         'is_public': True,
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(f'{BASE_URL}/channels/listall/v2', json={
+    channel_list = requests.get(config.url + '/channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json()
 
