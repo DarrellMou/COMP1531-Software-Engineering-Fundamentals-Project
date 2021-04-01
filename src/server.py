@@ -9,7 +9,7 @@ from src import config
 
 from src.other import clear_v1
 from src.auth import auth_register_v1
-from src.dm import dm_create_v1, dm_details_v1, dm_list_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_list_v1, dm_remove_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -42,7 +42,7 @@ def echo():
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
     clear_v1()
-    return {}
+    return json.dumps({})
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_v2_flask(): 
@@ -59,18 +59,25 @@ def dm_create_v1_flask():
     return json.dumps(dm_id)
 
 @APP.route('/dm/details/v1', methods=['GET'])
-def dm_details_v2_flask(): 
+def dm_details_v1_flask(): 
     data = request.get_json()
     dm_details = dm_details_v1(data["token"], data["dm_id"])
 
     return json.dumps(dm_details)
 
 @APP.route('/dm/list/v1', methods=['GET'])
-def dm_list_v2_flask(): 
+def dm_list_v1_flask(): 
     data = request.get_json()
     dm_list = dm_list_v1(data["token"])
 
     return json.dumps(dm_list)
+
+@APP.route('/dm/remove/v1', methods=['DELETE'])
+def dm_remove_v1_flask(): 
+    data = request.get_json()
+    dm_remove_v1(data["token"], data["dm_id"])
+
+    return json.dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port

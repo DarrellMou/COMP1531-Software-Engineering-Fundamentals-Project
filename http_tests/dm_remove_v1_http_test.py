@@ -162,7 +162,7 @@ def test_invalid_token():
     dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body({"token": 058731057310}, dm0))
+    r = requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body({"token": 521580128575}, dm0))
     response = r.json()
 
     assert response["code"] == 403
