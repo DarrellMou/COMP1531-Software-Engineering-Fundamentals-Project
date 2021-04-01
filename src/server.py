@@ -3,7 +3,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
-import src.config
+from src import config
 
 def defaultHandler(err):
     response = err.get_response()
