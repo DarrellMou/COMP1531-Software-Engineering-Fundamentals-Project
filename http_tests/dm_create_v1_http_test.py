@@ -15,11 +15,18 @@ def user_body(num):
     }
 
 def dm_create_body(user, u_ids): 
-    u_ids_list = [u_id['auth_user_id'] for u_id in uids]
+    u_ids_list = [u_id['auth_user_id'] for u_id in u_ids]
     return {
         "token": user["token"],
         "u_ids": u_ids_list
     }
+
+def dm_details_body(user, dm):
+    return {
+        "token": user["token"],
+        "channel_id": dm["dm_id"]
+    }
+
 
 BASE_URL = 'http://127.0.0.1:6000'
 
@@ -37,11 +44,26 @@ def test_function():
     dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    assert dm0 == {
-        'dm_id': data['users'][a_u_id1['auth_user_id']]['dms'][0],
-        'dm_name': 'first_name1last_name, first_name2last_name'
+    payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body(user0, dm0))
+    dm_details = payload.json()
+
+    assert dm_details == {
+        'name': 'first_name1last_name, first_name2last_name',
+        'members': [
+            {
+                'u_id': a_u_id1['auth_user_id'],
+                'name_first': 'first_name1',
+                'name_last': 'last_name1',
+            },
+            {
+                'u_id': a_u_id2['auth_user_id'],
+                'name_first': 'first_name2',
+                'name_last': 'last_name2',
+            }
+        ]
     }
 
+'''
 def test_multiple():
     data = retrieve_data()
 
@@ -52,7 +74,7 @@ def test_multiple():
         a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]))
+    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], users[1], users[2], users[3], users[4]))
     dm0 = dm_id0.json()
 
     assert dm0 == {
@@ -85,3 +107,4 @@ def test_invalid_user():
     assert payload.json()["code"] == 400
     assert payload.json()["name"] == "System Error"
     assert payload.json()["message"] == "<p></p>"
+'''
