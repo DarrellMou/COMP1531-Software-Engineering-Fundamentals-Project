@@ -1,15 +1,15 @@
 import pytest
 
-from src.data import reset_data, data
-
-from src.error import InputError, AccessError
+from src.error import InputError
+from src.error import AccessError
 
 from src.auth import auth_register_v1, auth_decode_token
 from src.dm import dm_create_v1, dm_details_v1
+from src.other import clear_v1
 
 # Typical case
 def test_function():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -33,7 +33,7 @@ def test_function():
 
 # dm_details returning dm with multiple users
 def test_multiple():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
@@ -72,9 +72,17 @@ def test_multiple():
         ]
     }
 
+# dm_details given invalid dm_id
+def test_invalid_dm_id():
+    clear_v1()
+    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
+    
+    with pytest.raises(InputError):
+        dm_details_v1(a_u_id1['token'], 12345)
+
 # dm_details given invalid token
 def test_invalid_token():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -93,7 +101,7 @@ def test_invalid_dm_id():
 
 # dm_details given invalid user(s)
 def test_invalid_user():
-    reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
