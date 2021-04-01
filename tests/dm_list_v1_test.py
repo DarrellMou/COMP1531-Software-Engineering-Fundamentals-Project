@@ -1,16 +1,15 @@
 import pytest
 
-from src.data import reset_data, data
-
 from src.error import InputError
 from src.error import AccessError
 
 from src.auth import auth_register_v1, auth_decode_token
 from src.dm import dm_create_v1, dm_list_v1
+from src.other import clear_v1
 
 # Typical case
 def test_function():
-    data = reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -27,7 +26,7 @@ def test_function():
 
 # dm_list returning multiple dms of one user
 def test_multiple():
-    data = reset_data()
+    clear_v1()
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
@@ -62,11 +61,7 @@ def test_multiple():
 
 # dm_list given invalid token
 def test_invalid_token():
-    data = reset_data()
-    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
-    a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
-
-    dm_id = dm_create_v1(a_u_id1['token'], [a_u_id2['auth_user_id']])
+    clear_v1()
 
     with pytest.raises(AccessError):
         dm_list_v1(12345)
