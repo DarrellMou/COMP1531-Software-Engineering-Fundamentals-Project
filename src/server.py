@@ -1,5 +1,5 @@
 import sys
-from json import dumps
+import json
 from flask import Flask, request
 from flask_cors import CORS
 
@@ -8,7 +8,7 @@ from src import config
 
 from src.other import clear_v1
 from src.auth import auth_register_v1
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_details_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -56,6 +56,13 @@ def dm_create_v1_flask():
     dm_id = dm_create_v1(data["token"], data["u_ids"])
 
     return json.dumps(dm_id)
+
+@APP.route('/dm/details/v2', methods=['GET'])
+def dm_details_v2_flask(): 
+    data = request.get_json()
+    cdm_details = dm_details_v1(data["token"], data["dm_id"])
+
+    return json.dumps(dm_details)
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
