@@ -35,7 +35,7 @@ def channel_details_body(user, channel):
 BASE_URL = 'http://127.0.0.1:6000'
 
 def test_function():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -75,7 +75,7 @@ def test_function():
     }
 
 def test_multiple():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     users = []
     for i in range(10):
@@ -155,7 +155,7 @@ def test_multiple():
     }
 
 def test_multiple_channels():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     users = []
     for i in range(10):
@@ -257,7 +257,7 @@ def test_multiple_channels():
     }
 
 def test_invalid_channel_id():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -265,12 +265,12 @@ def test_invalid_channel_id():
     payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user0, {"channel_id": 126347542124}))
     channel_details = payload.json()
 
-    assert payload.json()["code"] == 400
-    assert payload.json()["name"] == "System Error"
-    assert payload.json()["message"] == "<p></p>"
+    assert channel_details["code"] == 400
+    assert channel_details["name"] == "System Error"
+    assert channel_details["message"] == "<p></p>"
 
 def test_unauthorized_user():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -284,12 +284,12 @@ def test_unauthorized_user():
     payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user1, channel0))
     channel_details = payload.json()
 
-    assert payload.json()["code"] == 403
-    assert payload.json()["name"] == "System Error"
-    assert payload.json()["message"] == "<p></p>"
+    assert channel_details["code"] == 403
+    assert channel_details["name"] == "System Error"
+    assert channel_details["message"] == "<p></p>"
 
 def test_invalid_token():
-    r = requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{BASE_URL}/clear/v1")
 
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -300,6 +300,6 @@ def test_invalid_token():
     payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body({"token": 18936087134}, channel0))
     channel_details = payload.json()
 
-    assert payload.json()["code"] == 403
-    assert payload.json()["name"] == "System Error"
-    assert payload.json()["message"] == "<p></p>"
+    assert channel_details["code"] == 403
+    assert channel_details["name"] == "System Error"
+    assert channel_details["message"] == "<p></p>"
