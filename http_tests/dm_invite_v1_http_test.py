@@ -34,19 +34,19 @@ def dm_invite_body(user1, dm, user2):
     }
 
 def test_function():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(3):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
-    requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(users[0], dm0, users[2]))
+    requests.post(f"{url}dm/invite/v1", json=dm_invite_body(users[0], dm0, users[2]))
 
-    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -72,20 +72,20 @@ def test_function():
     }
 
 def test_multiple():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
     users = []
     for i in range(5):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
     for i in range(3):
-        requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(users[0], dm0, users[i + 2]))
+        requests.post(f"{url}dm/invite/v1", json=dm_invite_body(users[0], dm0, users[i + 2]))
 
-    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -120,67 +120,67 @@ def test_multiple():
     }
 
 def test_invalid_token():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(3):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
-    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body({"token": 3165801385}, dm0, users[2]))
+    r = requests.post(f"{url}dm/invite/v1", json=dm_invite_body({"token": 3165801385}, dm0, users[2]))
 
     assert r.json()["code"] == 403
     assert r.json()["name"] == "System Error"
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_dm_id():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(user0, {"dm_id": 427602476}, user1))
+    r = requests.post(f"{url}dm/invite/v1", json=dm_invite_body(user0, {"dm_id": 427602476}, user1))
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_user():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(user0, dm0, {"auth_user_id": 671836071683}))
+    r = requests.post(f"{url}dm/invite/v1", json=dm_invite_body(user0, dm0, {"auth_user_id": 671836071683}))
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
     assert r.json()["message"] == "<p></p>"
 
 def test_unauthorised_user():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(4):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
-    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(users[2], dm0, users[3]))
+    r = requests.post(f"{url}dm/invite/v1", json=dm_invite_body(users[2], dm0, users[3]))
 
     assert r.json()["code"] == 403
     assert r.json()["name"] == "System Error"

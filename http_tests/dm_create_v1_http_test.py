@@ -27,18 +27,18 @@ def dm_details_body(user, dm):
     }
 
 def test_function():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(user0, dm0))
+    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(user0, dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -58,17 +58,17 @@ def test_function():
     }
 
 def test_multiple():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(5):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -103,12 +103,12 @@ def test_multiple():
     }
 
 def test_invalid_token():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
     dm0 = dm_id0.json()
 
     assert dm0["code"] == 403
@@ -116,12 +116,12 @@ def test_invalid_token():
     assert dm0["message"] == "<p></p>"
 
 def test_invalid_user():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [{"auth_user_id": 3295791357}]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [{"auth_user_id": 3295791357}]))
     dm0 = dm_id0.json()
 
     assert dm0["code"] == 400
