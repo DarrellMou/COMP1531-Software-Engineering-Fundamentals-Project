@@ -2,6 +2,7 @@ import json
 import requests
 import urllib
 
+from src.config import url
 # HELPER FUNCTIONS
 
 def user_body(num):
@@ -32,23 +33,21 @@ def channel_details_body(user, channel):
         "channel_id": channel["channel_id"]
     }
 
-BASE_URL = 'http://127.0.0.1:6000'
-
 def test_function():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
     
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
+    requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user0, channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(user0, channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -75,20 +74,20 @@ def test_function():
     }
 
 def test_multiple():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
     users = []
     for i in range(10):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[0], 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[0], 0, True))
     channel0 = ch_id0.json()
 
     for i in range(1,10):
-        requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
+        requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -155,26 +154,26 @@ def test_multiple():
     }
 
 def test_multiple_channels():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
     users = []
     for i in range(10):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[0], 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[0], 0, True))
     channel0 = ch_id0.json()
 
-    ch_id1 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[5], 1, True))
+    ch_id1 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[5], 1, True))
     channel1 = ch_id1.json()
 
     for i in range(1,5):
-        requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
+        requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
 
     for i in range(6,10):
-        requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[5], channel1, users[i]))
+        requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[5], channel1, users[i]))
 
-    payload0 = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(users[2], channel0))
+    payload0 = requests.get(f"{url}/channel/details/v2", json=channel_details_body(users[2], channel0))
     channel_details0 = payload0.json()
 
     assert channel_details0 == {
@@ -215,7 +214,7 @@ def test_multiple_channels():
         ],
     }
 
-    payload1 = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(users[8], channel1))
+    payload1 = requests.get(f"{url}/channel/details/v2", json=channel_details_body(users[8], channel1))
     channel_details1 = payload1.json()
 
     assert channel_details1 == {
@@ -257,12 +256,12 @@ def test_multiple_channels():
     }
 
 def test_invalid_channel_id():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user0, {"channel_id": 126347542124}))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(user0, {"channel_id": 126347542124}))
     channel_details = payload.json()
 
     assert channel_details["code"] == 400
@@ -270,18 +269,18 @@ def test_invalid_channel_id():
     assert channel_details["message"] == "<p></p>"
 
 def test_unauthorized_user():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
     
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user1, channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(user1, channel0))
     channel_details = payload.json()
 
     assert channel_details["code"] == 403
@@ -289,15 +288,15 @@ def test_unauthorized_user():
     assert channel_details["message"] == "<p></p>"
 
 def test_invalid_token():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body({"token": 18936087134}, channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body({"token": 18936087134}, channel0))
     channel_details = payload.json()
 
     assert channel_details["code"] == 403
