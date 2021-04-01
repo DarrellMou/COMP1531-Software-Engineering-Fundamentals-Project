@@ -8,6 +8,8 @@ from src import config
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2
 from src.channels import channels_create_v2, channels_listall_v2
+from src.dm import dm_create_v1
+from src.message import message_senddm_v1
 from src.other import clear_v1
 
 def defaultHandler(err):
@@ -86,6 +88,23 @@ def channel_details_v2_flask():
     channel_id = payload['channel_id']
 
     return dumps(channel_details_v2(token,channel_id))
+
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    u_id = payload['u_id']
+
+    return dumps(dm_create_v1(token, [u_id]))
+
+@APP.route("/message/senddm/v1", methods=['POST'])
+def message_senddm_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    dm_id = payload['dm_id']
+    message = payload['message']
+
+    return dumps(message_senddm_v1(token,dm_id,message))
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
