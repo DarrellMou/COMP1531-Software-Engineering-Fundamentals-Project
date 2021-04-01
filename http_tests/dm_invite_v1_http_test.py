@@ -41,7 +41,7 @@ def test_function():
         a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]]))
+    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
     requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(users[0], dm0, users[2]))
@@ -50,7 +50,7 @@ def test_function():
     dm_details = payload.json()
 
     assert dm_details == {
-        'name': 'first_name1last_name, first_name2last_name',
+        'name': 'first_name0last_name, first_name1last_name',
         'members': [
             {
                 'u_id': users[0]['auth_user_id'],
@@ -89,7 +89,7 @@ def test_multiple():
     dm_details = payload.json()
 
     assert dm_details == {
-        'name': 'first_name1last_name, first_name2last_name',
+        'name': 'first_name0last_name, first_name1last_name',
         'members': [
             {
                 'u_id': users[0]['auth_user_id'],
@@ -160,10 +160,10 @@ def test_invalid_user():
     a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(users[0], dm0, {"auth_user_id": 671836071683}))
+    r = requests.post(f"{url}/dm/invite/v1", json=dm_invite_body(user0, dm0, {"auth_user_id": 671836071683}))
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
