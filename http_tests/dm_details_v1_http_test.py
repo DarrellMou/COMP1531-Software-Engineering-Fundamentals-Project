@@ -33,12 +33,6 @@ def test_invalid_dm_id():
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
-    user1 = a_u_id1.json()
-
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [user1]))
-    dm0 = dm_id0.json()
-
     payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body(user0, {"dm_id": 5031705713}))
     dm_details = payload.json()
 

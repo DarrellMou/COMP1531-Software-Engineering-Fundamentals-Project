@@ -25,7 +25,6 @@ def dm_details_body(user, dm):
         "dm_id": dm["dm_id"]
     }
 
-
 BASE_URL = 'http://127.0.0.1:6000'
 
 def test_function():
@@ -110,9 +109,6 @@ def test_invalid_token():
     a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
-    user1 = a_u_id1.json()
-
     dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
     dm0 = dm_id0.json()
 
@@ -132,4 +128,3 @@ def test_invalid_user():
     assert dm0["code"] == 400
     assert dm0["name"] == "System Error"
     assert dm0["message"] == "<p></p>"
-    
