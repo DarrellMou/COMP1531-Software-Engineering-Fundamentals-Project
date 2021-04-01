@@ -2,6 +2,7 @@ import json
 import requests
 import urllib
 
+from src.config import url
 # HELPER FUNCTIONS
 
 def user_body(num):
@@ -25,15 +26,13 @@ def dm_details_body(user, dm):
         "dm_id": dm["dm_id"]
     }
 
-BASE_URL = 'http://127.0.0.1:6000'
-
 def test_invalid_dm_id():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
     
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body(user0, {"dm_id": 5031705713}))
+    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(user0, {"dm_id": 5031705713}))
     dm_details = payload.json()
 
     assert dm_details["code"] == 400
@@ -41,17 +40,17 @@ def test_invalid_dm_id():
     assert dm_details["message"] == "<p></p>"
 
 def test_invalid_user():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
     
     users = []
     for i in range(3):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
+    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body(users[2], dm0))
+    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body(users[2], dm0))
     dm_details = payload.json()
 
     assert dm_details["code"] == 403
@@ -59,18 +58,18 @@ def test_invalid_user():
     assert dm_details["message"] == "<p></p>"
 
 def test_invalid_token():
-    requests.delete(f"{BASE_URL}/clear/v1")
+    requests.delete(f"{url}/clear/v1")
     
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{BASE_URL}/dm/details/v1", json=dm_details_body({"token": 501730570}, dm0))
+    payload = requests.get(f"{url}/dm/details/v1", json=dm_details_body({"token": 501730570}, dm0))
     dm_details = payload.json()
 
     assert dm_details["code"] == 403
