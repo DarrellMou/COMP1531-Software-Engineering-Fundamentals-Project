@@ -2,6 +2,7 @@ import json
 import requests
 import urllib
 
+from src.config import url
 # HELPER FUNCTIONS
 
 def user_body(num):
@@ -32,23 +33,25 @@ def channel_details_body(user, channel):
         "channel_id": channel["channel_id"]
     }
 
-BASE_URL = 'http://127.0.0.1:6000'
-
 def test_function():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
     
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
+    requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(user0, channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(user0, channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -75,20 +78,24 @@ def test_function():
     }
 
 def test_multiple():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(5):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[0], 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[0], 0, True))
     channel0 = ch_id0.json()
 
     for i in range(1,5):
-        requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
+        requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -130,20 +137,24 @@ def test_multiple():
     }
 
 def test_multiple_users_invite():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(5):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[0], 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[0], 0, True))
     channel0 = ch_id0.json()
 
     for i in range(4):
-        requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[i], channel0, users[i + 1]))
+        requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[i], channel0, users[i + 1]))
 
-    payload = requests.get(f"{BASE_URL}/channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}/channel/details/v2", json=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -185,30 +196,38 @@ def test_multiple_users_invite():
     }
 
 def test_invalid_channel_id():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    r = requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    r = requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(user0, channel0, {"auth_user_id": 1216374684571}))
+    r = requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(user0, channel0, {"auth_user_id": 1216374684571}))
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_invited_user():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    r = requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    r = requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(user0, {"channel_id": 319245780425}, user1))
+    r = requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(user0, {"channel_id": 319245780425}, user1))
     print(r)
 
     assert r.json()["code"] == 400
@@ -216,32 +235,40 @@ def test_invalid_invited_user():
     assert r.json()["message"] == "<p></p>"
 
 def test_unauthorized_user():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    r = requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(3):
-        a_u_id = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(users[0], 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(users[0], 0, True))
     channel0 = ch_id0.json()
 
-    r = requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body(users[1], channel0, users[2]))
+    r = requests.post(f"{url}/channel/invite/v2", json=channel_invite_body(users[1], channel0, users[2]))
     
     assert r.json()["code"] == 403
     assert r.json()["name"] == "System Error"
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_token():
+<<<<<<< HEAD
     requests.delete(f"{BASE_URL}/clear/v1")
+=======
+    r = requests.delete(f"{url}/clear/v1")
+>>>>>>> darrell/channel_invite_v2_flask
 
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    ch_id0 = requests.post(f"{BASE_URL}/channels/create/v2", json=channel_create_body(user0, 0, True))
+    ch_id0 = requests.post(f"{url}/channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    r = requests.post(f"{BASE_URL}/channel/invite/v2", json=channel_invite_body({"token": 18936087134}, channel0, {"auth_user_id": 1216374684571}))
+    r = requests.post(f"{url}/channel/invite/v2", json=channel_invite_body({"token": 18936087134}, channel0, {"auth_user_id": 1216374684571}))
 
     assert r.json()["code"] == 403
     assert r.json()["name"] == "System Error"
