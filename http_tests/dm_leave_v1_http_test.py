@@ -40,26 +40,26 @@ def test_function():
         a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [user[1], user[2]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1], users[2]]))
     dm0 = dm_id0.json()
 
-    requests.post(f"{url}dm/leave/v1", json=dm_leave_body(users[2], dm0))
+    requests.post(f"{url}dm/leave/v1", json=dm_leave_body(users[1], dm0))
 
     payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
-        'name': 'first_name0last_name, first_name1last_name',
+        'name': 'first_name0last_name, first_name1last_name, first_name2last_name',
         'members': [
             {
                 'u_id': users[0]['auth_user_id'],
-                'name_first': 'first_name1',
-                'name_last': 'last_name1',
+                'name_first': 'first_name0',
+                'name_last': 'last_name0',
             },
             {
-                'u_id': users[1]['auth_user_id'],
-                'name_first': 'first_name3',
-                'name_last': 'last_name3',
+                'u_id': users[2]['auth_user_id'],
+                'name_first': 'first_name2',
+                'name_last': 'last_name2',
             }
         ]
     }
@@ -82,7 +82,7 @@ def test_multiple():
     dm_details = payload.json()
 
     assert dm_details == {
-        'name': ' first_name0last_name, first_name1last_name, first_name2last_name, first_name3last_name, first_name4last_name',
+        'name': 'first_name0last_name, first_name1last_name, first_name2last_name, first_name3last_name, first_name4last_name',
         'members': [
             {
                 'u_id': users[0]['auth_user_id'],
@@ -109,7 +109,7 @@ def test_invalid_token():
 
     assert response["code"] == 403
     assert response["name"] == "System Error"
-    assert response["message"] == "<p></p>
+    assert response["message"] == "<p></p>"
 
 def test_invalid_dm_id():
     requests.delete(f"{url}clear/v1")
@@ -122,7 +122,7 @@ def test_invalid_dm_id():
 
     assert response["code"] == 400
     assert response["name"] == "System Error"
-    assert response["message"] == "<p></p>
+    assert response["message"] == "<p></p>"
 
 def test_unauthorised_user():
     requests.delete(f"{url}clear/v1")
@@ -132,7 +132,7 @@ def test_unauthorised_user():
         a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
-    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [user[1]]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
     r = requests.post(f"{url}dm/leave/v1", json=dm_leave_body(users[2], dm0))
@@ -140,4 +140,4 @@ def test_unauthorised_user():
 
     assert response["code"] == 403
     assert response["name"] == "System Error"
-    assert response["message"] == "<p></p>
+    assert response["message"] == "<p></p>"
