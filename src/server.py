@@ -9,7 +9,7 @@ from src import config
 
 from src.other import clear_v1
 from src.auth import auth_register_v1
-from src.dm import dm_create_v1, dm_details_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_leave_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -64,6 +64,13 @@ def dm_details_v1_flask():
     dm_details = dm_details_v1(data["token"], data["dm_id"])
 
     return json.dumps(dm_details)
+
+@APP.route('/dm/leave/v1', methods=['POST'])
+def dm_leave_v1_flask(): 
+    data = request.get_json()
+    dm_leave_v1(data["token"], data["dm_id"])
+
+    return json.dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
