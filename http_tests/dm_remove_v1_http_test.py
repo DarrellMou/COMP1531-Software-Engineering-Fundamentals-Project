@@ -32,18 +32,18 @@ def dm_remove_body(user, dm):
     }
 
 def test_function():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.get(f"{url}/dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(user0))
     dm_list = r.json()
 
     assert dm_list == {
@@ -55,27 +55,27 @@ def test_function():
         ]
     }
 
-    requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body(user0, dm0))
+    requests.delete(f"{url}dm/remove/v1", json=dm_remove_body(user0, dm0))
 
-    r = requests.get(f"{url}/dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(user0))
     dm_list = r.json()
 
     assert dm_list == {'dms': []}
 
 def test_multiple():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(5):
-        a_u_id = requests.post(f"{url}/auth/register/v2", json=user_body(i))
+        a_u_id = requests.post(f"{url}auth/register/v2", json=user_body(i))
         users.append(a_u_id.json())
 
     dms = []
     for i in range(4):
-        dm_id = requests.post(f"{url}/dm/create/v1", json=dm_create_body(users[0], [users[i + 1]]))
+        dm_id = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[i + 1]]))
         dms.append(dm_id.json())
 
-    r = requests.get(f"{url}/dm/list/v1", json=dm_list_body(users[0]))
+    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(users[0]))
     dm_list = r.json()
 
     assert dm_list == {
@@ -99,10 +99,10 @@ def test_multiple():
         ]
     }
 
-    requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body(users[0], dms[1]))
-    requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body(users[0], dms[3]))
+    requests.delete(f"{url}dm/remove/v1", json=dm_remove_body(users[0], dms[1]))
+    requests.delete(f"{url}dm/remove/v1", json=dm_remove_body(users[0], dms[3]))
 
-    r = requests.get(f"{url}/dm/list/v1", json=dm_list_body(users[0]))
+    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(users[0]))
     dm_list = r.json()
 
     assert dm_list == {
@@ -119,12 +119,12 @@ def test_multiple():
     }
 
 def test_invalid_dm_id():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    r = requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body(user0, {"dm_id": 13601738017}))
+    r = requests.delete(f"{url}dm/remove/v1", json=dm_remove_body(user0, {"dm_id": 13601738017}))
     response = r.json()
 
     assert response["code"] == 400
@@ -132,18 +132,18 @@ def test_invalid_dm_id():
     assert response["message"] == "<p></p>"
 
 def test_unauthorized_user():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body(user1, dm0))
+    r = requests.delete(f"{url}dm/remove/v1", json=dm_remove_body(user1, dm0))
     response = r.json()
 
     assert response["code"] == 403
@@ -151,18 +151,18 @@ def test_unauthorized_user():
     assert response["message"] == "<p></p>"
 
 def test_invalid_token():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
     
-    a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{url}/auth/register/v2", json=user_body(1))
+    a_u_id1 = requests.post(f"{url}auth/register/v2", json=user_body(1))
     user1 = a_u_id1.json()
 
-    dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body(user0, [user1]))
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.delete(f"{url}/dm/remove/v1", json=dm_remove_body({"token": 521580128575}, dm0))
+    r = requests.delete(f"{url}dm/remove/v1", json=dm_remove_body({"token": 521580128575}, dm0))
     response = r.json()
 
     assert response["code"] == 403
