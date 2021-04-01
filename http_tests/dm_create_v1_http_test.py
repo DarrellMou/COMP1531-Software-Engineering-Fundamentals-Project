@@ -26,11 +26,6 @@ def dm_details_body(user, dm):
         "dm_id": dm["dm_id"]
     }
 
-<<<<<<< HEAD
-BASE_URL = 'http://127.0.0.1:6000'
-
-=======
->>>>>>> darrell/dm_create_v1_flask
 def test_function():
     requests.delete(f"{url}/clear/v1")
     
@@ -113,11 +108,7 @@ def test_invalid_token():
     a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-<<<<<<< HEAD
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
-=======
     dm_id0 = requests.post(f"{url}/dm/create/v1", json=dm_create_body({"token": 18936087134}, [user0]))
->>>>>>> darrell/dm_create_v1_flask
     dm0 = dm_id0.json()
 
     assert dm0["code"] == 403
