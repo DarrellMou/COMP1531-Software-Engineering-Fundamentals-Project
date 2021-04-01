@@ -4,9 +4,9 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.data import data
-import pickle
-import os
+from src.auth import auth_register_v1, auth_login_v1, auth_logout_v1
+from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
+from src.data import reset_data
 
 def defaultHandler(err):
     response = err.get_response()
@@ -19,51 +19,94 @@ def defaultHandler(err):
     response.content_type = 'application/json'
     return response
 
-# these are left as comment for you to compare the changes 
-# APP = Flask(__name__)
-# CORS(APP)
+APP = Flask(__name__)
+CORS(APP)
 
-# APP.config['TRAP_HTTP_EXCEPTIONS'] = True
-# APP.register_error_handler(Exception, defaultHandler)
+APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.register_error_handler(Exception, defaultHandler)
 
-
-# create new app instance
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
-
-    app.config['TRAP_HTTP_EXCEPTIONS'] = True
-    app.register_error_handler(Exception, defaultHandler)
-
-    from src import auth, user
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(user.bp)
-    # add more blueprints here from channel, message, etc
-
-    return app
+# Example
+@APP.route("/echo", methods=['GET'])
+def echo():
+    data = request.args.get('data')
+    if data == 'echo':
+        raise InputError(description='Cannot echo "echo"')
+    return dumps({
+        'data': data
+    })
 
 
-# # Example
-# @app.route("/echo", methods=['GET'])
-# def echo():
-#     data = request.args.get('data')
-#     if data == 'echo':
-#    	    raise InputError(description='Cannot echo "echo"')
-#     return dumps({
-#         'data': data
-#     })
+@APP.route("/auth/register/v2", methods=['POST'])
+def auth_register_v2_flask():
+    returnDict = auth_register_v1(request.args.get('email'), request.args.get('password'), request.args.get('name_first'), request.args.get('name_last'))
 
-if __name__ == "__main__": 
-    # load the database from .p only when we're actually running the server, 
-    # for tests just use the default values in data.py
-    if not os.path.isfile('database.p'):
-        print('No database, creating one now')
-        with open("database.p", "wb") as FILE:
-            pickle.dump(data, FILE)
+    return dumps(returnDict)
 
 
-    with open("database.p", "rb") as FILE:
-        pickle.load(FILE)
+@APP.route("/auth/login/v2", methods=['POST'])
+def auth_login_v2_flask():
+    returnDict = auth_login_v1(request.args.get('email'), request.args.get('password'))
 
-    APP = create_app()
-    APP.run(port=config.port) # Do not edit this port
+    return dumps(returnDict)
+
+
+@APP.route("/auth/logout/v1", methods=['POST'])
+def auth_logout_route():
+    returnDict = auth_logout_v1(request.args.get('token'))
+    return dumps(returnDict)
+
+
+###
+@APP.route("/channels/create/v2", methods=['POST'])
+def channels_create_v2_flask():
+    data = request.get_json()
+    channel_id = channels_create_v1(data['auth_user_id'], data['name'], data['is_public'])
+    return json.dumps(channel_id)
+
+
+@APP.route("/message/send/v2", methods=['POST'])
+def message_send_v2_flask():
+    data = request.get_json()
+    message_id = message_send_v2(data['token'], data['channel_id'], data['message'])
+
+    return json.dumps(message_id)
+
+
+@APP.route('/user/profile/v2', methods=['GET'])
+def user_profile_v2_flask():
+    returnDict = user_profile_v2(request.args.get('token'), request.args.get('u_id'))
+    return dumps(returnDict)
+
+
+@APP.route('/user/profile/setname/v2', methods=['PUT'])
+def user_profile_setname_v2_flask():
+    returnDict = user_profile_setname_v2(request.args.get('token'), request.args.get('name_first'), request.args.get('name_last'))
+    return dumps(returnDict)  
+
+
+@APP.route('/user/profile/setemail/v2', methods=['PUT'])
+def user_profile_setemail_v2_flask():
+    returnDict = user_profile_setemail_v2(request.args.get('token'), request.args.get('email'))
+    return dumps(returnDict) 
+
+
+@APP.route('/user/profile/sethandle/v2', methods=['PUT'])
+def user_profile_sethandle_v2_flask():
+    returnDict = user_profile_sethandle_v2(request.args.get('token'), request.args.get('handle_str'))
+    return dumps(returnDict) 
+
+
+@APP.route('/users/all/v1', methods=['GET'])
+def users_all_v2_flask():
+    returnDict = users_all_v1(request.args.get('token'))
+    return dumps(returnDict) 
+
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    reset_data()
+    return {}
+
+
+if __name__ == "__main__":
+    APP.run(debug=True, port=config.port) # Do not edit this port

@@ -3,6 +3,7 @@ def clear_v1():
         "users" : {},
         "channels" : {}
     }
+
     return data
 
 def search_v1(auth_user_id, query_str):
