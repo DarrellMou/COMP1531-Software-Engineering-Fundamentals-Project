@@ -34,11 +34,7 @@ def channel_details_body(user, channel):
     }
 
 def test_function():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -78,11 +74,7 @@ def test_function():
     }
 
 def test_multiple():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(5):
@@ -137,11 +129,7 @@ def test_multiple():
     }
 
 def test_multiple_users_invite():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(5):
@@ -196,11 +184,7 @@ def test_multiple_users_invite():
     }
 
 def test_invalid_channel_id():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     r = requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -215,11 +199,7 @@ def test_invalid_channel_id():
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_invited_user():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     r = requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -235,11 +215,7 @@ def test_invalid_invited_user():
     assert r.json()["message"] == "<p></p>"
 
 def test_unauthorized_user():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     r = requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     users = []
     for i in range(3):
@@ -256,11 +232,7 @@ def test_unauthorized_user():
     assert r.json()["message"] == "<p></p>"
 
 def test_invalid_token():
-<<<<<<< HEAD
-    requests.delete(f"{BASE_URL}/clear/v1")
-=======
     r = requests.delete(f"{url}/clear/v1")
->>>>>>> darrell/channel_invite_v2_flask
 
     a_u_id0 = requests.post(f"{url}/auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
