@@ -39,7 +39,7 @@ def test_function():
     dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.post(f"{BASE_URL}/dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{BASE_URL}/dm/list/v1", json=dm_list_body(user0))
     dm_list = r.json()
 
     assert dm_list == {
@@ -61,46 +61,37 @@ def test_multiple():
 
     dms = []
     for i in range(4):
-        dm_id = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], users[i + 1]))
+        dm_id = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(users[0], [users[i + 1]]))
         dms.append(dm_id.json())
 
-    r = requests.post(f"{BASE_URL}/dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{BASE_URL}/dm/list/v1", json=dm_list_body(users[0]))
     dm_list = r.json()
 
     assert dm_list == {
         'dms': [
             {
-                'dm_id': dm_id2['dm_id'],
-                'name': dm_id2['dm_name']
+                'dm_id': dms[0]['dm_id'],
+                'name': dms[0]['dm_name']
             },
             {
-                'dm_id': dm_id3['dm_id'],
-                'name': dm_id3['dm_name']
+                'dm_id': dms[1]['dm_id'],
+                'name': dms[1]['dm_name']
             },
             {
-                'dm_id': dm_id4['dm_id'],
-                'name': dm_id4['dm_name']
+                'dm_id': dms[2]['dm_id'],
+                'name': dms[2]['dm_name']
             },
             {
-                'dm_id': dm_id5['dm_id'],
-                'name': dm_id5['dm_name']
+                'dm_id': dms[3]['dm_id'],
+                'name': dms[3]['dm_name']
             }
         ]
     }
 
 def test_invalid_token():
     requests.delete(f"{BASE_URL}/clear/v1")
-    
-    a_u_id0 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(0))
-    user0 = a_u_id0.json()
 
-    a_u_id1 = requests.post(f"{BASE_URL}/auth/register/v2", json=user_body(1))
-    user1 = a_u_id1.json()
-
-    dm_id0 = requests.post(f"{BASE_URL}/dm/create/v1", json=dm_create_body(user0, [user1]))
-    dm0 = dm_id0.json()
-
-    r = requests.post(f"{BASE_URL}/dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{BASE_URL}/dm/list/v1", json=dm_list_body({"token": 513875017835}))
     dm_list = r.json()
 
     assert dm_list["code"] == 403
