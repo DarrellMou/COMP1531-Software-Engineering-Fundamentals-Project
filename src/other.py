@@ -13,8 +13,12 @@ def clear_v1():
     data = {
         "users" : {},
         "channels" : {},
+<<<<<<< HEAD
         "dms" : {},
         "messages" : []
+=======
+        "dms": {}
+>>>>>>> darrell/dm_details_v1
     }
     with open("data.json", "w") as FILE:
         json.dump(data, FILE)
