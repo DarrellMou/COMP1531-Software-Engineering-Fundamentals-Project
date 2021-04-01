@@ -8,11 +8,7 @@ from src.other import clear_v1
 
 # Typical case
 def test_function():
-<<<<<<< HEAD
-    reset_data()
-=======
     clear_v1()
->>>>>>> darrell/dm_list_v1_flask
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
 
@@ -29,11 +25,7 @@ def test_function():
 
 # dm_list returning multiple dms of one user
 def test_multiple():
-<<<<<<< HEAD
-    reset_data()
-=======
     clear_v1()
->>>>>>> darrell/dm_list_v1_flask
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
     a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
