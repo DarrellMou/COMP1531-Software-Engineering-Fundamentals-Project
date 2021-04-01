@@ -4,6 +4,9 @@ from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
+
+from json import dumps
+import json
 '''
 from data import data, retrieve_data, reset_data
 from error import AccessError, InputError
@@ -259,7 +262,9 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 
 
 def message_senddm_v1(token, dm_id, message):
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -306,6 +311,9 @@ def message_senddm_v1(token, dm_id, message):
     data['messages'].append(message_dictionary)
     #f = open("demofile3.txt", "w")
     #f.write(data)
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)  
 
     return {
         'message_id': unique_message_id

@@ -54,9 +54,9 @@ def channels_list_v2(token):
 # Provide a list of all channels (and their associated details)
 def channels_listall_v2(token):
 
-    #data = retrieve_data()
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    data = retrieve_data()
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
     
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
@@ -72,8 +72,8 @@ def channels_listall_v2(token):
         }
         channel_listall.append(channel_details)
     
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
+    #with open("data.json", "w") as FILE:
+    #    json.dump(data, FILE)
 
     return {
         'channels': channel_listall
@@ -83,9 +83,9 @@ def channels_listall_v2(token):
 # Creates a new channel with that name that is either a public or private channel
 def channels_create_v2(token, name, is_public):
 
-    #data = retrieve_data()
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    data = retrieve_data()
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
 
     # InputError occurs when creating a channel name longer than 20 characters
     if len(name) > 20: raise InputError("Channel name cannot be longer than 20 characters")
@@ -106,33 +106,11 @@ def channels_create_v2(token, name, is_public):
         'messages' : [],
     } 
 
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)  
+    #with open("data.json", "w") as FILE:
+    #    json.dump(data, FILE)  
 
     return {
         'channel_id': channel_id
     }
 
-'''
-#################################################################################
-#                                API ROUTES                                     #
-#   * channels_list, channels_listall, channels_create                          #
-#                                                                               #                                                                      #
-#################################################################################
 
-@bp.route('create', methods=['POST'])
-def create_channels():
-    token = request.json['token']
-    name = request.json['name']
-    is_public = bool(request.json['is_public'])
-
-    responseObj = channels_create_v2(token, name, is_public)
-
-    return json.dumps(responseObj)
-
-@bp.route('listall', methods=['GET'])
-def listall_channels():
-    token = request.json['token']
-
-    return json.dumps(channels_listall_v2(token))
-'''

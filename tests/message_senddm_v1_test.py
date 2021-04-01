@@ -41,7 +41,10 @@ def set_up_data():
     return setup
 
 def send_x_messages(user1, user2, dm1, num_messages):
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     message_count = 0
     while message_count < num_messages:
         message_num = message_count + 1
@@ -50,17 +53,21 @@ def send_x_messages(user1, user2, dm1, num_messages):
         else:
             message_senddm_v1(user2, dm1, str(message_num))
         message_count += 1
-    
+
     return data
 
 def send_x_messages_two_dms(user, dm1, dm2, num_messages):
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     message_count = 0
     while message_count < num_messages:
         message_num = message_count + 1
         message_senddm_v1(user, dm1, str(message_num))
         message_senddm_v1(user, dm2, str(message_num))
         message_count += 1
+
     return data
 
 
@@ -104,12 +111,14 @@ def test_message_senddm_v1_InputError():
 # Testing for 1 message being sent by user1
 def test_message_senddm_v1_send_one():
     setup = set_up_data()
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     assert message_senddm_v1(user1, dm1, "Hello")['message_id'] ==\
-        data['dms'][dm1]['messages'][0]['message_id']
+        f"{data['dms'][dm1]['messages'][0]['message_id']}"
 
 
 # Testing for 2 identical messages being sent by user1
@@ -117,13 +126,15 @@ def test_message_senddm_v1_user_sends_identical_messages():
     setup = set_up_data()
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     first_message_id = message_senddm_v1(user1, dm1, "Hello")['message_id']
     second_message_id = message_senddm_v1(user1, dm1, "Hello")['message_id']
 
-    assert first_message_id == data['dms'][dm1]['messages'][0]['message_id']
-    assert second_message_id == data['dms'][dm1]['messages'][1]['message_id']
+    assert first_message_id == f"{data['dms'][dm1]['messages'][0]['message_id']}"
+    assert second_message_id == f"{data['dms'][dm1]['messages'][1]['message_id']}"
 
     assert first_message_id != second_message_id
 
@@ -139,7 +150,9 @@ def test_message_senddm_v1_multiple_users_multiple_messages():
 
     send_x_messages(user1, user2, dm1, 10)
 
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     assert data['dms'][dm1]['messages'][0]['message'] == "1"
     assert data['dms'][dm1]['messages'][5]['message'] == "6"
@@ -155,7 +168,10 @@ def test_message_senddm_v1_multiple_users_multiple_messages_message_id():
 
     dm_invite_v1(user1, dm1, u_id2)
 
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     message_count = 0
     while message_count < 100:
         message_num = message_count + 1
@@ -163,7 +179,7 @@ def test_message_senddm_v1_multiple_users_multiple_messages_message_id():
             message_id = message_senddm_v1(user1, dm1, str(message_num))['message_id']
         else:
             message_id = message_senddm_v1(user2, dm1, str(message_num))['message_id']
-        assert message_id == data['dms'][dm1]['messages'][message_count]['message_id']
+        assert message_id == f"{data['dms'][dm1]['messages'][message_count]['message_id']}"
         message_count += 1
 
 
@@ -176,10 +192,11 @@ def test_message_senddm_v1_identical_message_to_2_dms():
 
     dm2 = dm_create_v1(user1, [u_id3])['dm_id']
 
-
     send_x_messages_two_dms(user1, dm1, dm2, 10)
 
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     m_id0_ch1 = data['dms'][dm1]['messages'][0]['message_id']
     m_id0_ch2 = data['dms'][dm2]['messages'][0]['message_id']
@@ -202,7 +219,10 @@ def test_message_senddm_v1_appends_to_data_messages():
     
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     assert len(data['messages']) == 20
 
 
@@ -216,7 +236,9 @@ def test_message_senddm_v1_data_messages_in_order():
 
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     m_id0_ch1 = data['dms'][dm1]['messages'][0]
     m_id0_ch2 = data['dms'][dm2]['messages'][0]
@@ -225,5 +247,5 @@ def test_message_senddm_v1_data_messages_in_order():
     m_id9_ch1 = data['dms'][dm1]['messages'][9]['message_id']
     m_id9_ch2 = data['dms'][dm2]['messages'][9]['message_id']
 
-    assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
-    assert data['messages'][0]['message'] == m_id0_ch1['message']
+    assert data['messages'][0]['message_id'] == f"{m_id0_ch1['message_id']}"
+    assert data['messages'][0]['message'] == f"{m_id0_ch1['message']}"

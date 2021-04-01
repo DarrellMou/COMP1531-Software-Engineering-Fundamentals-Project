@@ -10,17 +10,16 @@ import src.data
 import json
 
 def clear_v1():
-    #src.data.
-    data = {
+    src.data.data = {
         "users" : {},
         "channels" : {},
         "dms": {},
         "messages" : []
     }
-    #return {}
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
-
+    return {}
+    #with open("data.json", "w") as FILE:
+    #    json.dump(data, FILE)
+    
 def search_v2(token, query_str):
     
     data = retrieve_data()

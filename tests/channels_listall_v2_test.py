@@ -30,7 +30,7 @@ def test_channels_listall_single(setup_user):
     # ensure channels_listall returns correct values
     channel_list = channels_listall_v2(users['user3']['token'])
 
-    assert channel_list['channels'][0]['channel_id'] == f"{channel_id3['channel_id']}"
+    assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public3'
 
 # listing multiple channels
@@ -45,13 +45,13 @@ def test_channels_listall_multiple(setup_user):
     # ensure channels_listall returns correct values
     channel_list = channels_listall_v2(users['user3']['token'])
 
-    assert channel_list['channels'][0]['channel_id'] == f"{channel_id3['channel_id']}"
+    assert channel_list['channels'][0]['channel_id'] == channel_id3['channel_id']
     assert channel_list['channels'][0]['name'] == 'Public3'
 
-    assert channel_list['channels'][1]['channel_id'] == f"{channel_id4['channel_id']}"
+    assert channel_list['channels'][1]['channel_id'] == channel_id4['channel_id']
     assert channel_list['channels'][1]['name'] == 'Private4'
 
-    assert channel_list['channels'][2]['channel_id'] == f"{channel_id5['channel_id']}"
+    assert channel_list['channels'][2]['channel_id'] == channel_id5['channel_id']
     assert channel_list['channels'][2]['name'] == 'Public5'
 
 
