@@ -7,6 +7,15 @@ def clear_v1():
         "channels" : {},
         "dms" : {}
     }
+    '''
+    data = {
+        "users" : {},
+        "channels" : {},
+        "dms" : {}
+    }
+    '''
+    with open("data.json", "w") as FILE:
+        json.dump(src.data.data, FILE)
     return {}
 
     '''
