@@ -1,9 +1,15 @@
 import sys
 from json import dumps
+import json
 from flask import Flask, request
 from flask_cors import CORS
+
 from src.error import InputError
-import src.config
+from src import config
+
+from src.other import clear_v1
+from src.auth import auth_register_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_invite_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -49,6 +55,39 @@ def create_app():
 #         'data': data
 #     })
 
+# Initialize
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+    return {}
+
+@APP.route('/auth/register/v2', methods=['POST'])
+def auth_register_v2_flask(): 
+    data = request.get_json()
+    a_u_id = auth_register_v1(data['email'], data['password'], data['name_first'], data['name_last'])
+
+    return json.dumps(a_u_id)
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create_v1_flask(): 
+    data = request.get_json()
+    dm_id = dm_create_v1(data["token"], data["u_ids"])
+
+    return json.dumps(dm_id)
+
+@APP.route('/dm/details/v1', methods=['GET'])
+def dm_details_v1_flask(): 
+    data = request.get_json()
+    dm_details = dm_details_v1(data["token"], data["dm_id"])
+
+    return json.dumps(dm_details)
+
+@APP.route('/dm/invite/v1', methods=['POST'])
+def dm_invite_v1_flask(): 
+    data = request.get_json()
+    dm_invite_v1(data["token"], data["dm_id"], data["u_id"])
+
+    return json.dumps({})
+
 if __name__ == "__main__":
-    APP = create_app()
-    APP.run(port=config.port) # Do not edit this port
+    APP.run(port=config.port,debug=True) # Do not edit this port
