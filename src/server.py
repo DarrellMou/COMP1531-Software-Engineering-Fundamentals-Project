@@ -6,10 +6,9 @@ from src.error import InputError
 from src import config
 from src.auth import auth_register_v1
 from src.message import message_send_v2
-from src.data import reset_data
 
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
-from src.channel import channel_details_v2
+from src.channel import channel_details_v2, channel_invite_v2
 from src.channels import channels_create_v2, channels_listall_v2
 from src.other import clear_v1
 
@@ -52,18 +51,28 @@ def auth_register_v1_flask():
 @APP.route("/channels/create/v2", methods=['POST'])
 def channels_create_v2_flask():
     data = request.get_json()
-    channel_id = channels_create_v1(data['auth_user_id'], data['name'], data['is_public'])
+    channel_id = channels_create_v2(data['token'], data['name'], data['is_public'])
     return json.dumps(channel_id)
 
 
 @APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite_v2_flask():
+    data = request.get_json()
+    channel_invite_v2(data["token"], data["channel_id"], data["u_id"])
+
+    return json.dumps({})
+
+
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages_v2_flask():
     payload = request.get_json()
     token = payload['token']
     channel_id = payload['channel_id']
-    u_id = payload['u_id']
+    start = int(payload['start'])
 
-    return json.dumps(channel_invite_v2(token,channel_id,u_id))
+    return json.dumps(channel_messages_v2(token,channel_id,start))
+
 
 
 @APP.route("/message/send/v2", methods=['POST'])
@@ -76,11 +85,8 @@ def message_send_v2_flask():
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
-    reset_data()
+    clear_v1()
     return {}
-
-
-
 
 
 if __name__ == "__main__":
