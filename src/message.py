@@ -44,7 +44,6 @@ def get_share_status(message_id):
 
 # Given a message, return a tab in front of the relevant lines
 def tab_given_message(msg):
-    msg_len = len(msg)
     index = 0
     for n in range(0, len(msg)):
         if msg[n] == msg[n + 1] == msg[n + 2] == '"':
@@ -56,28 +55,6 @@ def tab_given_message(msg):
 
     tabbed_msg = beginning_of_string + changed_string
     return tabbed_msg
-
-
-    '''
-    for n in range(0, msg_len):
-        if msg[n] == msg[n + 1] == msg[n + 2] == '"':
-            if count == 0:
-                count = 0.5
-        if count == 0.5 and msg[n] == '\n':
-            count = 1
-        if count == 1 and msg[n] == '\n':
-            msg = msg[0:n] + "\n    " +  msg[(n + 1):len(msg)]
-    return msg
-    '''
-
-'''
-# Given a message_id, return its index in data['messages']
-def get_message_index(message_id):
-    data = retrieve_data()
-    i = 0
-    while i < len(data['messages']):
-        if data['messages']['message_id'] = 
-'''
 
 
 ###############################################################################
@@ -258,10 +235,16 @@ def message_edit_v2(token, message_id, message):
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
             msg['message'] = message
-    for ch_msg in data['channels'][ch_id]['messages']:
-        if ch_msg['message_id'] == message_id:
-            ch_msg['message'] = message
+    if ch_id != -1:
+        for ch_msg in data['channels'][ch_id]['messages']:
+            if ch_msg['message_id'] == message_id:
+                ch_msg['message'] = message
+    else:
+        for dm_msg in data['dms'][dm_id]['messages']:
+            if dm_msg['message_id'] == message_id:
+                dm_msg['message'] = message
 
     return {
     }

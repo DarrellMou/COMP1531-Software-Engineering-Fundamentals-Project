@@ -1,10 +1,10 @@
+
 import pytest
 
 from src.error import InputError, AccessError
-from src.data import retrieve_data
-from src.other import clear_v1
+from src.data import reset_data, retrieve_data
 from src.auth import auth_register_v1, auth_decode_token
-from src.dm import dm_create_v1, dm_invite_v1
+from src.dm import dm_create_v1, dm_messages_v1, dm_invite_v1
 from src.message import message_senddm_v1
 
 
