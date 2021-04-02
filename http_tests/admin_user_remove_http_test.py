@@ -158,6 +158,9 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
     assert messages_channel_id1['messages'][0]['message'] == "Nice day"
     assert messages_channel_id2['messages'][0]['message'] == "Hello user2"
     #assert messages_dm_id_1['messages'][0]['message'] == "Hi guys"
+
+    print(messages_channel_id1)
+    print(messages_channel_id2)
     
     # Global User 2 removes Global User 1
     requests.post(config.url + '/admin/userpermission/change/v1', json={
@@ -180,6 +183,6 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
     
     # Ensure the correct output after calling admin_user_remove
     #assert user_profile_id1['auth_user_id'][0]['first_name'] == "Removed user"
-    assert messages_channel_id1['messages'][0]['message'] == "Removed user"
-    assert messages_channel_id2['messages'][0]['message'] == "Removed user"
+    assert messages_channel_id1a['messages'][0]['message'] == "Removed user"
+    assert messages_channel_id2a['messages'][0]['message'] == "Removed user"
     #assert messages_dm_id_1['messages'][0]['message'] == "Removed user"
