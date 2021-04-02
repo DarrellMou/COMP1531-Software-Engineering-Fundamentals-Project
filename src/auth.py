@@ -96,6 +96,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'handle_str' : '',
         'permission_id': permission_id,
         'dms': [],
+        'notifications': []
     }
 
     # Check to see if the handle is unique
