@@ -1,4 +1,4 @@
-﻿COMP1531 ASSIGNMENT 
+COMP1531 ASSIGNMENT 
 Meeting Minutes and Reflection
 
 ITERATION 1
@@ -178,17 +178,11 @@ ACTIONS:
 REFLECTIONS
 
 -	Start earlier and read the spec carefully.
-
 -	Make use of social platforms and update each other frequently.
-
 -	Attend all meetings that are proposed.
-
 -	Don’t leave code to last minute.
-
 -   Utilise proper Git practices.
-
 -   Utilise Git Taskboard more and consistently check board.
-
 -   Better commit comments.
 
 
@@ -197,3 +191,33 @@ Week 4 Friday - Allocation of work
 
 15.03.21
 -   Nikki edited code to fix pylint
+
+
+Meeting - Wednesday 17/03/21
+
+Duration	8:30pm - 11:00pm
+Platform	Discord
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+UPDATES:
+-	Winston implemented token helper functions to auth. 
+-   Winston added to __init__.
+-   Brendan, Nikki, Darrell, Kellen and Winston changed their initial assigned functions to have input token.
+-   Darrell began on dm functions.
+
+ACTIONS:
+-   Winston verifying auth.
+-   Everyone else start their newly assigned functions for Iteration2.
+-   Darrell merged Winston's auth into his branch.
+
+TO-DO: 
+-   Work out uniform architecture.
+-   Work on new functions.
+
+
+Tutorial - Friday 19/03/21
+
+TO-DO: 
+-   Finish draft functions by next Wednesday meeting at 8:30pm  
+
+
