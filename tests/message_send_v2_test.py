@@ -1,7 +1,7 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.channel import channel_messages_v2, channel_invite_v1
+from src.channel import channel_messages_v2, channel_invite_v2
 from src.data import retrieve_data
 from src.auth import auth_register_v1, auth_decode_token
 from src.channels import channels_create_v2
@@ -134,7 +134,7 @@ def test_message_send_v2_multiple_users_multiple_messages():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     u_id2 = auth_decode_token(user2)
 
-    channel_invite_v1(user1, channel1, u_id2)
+    channel_invite_v2(user1, channel1, u_id2)
 
     send_x_messages(user1, user2, channel1, 10)
 
@@ -152,7 +152,7 @@ def test_message_send_v2_multiple_users_multiple_messages_message_id():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     u_id2 = auth_decode_token(user2)
 
-    channel_invite_v1(user1, channel1, u_id2)
+    channel_invite_v2(user1, channel1, u_id2)
 
     data = retrieve_data()
     message_count = 0
