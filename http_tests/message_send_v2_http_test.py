@@ -1,14 +1,7 @@
 import json
 import requests
-import urllib
-import src.server
-from src.message import message_send
-from src.auth import auth_register_v1, auth_decode_token
-from src.channels import channels_create_v1
-from src.channel import channel_invite_v1
-
-
-BASE_URL = 'http://127.0.0.1:8080/'
+import pytest
+from src.config import url
 
 
 ###############################################################################
@@ -16,8 +9,8 @@ BASE_URL = 'http://127.0.0.1:8080/'
 ###############################################################################
 
 def set_up_data():
-    requests.delete(f"{BASE_URL}clear/v1/")
-    r = requests.post(f"{BASE_URL}auth/register/v2", json = {
+    requests.delete(f"{url}clear/v1/")
+    r = requests.post(f"{url}auth/register/v2", json = {
         "email": "bob.builder@email.com",
         "password": "badpassword1",
         "name_first": "Bob",
@@ -25,7 +18,7 @@ def set_up_data():
     })
     user1 = r.json()
 
-    r = requests.post(f"{BASE_URL}auth/register/v2", json = {
+    r = requests.post(f"{url}auth/register/v2", json = {
         "email": "shaun.sheep@email.com",
         "password": "password123",
         "name_first": "Shaun",
@@ -33,7 +26,7 @@ def set_up_data():
     })
     user2 = r.json()
 
-    r = requests.post(f"{BASE_URL}channels/create/v2", json = {
+    r = requests.post(f"{url}channels/create/v2", json = {
         "auth_user_id": user1['auth_user_id'],
         "name": "Channel1",
         "is_public": True
@@ -57,13 +50,13 @@ def send_x_messages(user1, user2, channel1, num_messages):
     while message_count < num_messages:
         message_num = message_count + 1
         if message_count % 2 == 0:
-            requests.post(f"{BASE_URL}message/send/v2", json= {
+            requests.post(f"{url}message/send/v2", json= {
                 "token": user1,
                 "channel_id": channel1,
                 "message": str(message_num)
             }).json
         else:
-            requests.post(f"{BASE_URL}message/send/v2", json= {
+            requests.post(f"{url}message/send/v2", json= {
                 "token": user2,
                 "channel_id": channel1,
                 "message": str(message_num)
@@ -79,12 +72,12 @@ def send_x_messages_two_channels(user, channel1, channel2, num_messages):
     message_count = 0
     while message_count < num_messages:
         message_num = message_count + 1
-        requests.post(f"{BASE_URL}message/send/v2", json= {
+        requests.post(f"{url}message/send/v2", json= {
             "token": user,
             "channel_id": channel1,
             "message": str(message_num)
         }).json
-        requests.post(f"{BASE_URL}message/send/v2", json= {
+        requests.post(f"{url}message/send/v2", json= {
             "token": user,
             "channel_id": channel2,
             "message": str(message_num)
@@ -103,12 +96,16 @@ def send_x_messages_two_channels(user, channel1, channel2, num_messages):
 def test_http_message_send_v2_AccessError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
-    
-    # user2 who is not a part of channel_1 tries to send message 
-    # - should raise an access error
-    with pytest.raises(AccessError):
-        assert message_send_v2(user2, channel1, "Hello")
 
+
+    # Ensure AccessError
+    assert requests.post(url + 'message/send/v2', json={
+        'token': invalid_token,
+        'channel_id': channel1,
+        'message': "Hello",
+    }).status_code == 403
+
+'''
 
 # Testing to see if message is of valid length
 def test_http_message_send_v2_InputError():
@@ -137,7 +134,7 @@ def test_http_message_send_v2_send_one():
     with open("data.json", "r") as FILE:
         data = json.load(FILE)
 
-    message_one = requests.post(f"{BASE_URL}message/send/v2", json= {
+    message_one = requests.post(f"{url}message/send/v2", json= {
         "token": user1,
         "channel_id": channel1,
         "message": "Hello"
@@ -155,13 +152,13 @@ def test_http_message_send_v2_user_sends_identical_messages():
     with open("data.json", "r") as FILE:
         data = json.load(FILE)
 
-    first_message_id = requests.post(f"{BASE_URL}message/send/v2", json= {
+    first_message_id = requests.post(f"{url}message/send/v2", json= {
         "token": user1,
         "channel_id": channel1,
         "message": "Hello"
     }).json
 
-    second_message_id = requests.post(f"{BASE_URL}message/send/v2", json= {
+    second_message_id = requests.post(f"{url}message/send/v2", json= {
         "token": user2,
         "channel_id": channel1,
         "message": "Hello"
@@ -181,7 +178,7 @@ def test_http_message_send_v2_multiple_users_multiple_messages():
 
     u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2) 
     
-    requests.post(f"{BASE_URL}channel/invite/v2", json = {
+    requests.post(f"{url}channel/invite/v2", json = {
         "token": user1,
         "channel_id": channel1,
         "u_id": u_id2
@@ -205,7 +202,7 @@ def test_http_message_send_v2_multiple_users_multiple_messages_message_id():
 
     u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2) 
 
-    requests.post(f"{BASE_URL}channel/invite/v2", json = {
+    requests.post(f"{url}channel/invite/v2", json = {
         "token": user1,
         "channel_id": channel1,
         "u_id": u_id2
@@ -218,13 +215,13 @@ def test_http_message_send_v2_multiple_users_multiple_messages_message_id():
     while message_count < 100:
         message_num = message_count + 1
         if message_count % 2 == 0:
-            message_id = requests.post(f"{BASE_URL}message/send/v2", json= {
+            message_id = requests.post(f"{url}message/send/v2", json= {
                 "token": user1,
                 "channel_id": channel1,
                 "message": str(message_num)
             }).json
         else:
-            message_id = requests.post(f"{BASE_URL}message/send/v2", json= {
+            message_id = requests.post(f"{url}message/send/v2", json= {
                 "token": user2,
                 "channel_id": channel1,
                 "message": str(message_num)
@@ -240,7 +237,7 @@ def test_http_message_send_v2_identical_message_to_2_channels():
     user1, channel1 = setup['user1'], setup['channel1']
 
     u_id1 = auth_decode_token(user1)
-    channel2 = requests.post(f"{BASE_URL}channels/create/v2", json = {
+    channel2 = requests.post(f"{url}channels/create/v2", json = {
         "auth_user_id": u_id1,
         "name": "Channel2",
         "is_public": True
@@ -269,7 +266,7 @@ def test_http_message_send_v2_appends_to_data_messages():
     user1, channel1 = setup['user1'], setup['channel1']
 
     u_id1 = auth_decode_token(user1)
-    channel2 = requests.post(f"{BASE_URL}channels/create/v2", json = {
+    channel2 = requests.post(f"{url}channels/create/v2", json = {
         "auth_user_id": u_id1,
         "name": "Channel2",
         "is_public": True
@@ -289,7 +286,7 @@ def test_http_message_send_v2_data_messages_in_order():
     user1, channel1 = setup['user1'], setup['channel1']
 
     u_id1 = auth_decode_token(user1)
-    channel2 = requests.post(f"{BASE_URL}channels/create/v2", json = {
+    channel2 = requests.post(f"{url}channels/create/v2", json = {
         "auth_user_id": u_id1,
         "name": "Channel2",
         "is_public": True
@@ -309,3 +306,4 @@ def test_http_message_send_v2_data_messages_in_order():
 
     assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
     assert data['messages'][0]['message'] == m_id0_ch1['message']
+'''

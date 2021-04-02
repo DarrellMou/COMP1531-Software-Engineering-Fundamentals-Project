@@ -22,7 +22,7 @@ from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remov
 def defaultHandler(err):
     response = err.get_response()
     print('response', err, err.get_response())
-    response.data = dumps({
+    response.data = json.dumps({
         "code": err.code,
         "name": "System Error",
         "message": err.get_description(),
