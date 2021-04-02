@@ -1,9 +1,11 @@
 import sys
-from json import dumps
+import json
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
-from src import config, auth_register_v1, message_send_v2
+from src import config
+from src.auth import auth_register_v1
+from src.message import message_send_v2
 from src.data import reset_data
 
 def defaultHandler(err):
@@ -29,7 +31,7 @@ def echo():
     data = request.args.get('data')
     if data == 'echo':
    	    raise InputError(description='Cannot echo "echo"')
-    return dumps({
+    return json.dumps({
         'data': data
     })
 
@@ -48,6 +50,15 @@ def channels_create_v2_flask():
     channel_id = channels_create_v1(data['auth_user_id'], data['name'], data['is_public'])
     return json.dumps(channel_id)
 
+
+@APP.route("/channel/invite/v2", methods=['POST'])
+def channel_invite_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    u_id = payload['u_id']
+
+    return json.dumps(channel_invite_v2(token,channel_id,u_id))
 
 
 @APP.route("/message/send/v2", methods=['POST'])
