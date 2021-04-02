@@ -11,7 +11,7 @@ from src.data import reset_data
 def defaultHandler(err):
     response = err.get_response()
     print('response', err, err.get_response())
-    response.data = dumps({
+    response.data = json.dumps({
         "code": err.code,
         "name": "System Error",
         "message": err.get_description(),
