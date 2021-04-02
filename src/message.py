@@ -4,6 +4,8 @@ from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
+import json
+
 '''
 from data import data, retrieve_data, reset_data
 from error import AccessError, InputError
@@ -21,21 +23,27 @@ from channels import channels_create_v1
 
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+    
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             return msg['channel_id']
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             return msg['message']
 
 # Given a message_id, return whether the message is a shared message or not
 def get_share_status(message_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             return msg['was_shared']
@@ -62,7 +70,8 @@ def tab_given_message(msg):
 
 
 def message_send_v2(token, channel_id, message):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -110,15 +119,18 @@ def message_send_v2(token, channel_id, message):
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
+
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
     return {
         'message_id': unique_message_id
     }
 
 def message_remove_v2(token, message_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -157,11 +169,16 @@ def message_remove_v2(token, message_id):
         if msg['message_id'] == message_id:
             msg['is_removed'] = True
 
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
+
     return {
     }
 
 def message_edit_v2(token, message_id, message):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -221,13 +238,19 @@ def message_edit_v2(token, message_id, message):
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
+
     return {
     }
 
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+    
     u_id = auth_decode_token(token)
     og_message = get_message(og_message_id)
 
@@ -251,14 +274,20 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id != -1:
         shared_message_id = message_send_v2(token, channel_id, shared_message)['message_id']
         data['messages'][len(data['messages']) - 1]['was_shared'] = True
-    #else:
-        #shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
+    else:
+        shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
+        data['messages'][len(data['messages'] - 1)]['was_shared'] = True
+
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
     return {'shared_message_id': shared_message_id}
 
 
 def message_senddm_v1(token, dm_id, message):
-    data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -304,8 +333,10 @@ def message_senddm_v1(token, dm_id, message):
     # Append our dictionaries to their appropriate lists
     data['dms'][dm_id]['messages'].append(dm_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
+
+
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
 
     return {
         'message_id': unique_message_id
