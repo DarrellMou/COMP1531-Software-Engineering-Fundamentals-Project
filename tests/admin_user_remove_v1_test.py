@@ -1,6 +1,6 @@
 import pytest
 
-from src.auth import auth_register_v2
+from src.auth import auth_register_v1
 from src.channel import channel_join_v2, channel_messages_v2, channel_addowner_v1
 from src.channels import channels_create_v2, channels_listall_v2
 from src.error import InputError, AccessError
