@@ -6,11 +6,11 @@ from src.error import InputError
 from src import config
 
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
-from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1
+from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2
 from src.channels import channels_create_v2, channels_listall_v2
 from src.dm import dm_create_v1
-from src.message import message_senddm_v1
-from src.other import clear_v1, admin_userpermission_change_v1
+from src.message import message_send_v2, message_senddm_v1
+from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -115,6 +115,15 @@ def channel_addowner_v1_flask():
 
     return dumps(channel_addowner_v1(token,channel_id,u_id))
 
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    start = int(payload['start'])
+
+    return dumps(channel_messages_v2(token,channel_id,start))
+
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create_v1_flask(): 
     data = request.get_json()
@@ -127,6 +136,16 @@ def dm_create_v1_flask():
     u_id = payload['u_ids']
 
     '''
+
+@APP.route("/message/send/v2", methods=['POST'])
+def message_send_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    message = payload['message']
+
+    return dumps(message_send_v2(token,channel_id,message))
+
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm_v1_flask():
     payload = request.get_json()
@@ -149,7 +168,7 @@ def admin_userpermission_change_v1_flask():
 def admin_user_remove_v1_flask():
     payload = request.get_json()
     token = payload['token']
-    u_id = payload['u_id']
+    u_id = int(payload['u_id'])
 
     return dumps(admin_user_remove_v1(token, u_id))
 
