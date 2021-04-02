@@ -149,11 +149,11 @@ def message_send_v2(token, channel_id, message):
                 tagged = member
         
         notification = {
-        'channel_id' : channel_id,
-        'dm_id' : -1,
-        'notification_message' : (str(data['users'][user_id]['handle_str'])
-        + " tagged you in " + str(data['channels'][channel_id]['name'])
-        + ":" + str(message[0:20]))
+            'channel_id' : channel_id,
+            'dm_id' : -1,
+            'notification_message' : (str(data['users'][user_id]['handle_str'])
+            + " tagged you in " + str(data['channels'][channel_id]['name'])
+            + ":" + str(message[0:20]))
         }
         # Make sure notification list is len 20
         if len(data['users'][tagged]['notifications']) == 20:
@@ -360,11 +360,11 @@ def message_senddm_v1(token, dm_id, message):
                 tagged = member
         
         notification = {
-        'channel_id' : -1,
-        'dm_id' : dm_id,
-        'notification_message' : (str(data['users'][user_id]['handle_str'])
-        + " tagged you in " + str(data['channels'][channel_id]['name'])
-        + ":" + str(message[0:20]))
+            'channel_id' : -1,
+            'dm_id' : dm_id,
+            'notification_message' : (str(data['users'][user_id]['handle_str'])
+            + " tagged you in " + str(data['dms'][dm_id]['name'])
+            + ":" + str(message[0:20]))
         }
         # Make sure notification list is len 20
         if len(data['users'][tagged]['notifications']) == 20:
