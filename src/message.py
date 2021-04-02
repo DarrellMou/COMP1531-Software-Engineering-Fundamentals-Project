@@ -262,9 +262,9 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
 
 
 def message_senddm_v1(token, dm_id, message):
-    #data = retrieve_data()
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    data = retrieve_data()
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -312,8 +312,8 @@ def message_senddm_v1(token, dm_id, message):
     #f = open("demofile3.txt", "w")
     #f.write(data)
 
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)  
+    #with open("data.json", "w") as FILE:
+    #    json.dump(data, FILE)  
 
     return {
         'message_id': unique_message_id
