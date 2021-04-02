@@ -107,7 +107,7 @@ def admin_user_remove_v1(token, u_id):
     # Replace any messages from u_id with 'Removed user'
     for message in data['messages']:
         if message['u_id'] == u_id:
-            message['message'].replace(message['message'], 'Removed user')
+            message['message'] = "Removed user"
             message['is_removed'] = True   
             break
 
@@ -115,8 +115,8 @@ def admin_user_remove_v1(token, u_id):
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:
-            data['users'][user]['name_first'].replace(data['users'][user]['name_first'], 'Removed user')
-            data['users'][user]['is_removed'] = True
+            user['name_first'] = "Removed user"
+            user['is_removed'] = True
             break
     
     return {}
