@@ -158,9 +158,6 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
     assert messages_channel_id1['messages'][0]['message'] == "Nice day"
     assert messages_channel_id2['messages'][0]['message'] == "Hello user2"
     #assert messages_dm_id_1['messages'][0]['message'] == "Hi guys"
-
-    print(messages_channel_id1)
-    print(messages_channel_id2)
     
     # Global User 2 removes Global User 1
     requests.post(config.url + '/admin/userpermission/change/v1', json={
@@ -179,6 +176,22 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
     requests.delete(config.url + '/admin/user/remove/v1', json={
         'token': users['user2']['token'],
         'u_id': users['user1']['auth_user_id'],
+    }).json()
+
+    print(data)
+
+    # Set up variables to test function outputs
+    # user_profile_id1 = user_profile_v2(users['user1']['token'],users['user1']['auth_user_id'])
+    messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', json={
+        'token': users['user3']['token'],
+        'channel_id': channel_id1['channel_id'],
+        'start': 0
+    }).json()
+
+    messages_channel_id2a = requests.get(config.url + 'channel/messages/v2', json={
+        'token': users['user2']['token'],
+        'channel_id': channel_id2['channel_id'],
+        'start': 0
     }).json()
     
     # Ensure the correct output after calling admin_user_remove

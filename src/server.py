@@ -126,16 +126,26 @@ def channel_messages_v2_flask():
 
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create_v1_flask(): 
+    
     data = request.get_json()
     dm_id = dm_create_v1(data['token'], data['u_ids'])
 
-    return json.dumps(dm_id)
+    return dumps(dm_id)
     '''
     payload = request.get_json()
     token = payload['token']
     u_id = payload['u_ids']
 
+    return dumps(dm_create_v1(token, u_id))
     '''
+
+@APP.route('/dm/messages/v1', methods=['GET'])
+def dm_messages_v1_flask(): 
+    
+    data = request.get_json()
+    dm_messages = dm_messages_v1(data['token'], data['dm_id'], data['start'])
+
+    return dumps(dm_messages)
 
 @APP.route("/message/send/v2", methods=['POST'])
 def message_send_v2_flask():
