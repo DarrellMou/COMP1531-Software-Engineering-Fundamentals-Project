@@ -145,6 +145,14 @@ def admin_userpermission_change_v1_flask():
 
     return dumps(admin_userpermission_change_v1(token, u_id, permission_id))
 
+@APP.route("/admin/user/remove/v1", methods=['DELETE'])
+def admin_user_remove_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    u_id = payload['u_id']
+
+    return dumps(admin_user_remove_v1(token, u_id))
+
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
     clear_v1()
