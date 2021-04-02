@@ -3,9 +3,10 @@ import pytest
 
 from src.error import InputError, AccessError
 from src.channel import channel_messages_v1, channel_invite_v1
-from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v1
+from src.auth import auth_register_v1, auth_token_ok, auth_decode_token
+from src.data import retrieve_data
 from src.channels import channels_create_v1
+from src.other import clear_v1
 
 
 # ASSUMPTION: Start refers to the starting index of the
@@ -25,7 +26,8 @@ from src.channels import channels_create_v1
 # Simple data population helper function; registers users 1 and 2,
 # creates channel_1 with member u_id = 1
 def set_up_data():
-    reset_data()
+    data = retrieve_data()
+    clear_v1()
     
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')

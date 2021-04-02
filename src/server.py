@@ -8,6 +8,11 @@ from src.auth import auth_register_v1
 from src.message import message_send_v2
 from src.data import reset_data
 
+from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.channel import channel_details_v2
+from src.channels import channels_create_v2, channels_listall_v2
+from src.other import clear_v1
+
 def defaultHandler(err):
     response = err.get_response()
     print('response', err, err.get_response())

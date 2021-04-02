@@ -1,29 +1,35 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1
-from src.data import reset_data, retrieve_data
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
+from src.data import retrieve_data
+from src.other import clear_v1
+
+import time
+
+from src.other import clear_v1
+import json
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
-#from data import reset_data, retrieve_data
+#from data import clear_v1, retrieve_data
 
+@pytest.fixture
+def test_users():
+    clear_v1()
 
-def setup_user():
-    reset_data()
-
-    a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
-    a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user1_first', 'user1_last')
-    a_u_id3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
-    a_u_id4 = auth_register_v1('user4@email.com', 'User4_pass!', 'user4_first', 'user4_last')
-    a_u_id5 = auth_register_v1('user5@email.com', 'User5_pass!', 'user5_first', 'user5_last')
+    dict1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
+    dict2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
+    dict3 = auth_register_v1('user3@email.com', 'User3_pass!', 'user3_first', 'user3_last')
+    dict4 = auth_register_v1('user4@email.com', 'User4_pass!', 'user4_first', 'user4_last')
+    dict5 = auth_register_v1('user5@email.com', 'User5_pass!', 'user5_first', 'user5_last')
 
     return {
-        'user1' : a_u_id1,
-        'user2' : a_u_id2,
-        'user3' : a_u_id3,
-        'user4' : a_u_id4,
-        'user5' : a_u_id5
+        'login1' : dict1,
+        'login2' : dict2,
+        'login3' : dict3,
+        'login4' : dict4,
+        'login5' : dict5
     }
 
 
@@ -32,20 +38,23 @@ def test_auth_email_format():
     assert auth_email_format('jsfdsfdsds123.con') == False, 'invalid email format'
     assert auth_email_format('myvalidemail@yahoogmail.com') == True, 'valid email format'
 
-def test_auth_login_v1():
-    users = setup_user()
+def test_auth_login_v1(test_users):
+    loginResponse = auth_login_v1('user1@email.com', 'User1_pass!')
+    assert loginResponse['auth_user_id'] == f"{test_users['login1']['auth_user_id']}"
 
-    assert auth_login_v1('user1@email.com', 'User1_pass!') == users['user1'], 'login function broken'
     with pytest.raises(InputError):
         auth_login_v1('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
     with pytest.raises(InputError):
         auth_login_v1('jsfdsfdsds123.con', '123456') # invalid email format 
 
 def test_auth_register_v1():
-    data = reset_data()
+    clear_v1()
 
-    a_u_id = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
-    assert data['users'][a_u_id['auth_user_id']]['handle_str'] == 'bobbuilder'
+    registerDict = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+    assert data['users'][f"{registerDict['auth_user_id']}"]['handle_str'] == 'bobbuilder'
+
     with pytest.raises(InputError):
         auth_register_v1('example1@hotmail.com', 'password1', 'test', 'user1') # duplicate key(email)
     with pytest.raises(InputError):
@@ -53,27 +62,44 @@ def test_auth_register_v1():
     with pytest.raises(InputError):
         auth_register_v1('sampleemail2@gmail.com', '12345', 'test', 'user1') # password too short, less than 6 chars
     with pytest.raises(InputError):
-        auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
+        auth_register_v1('sampleemail3@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
 
 def test_auth_register_v1_nonunique_handle():
-    users = setup_user()
-    data = retrieve_data()
-    assert data['users'][users['user1']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las'
-    assert data['users'][users['user2']['auth_user_id']]['handle_str'] == 'user1_firstuser1_las0'
+    clear_v1()
+    
+    r1 = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
+    r2 = auth_register_v1('example2@hotmail.com', 'password1', 'bob', 'builder')
 
-def test_check_auth_permissions():
-    users = setup_user()
-    data = retrieve_data()
-    assert data['users'][users['user1']['auth_user_id']]['permission_id'] == 1
-    assert data['users'][users['user2']['auth_user_id']]['permission_id'] == 2
-    assert data['users'][users['user3']['auth_user_id']]['permission_id'] == 2
-    assert data['users'][users['user4']['auth_user_id']]['permission_id'] == 2
-    assert data['users'][users['user5']['auth_user_id']]['permission_id'] == 2
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
-def test_encode_decode_token():
-    users = setup_user()
+    print(data['users'])
+    assert data['users'][f"{r1['auth_user_id']}"]['handle_str'] == 'bobbuilder'
+    assert data['users'][f"{r2['auth_user_id']}"]['handle_str'] == 'bobbuilder0'
 
-    token = encode_token(users['user1'])
-    assert isinstance(token, bytes) == True
-    assert decode_token(token) == users['users1']
-    assert decode_token('whatisthis') == 'invalid token, log in again'
+def test_check_auth_permissions(test_users):
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
+
+    assert data['users'][f"{test_users['login1']['auth_user_id']}"]['permission_id'] == 1 # admin
+    assert data['users'][f"{test_users['login2']['auth_user_id']}"]['permission_id'] == 2 # non-admin
+    assert data['users'][f"{test_users['login3']['auth_user_id']}"]['permission_id'] == 2 # etc
+    assert data['users'][f"{test_users['login4']['auth_user_id']}"]['permission_id'] == 2
+    assert data['users'][f"{test_users['login5']['auth_user_id']}"]['permission_id'] == 2
+
+def test_encode_decode_token(test_users):
+    token = auth_encode_token(test_users['login1']['auth_user_id'])
+    assert isinstance(token, str) == True
+    assert auth_decode_token(token) == test_users['login1']['auth_user_id']
+    assert auth_decode_token('whatisthis') == 'invalid token, log in again'
+
+    time.sleep(6)
+    assert auth_decode_token(token) == 'Session expired, log in again'
+
+
+def test_auth_token_ok():
+    token = auth_encode_token(123)
+    assert auth_token_ok(token) == True
+    bad_token = 'edaeddawedead'
+    assert auth_token_ok(bad_token) == False
+
