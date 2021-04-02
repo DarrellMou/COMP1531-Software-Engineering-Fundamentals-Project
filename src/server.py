@@ -22,38 +22,21 @@ def defaultHandler(err):
     response.content_type = 'application/json'
     return response
 
-# these are left as comment for you to compare the changes 
-# APP = Flask(__name__)
-# CORS(APP)
+APP = Flask(__name__)
+CORS(APP)
 
-# APP.config['TRAP_HTTP_EXCEPTIONS'] = True
-# APP.register_error_handler(Exception, defaultHandler)
+APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.register_error_handler(Exception, defaultHandler)
 
-
-# create new app instance
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
-
-    app.config['TRAP_HTTP_EXCEPTIONS'] = True
-    app.register_error_handler(Exception, defaultHandler)
-
-    from src import auth
-    app.register_blueprint(auth.bp)
-    # add more blueprints here from channel, message, etc
-
-    return app
-
-
-# # Example
-# @app.route("/echo", methods=['GET'])
-# def echo():
-#     data = request.args.get('data')
-#     if data == 'echo':
-#    	    raise InputError(description='Cannot echo "echo"')
-#     return dumps({
-#         'data': data
-#     })
+# Example
+@APP.route("/echo", methods=['GET'])
+def echo():
+    data = request.args.get('data')
+    if data == 'echo':
+   	    raise InputError(description='Cannot echo "echo"')
+    return dumps({
+        'data': data
+    })
 
 # Initialize
 @APP.route("/clear/v1", methods=['DELETE'])
