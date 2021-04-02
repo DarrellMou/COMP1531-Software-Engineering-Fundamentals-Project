@@ -1,3 +1,5 @@
+import json
+
 # Iteration 1 test data
 data = {
     'users' : {
@@ -85,3 +87,15 @@ data = {
 def retrieve_data():
     global data
     return data
+
+def read_data():
+    global data
+    with open("data.json", "r") as FILE:
+        data_json = json.load(FILE)
+        data = data_json
+    return data
+
+def write_data():
+    data = retrieve_data()
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
