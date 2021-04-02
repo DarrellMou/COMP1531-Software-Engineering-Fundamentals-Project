@@ -71,8 +71,9 @@ def tab_given_message(msg):
 
 
 def message_send_v2(token, channel_id, message):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    '''with open("data.json", "r") as FILE:
+        data = json.load(FILE)'''
+    data = retrieve_data()
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -122,8 +123,8 @@ def message_send_v2(token, channel_id, message):
     data['messages'].append(message_dictionary)
 
 
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
+    '''with open("data.json", "w") as FILE:
+        json.dump(data, FILE)'''
 
     return {
         'message_id': unique_message_id
