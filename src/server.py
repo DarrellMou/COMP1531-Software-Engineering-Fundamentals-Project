@@ -117,15 +117,17 @@ def channel_addowner_v1_flask():
 
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create_v1_flask(): 
+    
     data = request.get_json()
     dm_id = dm_create_v1(data['token'], data['u_ids'])
 
-    return json.dumps(dm_id)
+    return dumps(dm_id)
     '''
     payload = request.get_json()
     token = payload['token']
     u_id = payload['u_ids']
 
+    return dumps(dm_create_v1(token, u_id))
     '''
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm_v1_flask():
