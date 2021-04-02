@@ -17,6 +17,8 @@ def test_channels_create_access_error(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
+    print(u_id_list)
+    print(dm_create_body(users['user1'],u_id_list))
     dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
     print(dm_id1)
@@ -39,11 +41,8 @@ def test_channels_create_input_error(setup_user_data):
     users = setup_user_data
 
     # Creating a dm
-    u_id_list = [users['user2']['auth_user_id'],users['user3']['auth_user_id']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json={
-        'token': users['user1']['token'],
-        'u_id': u_id_list,
-    }).json()
+    u_id_list = [users['user2'],users['user3']]
+    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
