@@ -55,3 +55,25 @@ def test_channels_create_input_error(setup_user_data):
         'dm_id': dm_id1['dm_id'],
         'message': long_message,
     }).status_code == 400
+
+# Testing for 1 message being sent by user1
+def test_message_senddm_v1_send_one(setup_user_data):
+    users = setup_user_data
+
+    # Creating a dm
+    u_id_list = [users['user2'],users['user3']]
+    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+
+    requests.post(config.url + '/message/senddm/v1', json={
+        'token': users['user1']['token'],
+        'dm_id': dm_id1['dm_id'],
+        'message': "Hello",
+    }).json()
+
+    dm1_messages = requests.get(config.url + '/dm/messages/v1', json={
+        'token': users['user1']['token'],
+        'dm_id': dm_id1['dm_id'],
+        'start': 0,
+    }).json()
+
+    assert dm1_messages['messages'][0]['message'] == "Hello"
