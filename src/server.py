@@ -10,6 +10,7 @@ from src import config
 from src.other import clear_v1
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1, dm_details_v1, dm_invite_v1, dm_messages_v1
+from src.message import message_senddm_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -74,13 +75,20 @@ def dm_invite_v1_flask():
     return json.dumps({})
 
 @APP.route('/dm/messages/v1', methods=['GET'])
-def dm_invite_v1_flask(): 
+def dm_messages_v1_flask(): 
     token = request.args.get("token")
     dm_id = int(request.args.get("dm_id"))
     start = int(request.args.get("start"))
     dm_messages = dm_messages_v1(token, dm_id, start)
 
     return json.dumps(dm_messages)
+
+@APP.route('/message/senddm/v1', methods=['POST'])
+def message_senddm_v1_flask(): 
+    data = request.get_json()
+    message_id = message_senddm_v1(data["token"], data["dm_id"], data["message"])
+
+    return json.dumps(message_id)
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
