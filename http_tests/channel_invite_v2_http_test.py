@@ -47,7 +47,7 @@ def test_function():
 
     requests.post(f"{url}channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(user0, channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(user0, channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -87,7 +87,7 @@ def test_multiple():
     for i in range(1,5):
         requests.post(f"{url}channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -142,7 +142,7 @@ def test_multiple_users_invite():
     for i in range(4):
         requests.post(f"{url}channel/invite/v2", json=channel_invite_body(users[i], channel0, users[i + 1]))
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
