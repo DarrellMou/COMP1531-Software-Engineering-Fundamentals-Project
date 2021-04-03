@@ -6,11 +6,11 @@ from src.error import InputError
 from src import config
 
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
-from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2
+from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2, channel_leave_v1
 from src.channels import channels_create_v2, channels_listall_v2
-from src.dm import dm_create_v1, dm_messages_v1
+from src.dm import dm_create_v1, dm_messages_v1, dm_leave_v1
 from src.message import message_send_v2, message_senddm_v1
-from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1
+from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -124,6 +124,14 @@ def channel_messages_v2_flask():
 
     return dumps(channel_messages_v2(token,channel_id,start))
 
+@APP.route("/channel/leave/v1", methods=['POST'])
+def channel_leave_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+
+    return dumps(channel_leave_v1(token,channel_id))
+
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create_v1_flask(): 
     
@@ -146,6 +154,14 @@ def dm_messages_v1_flask():
     dm_messages = dm_messages_v1(data['token'], data['dm_id'], data['start'])
 
     return dumps(dm_messages)
+
+@APP.route("/dm/leave/v1", methods=['POST'])
+def dm_leave_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    dm_id = payload['dm_id']
+
+    return dumps(dm_leave_v1(token,dm_id))
 
 @APP.route("/message/send/v2", methods=['POST'])
 def message_send_v2_flask():
@@ -181,6 +197,14 @@ def admin_user_remove_v1_flask():
     u_id = int(payload['u_id'])
 
     return dumps(admin_user_remove_v1(token, u_id))
+
+@APP.route("/search/v2", methods=['GET'])
+def search_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    query_str = payload['query_str']
+
+    return dumps(search_v2(token, query_str))
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
