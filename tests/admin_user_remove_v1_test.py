@@ -90,6 +90,8 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     admin_userpermission_change_v1(users['user2']['token'], users['user3']['auth_user_id'], 1)   
     # Function called 
     admin_user_remove_v1(users['user2']['token'], users['user1']['auth_user_id'])
+
+    print(messages_channel_id1)
     
     # Ensure the correct output after calling admin_user_remove
     #assert user_profile_id1['auth_user_id'][0]['first_name'] == "Removed user"

@@ -152,6 +152,8 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
         'start': 0
     }).json()
     #messages_dm_id_1 = dm_messages_v1(users['user2']['token'],dm_id1['dm_id'],0)
+
+    print(messages_channel_id1)
     
     # Ensure the correct output
     #assert user_profile_id1['auth_user_id'][0]['first_name'] == "user1_first"
@@ -178,8 +180,6 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
     }).json()
 
-    print(data)
-
     # Set up variables to test function outputs
     # user_profile_id1 = user_profile_v2(users['user1']['token'],users['user1']['auth_user_id'])
     messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', json={
@@ -187,6 +187,8 @@ def test_admin_user_remove_only_channel_owner(setup_user_data):
         'channel_id': channel_id1['channel_id'],
         'start': 0
     }).json()
+
+    print(messages_channel_id1a)
 
     messages_channel_id2a = requests.get(config.url + 'channel/messages/v2', json={
         'token': users['user2']['token'],
