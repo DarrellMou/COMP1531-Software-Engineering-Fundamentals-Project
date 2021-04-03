@@ -61,8 +61,9 @@ def channel_invite_v2_flask():
 
 @APP.route('/channel/details/v2', methods=['GET'])
 def channel_details_v2_flask(): 
-    data = request.get_json()
-    channel_details = channel_details_v2(data["token"], data["channel_id"])
+    token = request.args.get("token")
+    channel_id = int(request.args.get("channel_id"))
+    channel_details = channel_details_v2(token, channel_id)
 
     return json.dumps(channel_details)
 
