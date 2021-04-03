@@ -37,7 +37,7 @@ def test_function():
     dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(user0))
+    r = requests.get(f"{url}dm/list/v1", params=dm_list_body(user0))
     dm_list = r.json()
 
     assert dm_list == {
@@ -62,7 +62,7 @@ def test_multiple():
         dm_id = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[i + 1]]))
         dms.append(dm_id.json())
 
-    r = requests.get(f"{url}dm/list/v1", json=dm_list_body(users[0]))
+    r = requests.get(f"{url}dm/list/v1", params=dm_list_body(users[0]))
     dm_list = r.json()
 
     assert dm_list == {
@@ -89,7 +89,7 @@ def test_multiple():
 def test_invalid_token():
     requests.delete(f"{url}clear/v1")
 
-    r = requests.get(f"{url}dm/list/v1", json=dm_list_body({"token": 513875017835}))
+    r = requests.get(f"{url}dm/list/v1", params=dm_list_body({"token": 513875017835}))
     dm_list = r.json()
 
     assert dm_list["code"] == 403
