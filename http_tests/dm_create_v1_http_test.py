@@ -38,7 +38,7 @@ def test_function():
     dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(user0, dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(user0, dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -68,7 +68,7 @@ def test_multiple():
     dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1], users[2], users[3], users[4]]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {

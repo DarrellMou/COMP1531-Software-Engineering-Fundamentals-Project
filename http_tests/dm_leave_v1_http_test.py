@@ -45,7 +45,7 @@ def test_function():
 
     requests.post(f"{url}dm/leave/v1", json=dm_leave_body(users[1], dm0))
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -78,7 +78,7 @@ def test_multiple():
     for i in range(4):
         requests.post(f"{url}dm/leave/v1", json=dm_leave_body(users[i + 1], dm0))
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {

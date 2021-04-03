@@ -65,8 +65,9 @@ def dm_create_v1_flask():
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details_v1_flask(): 
-    info = request.get_json()
-    dm_details = dm_details_v1(info["token"], info["dm_id"])
+    token = request.args.get("token")
+    dm_id = int(request.args.get("dm_id"))
+    dm_details = dm_details_v1(token, dm_id)
 
     write_data()
     return json.dumps(dm_details)
