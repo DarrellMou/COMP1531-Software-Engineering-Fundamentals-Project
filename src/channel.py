@@ -66,11 +66,11 @@ def channel_details_v2(token, channel_id):
     if channel_id not in data['channels']: raise InputError
 
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError
+    if not auth_token_ok(token): raise AccessError 
     auth_user_id = auth_decode_token(token)
 
     # Checks if the auth_user is in channel
-    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
+    if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError("The user corresponding to the given token is not in the channel")
 
     # Creates list with necessary data
     name = data['channels'][channel_id]['name']
@@ -220,7 +220,12 @@ def channel_join_v1(auth_user_id, channel_id):
     if auth_user_id not in data['channels'][channel_id]['all_members']:
         # Checks if channel is public, if true proceed, if false raise error
         if (data['channels'][channel_id]['is_public']) or data['users'][auth_user_id]['permission_id'] == 1:
-            #Add user to all_members pool in channel
+            
+            # If user is a global owner, user has owner permissions in every channel they join
+            if data['users'][auth_user_id]['permission_id'] == 1:
+                data['channels'][channel_id]['owner_members'].append(auth_user_id)
+            
+            # Add user to all_members pool in channel
             data['channels'][channel_id]['all_members'].append(auth_user_id)
         else: raise AccessError
 

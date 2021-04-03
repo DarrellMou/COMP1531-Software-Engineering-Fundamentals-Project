@@ -78,7 +78,7 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     messages_channel_id1 = channel_messages_v2(users['user3']['token'],channel_id1['channel_id'],0)
     messages_channel_id2 = channel_messages_v2(users['user2']['token'],channel_id2['channel_id'],0)
     messages_dm_id_1 = dm_messages_v1(users['user2']['token'],dm_id1['dm_id'],0)
-    
+
     # Ensure the correct output
     #assert user_profile_id1['auth_user_id'][0]['first_name'] == "user1_first"
     assert messages_channel_id1['messages'][0]['message'] == "Nice day"
@@ -90,8 +90,6 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     admin_userpermission_change_v1(users['user2']['token'], users['user3']['auth_user_id'], 1)   
     # Function called 
     admin_user_remove_v1(users['user2']['token'], users['user1']['auth_user_id'])
-
-    print(messages_channel_id1)
     
     # Ensure the correct output after calling admin_user_remove
     #assert user_profile_id1['auth_user_id'][0]['first_name'] == "Removed user"

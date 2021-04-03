@@ -5,6 +5,8 @@ import requests
 import pytest
 from src import config
 
+###      HELPER FUNCTIONS      ###
+
 def dm_create_body(user, u_ids): 
     u_ids_list = [u_id['auth_user_id'] for u_id in u_ids]
     return {
@@ -12,16 +14,14 @@ def dm_create_body(user, u_ids):
         'u_ids': u_ids_list
     }
 
+###     END HELPER FUNCTIONS   ###
+
 def test_channels_create_access_error(setup_user_data):
     users = setup_user_data
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
-    print(u_id_list)
-    print(dm_create_body(users['user1'],u_id_list))
     dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
-
-    print(dm_id1)
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']

@@ -46,19 +46,6 @@ def dm_create_v1(token, u_ids):
     }   
     '''
     # Create notification for users added to dm's
-    notification = {
-        'channel_id' : -1,
-        'dm_id' : dm_id,
-        'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + dm_name)
-    }
-    for u_id in u_ids:
-        # Make sure notification list is len 20
-        if len(data['users'][u_id]['notifications']) == 20:
-            data['users'][u_id]['notifications'].pop(0)
-        
-        # Append new notification to end of list
-        data['users'][u_id]['notifications'].append(notification)
-    '''
     for u_id in u_ids:
         data['users'][u_id]['notifications'].append({
             'channel_id' : -1,
@@ -68,9 +55,9 @@ def dm_create_v1(token, u_ids):
         # Make sure notification list is len 20
         if len(data['users'][u_id]['notifications']) > 20:
             data['users'][u_id]['notifications'].pop(0)
-
+    '''
     return {'dm_id': dm_id, 'dm_name': dm_name}
-
+    
 # Returns details of given dm
 def dm_details_v1(token, dm_id):
     data = retrieve_data()
@@ -165,18 +152,6 @@ def dm_invite_v1(token, dm_id, u_id):
 
     data['dms'][dm_id]['members'].append(u_id)
     '''
-    # Create notification for added user
-    notification = {
-        'channel_id' : -1,
-        'dm_id' : dm_id,
-        'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + str(data['dms'][dm_id]['name']))
-    }
-    # Make sure notification list is len 20
-    if len(data['users'][u_id]['notifications']) == 20:
-        data['users'][u_id]['notifications'].pop(0)
-    # Append new notification to end of list
-    data['users'][u_id]['notifications'].append(notification)
-    '''
     data['users'][u_id]['notifications'].append({
         'channel_id' : -1,
         'dm_id' : dm_id,
@@ -185,7 +160,7 @@ def dm_invite_v1(token, dm_id, u_id):
     # Make sure notification list is len 20
     if len(data['users'][u_id]['notifications']) > 20:
         data['users'][u_id]['notifications'].pop(0)
-
+    '''
     return {}
 
 # Given a DM ID, the user is removed as a member of this DM

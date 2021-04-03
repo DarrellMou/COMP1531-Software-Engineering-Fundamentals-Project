@@ -7,7 +7,7 @@ from src import config
 @pytest.fixture
 def reset():
     #clear_v1()
-    requests.delete(config.url+'/clear/v1')
+    requests.delete(config.url+'clear/v1')
 
 @pytest.fixture
 def setup_user_dict(reset):
@@ -59,19 +59,19 @@ def setup_user_dict(reset):
 def setup_user_data(setup_user_dict):
     
     user1 = setup_user_dict['user1_dict']
-    user1_details = requests.post(config.url + "/auth/register/v2", json=user1).json()
+    user1_details = requests.post(config.url + "auth/register/v2", json=user1).json()
 
     user2 = setup_user_dict['user2_dict']
-    user2_details = requests.post(config.url + "/auth/register/v2", json=user2).json()
+    user2_details = requests.post(config.url + "auth/register/v2", json=user2).json()
 
     user3 = setup_user_dict['user3_dict']
-    user3_details = requests.post(config.url + "/auth/register/v2", json=user3).json()
+    user3_details = requests.post(config.url + "auth/register/v2", json=user3).json()
 
     user4 = setup_user_dict['user4_dict']
-    user4_details = requests.post(config.url + "/auth/register/v2", json=user4).json()
+    user4_details = requests.post(config.url + "auth/register/v2", json=user4).json()
 
     user5 = setup_user_dict['user5_dict']
-    user5_details = requests.post(config.url + "/auth/register/v2", json=user5).json()
+    user5_details = requests.post(config.url + "auth/register/v2", json=user5).json()
     
     return {
         'user1' : user1_details,

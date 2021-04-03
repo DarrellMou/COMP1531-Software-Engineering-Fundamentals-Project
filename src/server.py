@@ -8,7 +8,7 @@ from src import config
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2
 from src.channels import channels_create_v2, channels_listall_v2
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_messages_v1
 from src.message import message_send_v2, message_senddm_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1
 
