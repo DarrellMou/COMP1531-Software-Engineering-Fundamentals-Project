@@ -91,6 +91,7 @@ def message_remove_v1_flask():
 
 
 @APP.route("/message/edit/v2", methods=['PUT'])
+def message_edit_v2_flask():
     data = request.get_json()
     message_edit_v2(data["token"], data["message_id"], data["message"])
     return json.dumps({})
