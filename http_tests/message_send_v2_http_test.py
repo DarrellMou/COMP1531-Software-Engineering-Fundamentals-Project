@@ -97,7 +97,7 @@ def send_x_messages_two_channels(user, channel1, channel2, num_messages):
 ###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
-'''
+
 ############################# EXCEPTION TESTING ##############################
 def test_http_message_send_v2_AccessError():
     setup = set_up_data()
@@ -151,10 +151,11 @@ def test_http_message_send_v2_send_one():
         "message": "Hello"
     }).json()
 
+    print(message_one)
     assert data["channels"][channel1]["messages"][0]["message"] == message_one["message_id"]
 
 
-
+'''
 # Testing for 2 identical messages being sent by user1
 def test_http_message_send_v2_user_sends_identical_messages():
     setup = set_up_data()
@@ -293,7 +294,7 @@ def test_http_message_send_v2_appends_to_data_messages():
 
     assert len(data['messages']) == 20
 
-'''
+
 # Test if data['messages'] list is in order
 def test_http_message_send_v2_data_messages_in_order():
     setup = set_up_data()
@@ -320,3 +321,4 @@ def test_http_message_send_v2_data_messages_in_order():
 
     assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
     assert data['messages'][0]['message'] == m_id0_ch1['message']
+'''
