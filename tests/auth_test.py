@@ -1,7 +1,7 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
+from src.auth import auth_login_v2, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
 from src.data import retrieve_data
 from src.other import clear_v1
 
@@ -9,7 +9,7 @@ import time
 
 
 #from error import InputError
-#from auth import auth_login_v1, auth_email_format, auth_register_v1
+#from auth import auth_login_v2, auth_email_format, auth_register_v1
 #from data import clear_v1, retrieve_data
 
 @pytest.fixture
@@ -36,14 +36,14 @@ def test_auth_email_format():
     assert auth_email_format('jsfdsfdsds123.con') == False, 'invalid email format'
     assert auth_email_format('myvalidemail@yahoogmail.com') == True, 'valid email format'
 
-def test_auth_login_v1(test_users):
-    loginResponse = auth_login_v1('user1@email.com', 'User1_pass!')
+def test_auth_login_v2(test_users):
+    loginResponse = auth_login_v2('user1@email.com', 'User1_pass!')
     assert loginResponse['auth_user_id'] == test_users['login1']['auth_user_id']
 
     with pytest.raises(InputError):
-        auth_login_v1('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
+        auth_login_v2('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
     with pytest.raises(InputError):
-        auth_login_v1('jsfdsfdsds123.con', '123456') # invalid email format 
+        auth_login_v2('jsfdsfdsds123.con', '123456') # invalid email format 
 
 def test_auth_register_v1():
     clear_v1()

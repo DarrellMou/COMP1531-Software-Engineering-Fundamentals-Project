@@ -48,6 +48,7 @@ def test_channeltag_notif():
 
     chid1 = channels_create_v2(user1['token'], 'Channel1', True)
     channel_invite_v2(user1['token'], chid1['channel_id'], user2['auth_user_id'])
+    message_send_v2(user1['token'], chid1['channel_id'], 'wbu @first2last2')
     message_send_v2(user1['token'], chid1['channel_id'], '@first2last2 1v1me')
     message_send_v2(user1['token'], chid1['channel_id'], '@first2last2 1v1me but longer')
 
@@ -61,17 +62,21 @@ def test_channeltag_notif():
             {
                 'channel_id' : chid1['channel_id'],
                 'dm_id' : -1,
-                'notification_message' : 'first1last1 tagged you in Channel1: @first2last2 1v1me',
+                'notification_message' : 'first1last1 tagged you in Channel1: wbu @first2last2',
             },
-            # Test to see if message cuts off at 20 characters
             {
                 'channel_id' : chid1['channel_id'],
                 'dm_id' : -1,
                 'notification_message' : 'first1last1 tagged you in Channel1: @first2last2 1v1me',
             },
+            {
+                'channel_id' : chid1['channel_id'],
+                'dm_id' : -1,
+                'notification_message' : 'first1last1 tagged you in Channel1: @first2last2 1v1me b',
+            },
         ]
     }
-'''
+
 # Test for added to dm notifications via dm creation
 def test_dmcreate_notif():
     clear_v1()
@@ -86,16 +91,16 @@ def test_dmcreate_notif():
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 added you to first1last1,first2last2,first3last3',
+                'notification_message' : 'first1last1 added you to first1last1, first2last2, first3last3',
             },
         ]
     }
     assert notifications_get_v1(user3['token']) == {
         'notifications': [
             {
-                'channel_id' : chid1['channel_id'],
-                'dm_id' : -1,
-                'notification_message' : 'first1last1 added you to first1last1,first2last2,first3last3',
+                'channel_id' : -1,
+                'dm_id' : dmid1['dm_id'],
+                'notification_message' : 'first1last1 added you to first1last1, first2last2, first3last3',
             },
         ]
     }
@@ -113,9 +118,9 @@ def test_dminvite_notif():
     assert notifications_get_v1(user3['token']) == {
         'notifications': [
             {
-                'channel_id' : chid1['channel_id'],
-                'dm_id' : -1,
-                'notification_message' : 'first2last2 added you to first1last1,first2last2',
+                'channel_id' : -1,
+                'dm_id' : dmid1['dm_id'],
+                'notification_message' : 'first2last2 added you to first1last1, first2last2',
             },
         ]
     }
@@ -135,18 +140,18 @@ def test_dmtag_notif():
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 added you to first1last1,first2last2',
+                'notification_message' : 'first1last1 added you to first1last1, first2last2',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me',
             },
             # Test to see if message cuts off at 20 characters
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me b',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me b',
             },
         ]
     }
@@ -166,103 +171,102 @@ def test_notif_max():
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me2',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me2',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me3',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me3',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me4',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me4',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me5',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me5',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me6',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me6',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me7',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me7',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me8',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me8',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me9',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me9',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me10',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me10',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me11',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me11',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me12',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me12',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me13',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me13',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me14',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me14',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me15',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me15',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me16',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me16',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me17',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me17',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me18',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me18',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me19',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me19',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me20',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me20',
             },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1,first2last2: @first2last2 1v1me21',
+                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me21',
             },
         ]
     }
-'''
