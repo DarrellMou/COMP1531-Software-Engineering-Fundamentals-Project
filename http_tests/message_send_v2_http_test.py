@@ -12,28 +12,25 @@ from src.config import url
 
 def set_up_data():
     requests.delete(f"{url}clear/v1")
-    r = requests.post(f"{url}auth/register/v2", json = {
+    user1 = requests.post(f"{url}auth/register/v2", json = {
         "email": "bob.builder@email.com",
         "password": "badpassword1",
         "name_first": "Bob",
         "name_last": "Builder"
-    })
-    user1 = r.json()
+    }).json()
 
-    r = requests.post(f"{url}auth/register/v2", json = {
+    user2 = requests.post(f"{url}auth/register/v2", json = {
         "email": "shaun.sheep@email.com",
         "password": "password123",
         "name_first": "Shaun",
         "name_last": "Sheep"
-    })
-    user2 = r.json()
+    }).json()
 
-    r = requests.post(f"{url}channels/create/v2", json = {
+    channel1 = requests.post(f"{url}channels/create/v2", json = {
         "token": user1["token"],
         "name": "Channel1",
         "is_public": True
-    })
-    channel1 = r.json()
+    }).json()
 
     setup = {
         "user1": user1,
