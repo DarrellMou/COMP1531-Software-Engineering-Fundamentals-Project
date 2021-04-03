@@ -127,7 +127,7 @@ def test_admin_user_remove_channel_messages(setup_user_data):
 
     # Set up variables to test function outputs
     # user_profile_id1 = user_profile_v2(users['user1']['token'],users['user1']['auth_user_id'])
-    messages_channel_id1 = requests.get(config.url + 'channel/messages/v2', json={
+    messages_channel_id1 = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user3']['token'],
         'channel_id': channel_id1['channel_id'],
         'start': 0
@@ -157,7 +157,7 @@ def test_admin_user_remove_channel_messages(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
     }).json()
 
-    messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', json={
+    messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user3']['token'],
         'channel_id': channel_id1['channel_id'],
         'start': 0
@@ -234,27 +234,32 @@ def test_admin_user_remove(setup_user_data):
     }).json()
 
     # Set up variables to test function outputs
-    # user_profile_id1 = user_profile_v2(users['user1']['token'],users['user1']['auth_user_id'])
-    messages_channel_id1 = requests.get(config.url + 'channel/messages/v2', json={
+    user_profile_id1 = requests.get(config.url + 'user/profile/v2', params={
+        'token': users['user2']['token'],
+        'u_id': users['user1']['auth_user_id'],
+    }).json()
+    print(user_profile_id1)
+
+    messages_channel_id1 = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user3']['token'],
         'channel_id': channel_id1['channel_id'],
         'start': 0
     }).json()
 
-    messages_channel_id2 = requests.get(config.url + 'channel/messages/v2', json={
+    messages_channel_id2 = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user2']['token'],
         'channel_id': channel_id2['channel_id'],
         'start': 0
     }).json()
 
-    messages_dm_id1 = requests.get(config.url + 'dm/messages/v1', json={
+    messages_dm_id1 = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user2']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0
     }).json()
     
     # Ensure the correct output
-    #assert user_profile_id1['auth_user_id'][0]['first_name'] == "user1_first"
+    assert user_profile_id1['user']['name_first'] == "user1_first"
     assert messages_channel_id1['messages'][0]['message'] == "Nice day"
     assert messages_channel_id2['messages'][0]['message'] == "Hello user1"
     assert messages_channel_id2['messages'][1]['message'] == "Hello user2"
@@ -274,7 +279,7 @@ def test_admin_user_remove(setup_user_data):
         'permission_id': 1,
     }).json()
 
-    channel_details = requests.get(config.url + 'channel/details/v2', json={
+    channel_details = requests.get(config.url + 'channel/details/v2', params={
         'token': users['user2']['token'],
         'channel_id': channel_id2['channel_id'],
     }).json()
@@ -287,34 +292,38 @@ def test_admin_user_remove(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
     }).json()
 
-    channel_details = requests.get(config.url + 'channel/details/v2', json={
+    channel_details = requests.get(config.url + 'channel/details/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id2['channel_id'],
     }).json()
     print(channel_details)
 
     # Set up variables to test function outputs
-    # user_profile_id1 = user_profile_v2(users['user1']['token'],users['user1']['auth_user_id'])
-    messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', json={
+    user_profile_id1a = requests.get(config.url + 'user/profile/v2', params={
+        'token': users['user2']['token'],
+        'u_id': users['user1']['auth_user_id'],
+    }).json()
+
+    messages_channel_id1a = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user3']['token'],
         'channel_id': channel_id1['channel_id'],
         'start': 0
     }).json()
 
-    messages_channel_id2a = requests.get(config.url + 'channel/messages/v2', json={
+    messages_channel_id2a = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id2['channel_id'],
         'start': 0
     }).json()
 
-    messages_dm_id1a = requests.get(config.url + 'dm/messages/v1', json={
+    messages_dm_id1a = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user2']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0
     }).json()
     
     # Ensure the correct output after calling admin_user_remove
-    #assert user_profile_id1['auth_user_id'][0]['first_name'] == "Removed user"
+    assert user_profile_id1a['user']['name_first'] == "Removed"
     assert messages_channel_id1a['messages'][0]['message'] == "Removed user"
     assert messages_channel_id2a['messages'][0]['message'] == "Hello user1"
     assert messages_channel_id2a['messages'][1]['message'] == "Removed user"
