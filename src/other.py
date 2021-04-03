@@ -110,8 +110,10 @@ def admin_user_remove_v1(token, u_id):
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:
-            data['users'][user]['name_first'] = "Removed "
+            print(user)
+            data['users'][user]['name_first'] = "Removed"
             data['users'][user]['name_last'] = "user"
+            data['users'][user]['is_removed'] = True
             break
     
     return {}
