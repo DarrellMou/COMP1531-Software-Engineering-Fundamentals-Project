@@ -38,21 +38,24 @@ def echo():
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def auth_register_v2_flask():
-    returnDict = auth_register_v1(request.args.get('email'), request.args.get('password'), request.args.get('name_first'), request.args.get('name_last'))
+    payload = request.get_json()
+    returnDict = auth_register_v1(payload['email'], payload['password'], payload['name_first'], payload['name_last'])
 
     return dumps(returnDict)
 
 
 @APP.route("/auth/login/v2", methods=['POST'])
 def auth_login_v2_flask():
-    returnDict = auth_login_v1(request.args.get('email'), request.args.get('password'))
+    payload = request.get_json()
+    returnDict = auth_login_v1(payload['email'], payload['password'])
 
     return dumps(returnDict)
 
 
 @APP.route("/auth/logout/v1", methods=['POST'])
 def auth_logout_route():
-    returnDict = auth_logout_v1(request.args.get('token'))
+    payload = request.get_json()
+    returnDict = auth_logout_v1(payload['token'])
     return dumps(returnDict)
 
 
@@ -80,19 +83,22 @@ def user_profile_v2_flask():
 
 @APP.route('/user/profile/setname/v2', methods=['PUT'])
 def user_profile_setname_v2_flask():
-    returnDict = user_profile_setname_v2(request.args.get('token'), request.args.get('name_first'), request.args.get('name_last'))
+    payload = request.get_json()
+    returnDict = user_profile_setname_v2(payload['token'], payload['name_first'], payload['name_last'])
     return dumps(returnDict)  
 
 
 @APP.route('/user/profile/setemail/v2', methods=['PUT'])
 def user_profile_setemail_v2_flask():
-    returnDict = user_profile_setemail_v2(request.args.get('token'), request.args.get('email'))
+    payload = request.get_json()
+    returnDict = user_profile_setemail_v2(payload['token'], payload['email'])
     return dumps(returnDict) 
 
 
 @APP.route('/user/profile/sethandle/v2', methods=['PUT'])
 def user_profile_sethandle_v2_flask():
-    returnDict = user_profile_sethandle_v2(request.args.get('token'), request.args.get('handle_str'))
+    payload = request.get_json()
+    returnDict = user_profile_sethandle_v2(payload['token'], payload['handle_str'])
     return dumps(returnDict) 
 
 

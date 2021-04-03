@@ -10,7 +10,7 @@ def reset():
 
 
 def test_user_profile():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 
 	resp_profile = requests.get(config.url + 'user/profile/v2', params={'token' : json_data_register['token'], 'u_id' : json_data_register['auth_user_id']})
@@ -28,7 +28,7 @@ def test_user_profile():
 
 
 def test_user_profile_invalid_token():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
@@ -42,7 +42,7 @@ def test_user_profile_invalid_token():
 
 
 def test_user_profile_non_existent_user():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
@@ -56,11 +56,11 @@ def test_user_profile_non_existent_user():
 
 
 def test_user_profile_setname():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
-	resp_setname = requests.put(config.url + 'user/profile/setname/v2', params={'token' : json_data_register['token'], 'name_first' : 'changedFirstname', 'name_last' : 'changedLastname'})
+	resp_setname = requests.put(config.url + 'user/profile/setname/v2', json={'token' : json_data_register['token'], 'name_first' : 'changedFirstname', 'name_last' : 'changedLastname'})
 	json_data_setname = json.loads(resp_setname.text)
 	assert json_data_setname == {}
 
@@ -78,11 +78,11 @@ def test_user_profile_setname():
 
 
 def test_user_profile_setname_invalid_token():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
-	resp_setname = requests.put(config.url + 'user/profile/setname/v2', params={'token' : 'someRandomToken', 'name_first' : 'changedFirstname', 'name_last' : 'changedLastname'})
+	resp_setname = requests.put(config.url + 'user/profile/setname/v2', json={'token' : 'someRandomToken', 'name_first' : 'changedFirstname', 'name_last' : 'changedLastname'})
 	json_data_setname = json.loads(resp_setname.text)
 	assert json_data_setname['name']
 	assert json_data_setname['message'] == '<p>invalid token</p>'
@@ -90,11 +90,11 @@ def test_user_profile_setname_invalid_token():
 
 
 def test_user_profile_setname_invalid_name_length():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
-	resp_setname = requests.put(config.url + 'user/profile/setname/v2', params={'token' : json_data_register['token'], 'name_first' : '', 'name_last' : 'changedLastname'})
+	resp_setname = requests.put(config.url + 'user/profile/setname/v2', json={'token' : json_data_register['token'], 'name_first' : '', 'name_last' : 'changedLastname'})
 	json_data_setname = json.loads(resp_setname.text)
 	assert json_data_setname['name']
 	assert json_data_setname['code']
@@ -102,11 +102,11 @@ def test_user_profile_setname_invalid_name_length():
 
 
 def test_user_profile_setemail():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
-	resp_setname = requests.put(config.url + 'user/profile/setemail/v2', params={'token' : json_data_register['token'], 'email' : 'changedEmail@outlook.com'})
+	resp_setname = requests.put(config.url + 'user/profile/setemail/v2', json={'token' : json_data_register['token'], 'email' : 'changedEmail@outlook.com'})
 	json_data_setemail = json.loads(resp_setname.text)
 	assert json_data_setemail == {}
 
@@ -125,11 +125,11 @@ def test_user_profile_setemail():
 
 
 def test_user_profile_sethandle_v1():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
-	resp_sethandle = requests.put(config.url + 'user/profile/sethandle/v2', params={'token' : json_data_register['token'], 'handle_str' : 'changedHandle'})
+	resp_sethandle = requests.put(config.url + 'user/profile/sethandle/v2', json={'token' : json_data_register['token'], 'handle_str' : 'changedHandle'})
 	json_data_sethandle = json.loads(resp_sethandle.text)
 	assert json_data_sethandle == {}
 
@@ -148,7 +148,7 @@ def test_user_profile_sethandle_v1():
 
 
 def test_users_all_v1():
-	resp_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	resp_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(resp_register.text)
 	assert json_data_register
 
