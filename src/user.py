@@ -10,7 +10,7 @@ def user_profile_v2(token, u_id):
 
     if not auth_token_ok(token):
         raise InputError('invalid token')
-    auth_user_id = auth_decode_token(token)
+    #auth_user_id = auth_decode_token(token)
 
     #if not auth_user_id in data['users']:
     #    raise InputError 
@@ -21,18 +21,18 @@ def user_profile_v2(token, u_id):
     try:
         u_id = int(u_id)
     except ValueError:
-        print ("Not convertable to integer")
+        pass
 
     if not any(x == u_id for x in data['users'].keys()):
         raise InputError('User doesn\'t exist')
 
-    userDict = data['users'][auth_user_id]
+    userDict = data['users'][u_id]
 
     # if userDict['is_removed']:
     #     return {'user' : {}}
 
     return {'user' : {
-                'auth_user_id' : auth_user_id,
+                'auth_user_id' : u_id,
                 'email'        : userDict['email'],
                 'name_first'   : userDict['name_first'],
                 'name_last'    : userDict['name_last'],
