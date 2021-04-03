@@ -32,7 +32,7 @@ def test_invalid_dm_id():
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(user0, {"dm_id": 5031705713}))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(user0, {"dm_id": 5031705713}))
     dm_details = payload.json()
 
     assert dm_details["code"] == 400
@@ -50,7 +50,7 @@ def test_invalid_user():
     dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(users[0], [users[1]]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[2], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[2], dm0))
     dm_details = payload.json()
 
     assert dm_details["code"] == 403
@@ -69,7 +69,7 @@ def test_invalid_token():
     dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, [user1]))
     dm0 = dm_id0.json()
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body({"token": 501730570}, dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body({"token": 501730570}, dm0))
     dm_details = payload.json()
 
     assert dm_details["code"] == 403
