@@ -6,17 +6,17 @@ import pytest
 from src import config
 
 # error when listing channels with an invalid token
-def test_message_senddm_access_error(setup_user_data):
+def test_channels_listall_access_error(setup_user_data):
     users = setup_user_data
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']
-    requests.post(config.url + '/auth/logout/v1', json={
+    requests.post(config.url + 'auth/logout/v1', json={
         'token': invalid_token
     })
 
     # Ensure AccessError
-    assert requests.get(config.url + '/message/senddm/v1', json={
+    assert requests.get(config.url + 'channels/listall/v2', json={
         'token': invalid_token,
     }).status_code == 403
 
@@ -24,7 +24,7 @@ def test_message_senddm_access_error(setup_user_data):
 def test_channels_listall_empty(setup_user_data):
     users = setup_user_data
 
-    assert requests.get(config.url + '/channels/listall/v2', json={
+    assert requests.get(config.url + 'channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json() == {'channels': []}
 
@@ -33,14 +33,14 @@ def test_channels_listall_single(setup_user_data):
     users = setup_user_data
 
     # Creating a basic public channel
-    channel_id = requests.post(config.url + '/channels/create/v2', json={
+    channel_id = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Basic Stuff',
         'is_public': True,
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(config.url + '/channels/listall/v2', json={
+    channel_list = requests.get(config.url + 'channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json()
 
@@ -51,26 +51,26 @@ def test_channels_listall_single(setup_user_data):
 def test_channels_listall_multiple(setup_user_data):
     users = setup_user_data
 
-    channel_id3 = requests.post(config.url + '/channels/create/v2', json={
+    channel_id3 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user3']['token'],
         'name': 'Public3',
         'is_public': True,
     }).json()
 
-    channel_id4 = requests.post(config.url + '/channels/create/v2', json={
+    channel_id4 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user2']['token'],
         'name': 'Private4',
         'is_public': False,
     }).json()
 
-    channel_id5 = requests.post(config.url + '/channels/create/v2', json={
+    channel_id5 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Public5',
         'is_public': True,
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(config.url + '/channels/listall/v2', json={
+    channel_list = requests.get(config.url + 'channels/listall/v2', json={
         'token': users['user1']['token'],
     }).json()
 

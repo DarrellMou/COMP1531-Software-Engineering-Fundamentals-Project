@@ -21,16 +21,16 @@ def test_channels_create_access_error(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
     # Invalidate an existing token to guarantee a token is invalid 
     invalid_token = users['user1']['token']
-    requests.post(config.url + '/auth/logout/v1', json={
+    requests.post(config.url + 'auth/logout/v1', json={
         'token': invalid_token
     })
 
     # Ensure AccessError
-    assert requests.post(config.url + '/message/senddm/v1', json={
+    assert requests.post(config.url + 'message/senddm/v1', json={
         'token': invalid_token,
         'dm_id': dm_id1,
         'message': "Hello",
@@ -42,7 +42,7 @@ def test_channels_create_input_error(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
@@ -50,7 +50,7 @@ def test_channels_create_input_error(setup_user_data):
         long_message += "a" 
 
     # Ensure input error: Message over 1000 characters
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': long_message,
@@ -62,15 +62,15 @@ def test_message_senddm_v1_send_one(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello",
     }).json()
 
-    dm1_messages = requests.get(config.url + '/dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
@@ -84,9 +84,9 @@ def test_message_senddm_v1_user_sends_identical_messages(setup_user_data):
 
     # Creating dm1
     u_id_list1 = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list1)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list1)).json()
 
-    first_message_id = requests.post(config.url + '/message/senddm/v1', json={
+    first_message_id = requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello",
@@ -94,9 +94,9 @@ def test_message_senddm_v1_user_sends_identical_messages(setup_user_data):
 
     # Creating dm2
     u_id_list2 = [users['user3']]
-    dm_id2 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list1)).json()
+    dm_id2 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list1)).json()
 
-    second_message_id = requests.post(config.url + '/message/senddm/v1', json={
+    second_message_id = requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id2['dm_id'],
         'message': "Hello",
@@ -111,27 +111,27 @@ def test_message_senddm_v1_send_one(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user2']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello2",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user3']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello3",
     }).json()
 
-    dm1_messages = requests.get(config.url + '/dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
@@ -147,21 +147,21 @@ def test_message_senddm_v1_send_two(setup_user_data):
 
     # Creat dm1
     u_id_list = [users['user2'],users['user3']]
-    dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user2']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello2",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user3']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hello3",
@@ -169,35 +169,35 @@ def test_message_senddm_v1_send_two(setup_user_data):
 
     # Creat dm2
     u_id_list = [users['user3'],users['user4']]
-    dm_id2 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    dm_id2 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id2['dm_id'],
         'message': "Bye",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user3']['token'],
         'dm_id': dm_id2['dm_id'],
         'message': "Bye2",
     }).json()
 
-    requests.post(config.url + '/message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user4']['token'],
         'dm_id': dm_id2['dm_id'],
         'message': "Bye3",
     }).json()
 
     # Call dm/messages to view details
-    dm1_messages = requests.get(config.url + '/dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
     }).json()
 
     # Call dm/messages to view details
-    dm2_messages = requests.get(config.url + '/dm/messages/v1', json={
+    dm2_messages = requests.get(config.url + 'dm/messages/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id2['dm_id'],
         'start': 0,
