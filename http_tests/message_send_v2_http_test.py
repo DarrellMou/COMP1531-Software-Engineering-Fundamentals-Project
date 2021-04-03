@@ -1,7 +1,6 @@
 import json
 import requests
 import pytest
-from src.data import retrieve_data
 from src.auth import auth_decode_token
 from src.config import url
 
@@ -136,7 +135,7 @@ def test_http_message_send_v2_send_one():
         "message": "Hello"
     }).json()
 
-    channel_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -163,7 +162,7 @@ def test_http_message_send_v2_user_sends_identical_messages():
         "message": "Hello"
     }).json()
 
-    channel_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -189,7 +188,7 @@ def test_http_message_send_v2_multiple_users_multiple_messages():
 
     send_x_messages(user1, user2, channel1, 10)
 
-    channel_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -228,7 +227,7 @@ def test_http_message_send_v2_multiple_users_multiple_messages_message_id():
                 "channel_id": channel1,
                 "message": str(message_num)
             }).json()
-        channel_messages = requests.get(f"{url}channel/messages/v2", json= {
+        channel_messages = requests.get(f"{url}channel/messages/v2", params= {
             "token": user1["token"],
             "channel_id": channel1,
             "start": 0
@@ -254,13 +253,13 @@ def test_http_message_send_v2_identical_message_to_2_channels():
 
     send_x_messages_two_channels(user1, channel1, channel2["channel_id"], 10)
 
-    channel1_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel1_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
     }).json()
 
-    channel2_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel2_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel2["channel_id"],
         "start": 0
@@ -291,13 +290,13 @@ def test_http_message_send_v2_appends_to_data_messages():
     
     send_x_messages_two_channels(user1, channel1, channel2["channel_id"], 10)
     
-    channel1_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel1_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
     }).json()
 
-    channel2_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel2_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel2["channel_id"],
         "start": 0
@@ -319,14 +318,14 @@ def test_http_message_send_v2_data_messages_in_order():
 
     send_x_messages_two_channels(user1, channel1, channel2["channel_id"], 10)
     
-    channel1_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel1_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
     }).json()
 
 
-    channel2_messages = requests.get(f"{url}channel/messages/v2", json= {
+    channel2_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
         "channel_id": channel2["channel_id"],
         "start": 0
