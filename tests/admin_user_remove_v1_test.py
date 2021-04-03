@@ -1,11 +1,7 @@
 import pytest
 
 from src.auth import auth_register_v1
-<<<<<<< HEAD
-from src.channel import channel_join_v2, channel_messages_v2, channel_addowner_v1
-=======
 from src.channel import channel_join_v2, channel_messages_v2, channel_addowner_v1, channel_details_v2
->>>>>>> nikki/admin_user_remove_v1
 from src.channels import channels_create_v2, channels_listall_v2
 from src.error import InputError, AccessError
 from src.dm import dm_create_v1, dm_messages_v1

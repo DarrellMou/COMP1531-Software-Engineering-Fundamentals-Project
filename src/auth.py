@@ -157,8 +157,4 @@ def auth_logout_v1(token):
     else:
         responseObj = {'is_success':False}
         return responseObj
-<<<<<<< HEAD
-
-=======
->>>>>>> nikki/admin_user_remove_v1
 
