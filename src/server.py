@@ -4,11 +4,11 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+
 from src.auth import auth_register_v1
 from src.message import message_send_v2
-
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
-from src.channel import channel_details_v2, channel_invite_v2
+from src.channel import channel_details_v2, channel_invite_v2, channel_messages_v2
 from src.channels import channels_create_v2, channels_listall_v2
 from src.other import clear_v1
 
@@ -66,12 +66,10 @@ def channel_invite_v2_flask():
 
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages_v2_flask():
-    payload = request.get_json()
-    token = payload['token']
-    channel_id = payload['channel_id']
-    start = int(payload['start'])
+    data = request.get_json()
+    messages_list = channel_messages_v2(data["token"], data["channel_id"], int(data["start"]))
 
-    return json.dumps(channel_messages_v2(token,channel_id,start))
+    return json.dumps(messages_list)
 
 
 
