@@ -44,6 +44,17 @@ def channel_invite_v2(token, channel_id, u_id):
     # if not any(user == u_id for user in data['channels'][channel_id]['all_members']):
     data['channels'][channel_id]['all_members'].append(u_id)
 
+    # Create notification for added user
+    data['users'][u_id]['notifications'].append({
+        'channel_id' : channel_id,
+        'dm_id' : -1,
+        'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + str(data['channels'][channel_id]['name']))
+    })
+    # Make sure notification list is len 20
+    if len(data['users'][u_id]['notifications']) > 20:
+        data['users'][u_id]['notifications'].pop(0)
+
+
     return {}
 
 # Given a Channel with ID channel_id that the authorised user is part of
