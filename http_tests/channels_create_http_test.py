@@ -65,7 +65,7 @@ def test_channels_create_same_name(setup_user_data):
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(config.url + 'channels/listall/v2', json={
+    channel_list = requests.get(config.url + 'channels/listall/v2', params={
         'token': users['user3']['token'],
     }).json()
 
@@ -91,7 +91,7 @@ def test_channels_create_valid_basic(setup_user_data):
     assert isinstance(channel_id['channel_id'], int)
 
     # Check that channel details have all been set correctly
-    channel_details = requests.get(config.url + 'channel/details/v2', json={
+    channel_details = requests.get(config.url + 'channel/details/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id['channel_id'],
     }).json()
