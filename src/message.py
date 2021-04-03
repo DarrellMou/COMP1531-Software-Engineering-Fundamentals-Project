@@ -24,8 +24,6 @@ from channels import channels_create_v1
 
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
     data = retrieve_data()
     
     for msg in data['messages']:
@@ -34,8 +32,6 @@ def get_channel_id(message_id):
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
     data = retrieve_data()
 
     for msg in data['messages']:
@@ -44,8 +40,6 @@ def get_message(message_id):
 
 # Given a message_id, return whether the message is a shared message or not
 def get_share_status(message_id):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
     data = retrieve_data()
 
     for msg in data['messages']:
@@ -74,8 +68,6 @@ def tab_given_message(msg):
 
 
 def message_send_v2(token, channel_id, message):
-    '''with open("data.json", "r") as FILE:
-        data = json.load(FILE)'''
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -126,16 +118,11 @@ def message_send_v2(token, channel_id, message):
     data['messages'].append(message_dictionary)
 
 
-    '''with open("data.json", "w") as FILE:
-        json.dump(data, FILE)'''
-
     return {
         'message_id': unique_message_id
     }
 
 def message_remove_v2(token, message_id):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -176,15 +163,10 @@ def message_remove_v2(token, message_id):
             msg['is_removed'] = True
 
 
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
-
     return {
     }
 
 def message_edit_v2(token, message_id, message):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     data = retrieve_data()
 
@@ -246,19 +228,12 @@ def message_edit_v2(token, message_id, message):
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
-
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
-
     return {
     }
 
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
-    
     data = retrieve_data()
 
     u_id = auth_decode_token(token)
@@ -288,9 +263,6 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
         data['messages'][len(data['messages'] - 1)]['was_shared'] = True
 
-
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
 
     return {'shared_message_id': shared_message_id}
 
@@ -342,12 +314,6 @@ def message_senddm_v1(token, dm_id, message):
     data['dms'][dm_id]['messages'].append(dm_message_dictionary)
     data['messages'].append(message_dictionary)
 
-
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
-
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)  
 
     return {
         'message_id': unique_message_id
