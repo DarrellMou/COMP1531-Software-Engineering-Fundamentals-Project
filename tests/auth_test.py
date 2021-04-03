@@ -68,6 +68,7 @@ def test_auth_register_v1_nonunique_handle():
     assert data['users'][r1['auth_user_id']]['handle_str'] == 'bobbuilder'
     assert data['users'][r2['auth_user_id']]['handle_str'] == 'bobbuilder0'
 
+
 def test_check_auth_permissions(test_users):
     data = retrieve_data()
 
@@ -77,10 +78,14 @@ def test_check_auth_permissions(test_users):
     assert data['users'][test_users['login4']['auth_user_id']]['permission_id'] == 2
     assert data['users'][test_users['login5']['auth_user_id']]['permission_id'] == 2
 
-def test_encode_decode_token(test_users):
-    token = auth_encode_token(test_users['login1']['auth_user_id'])
+
+def test_encode_decode_token():
+    token = auth_encode_token(1234567800, 1)
+    data = retrieve_data()
+    data['users'][1234567800] = {'sessions' : [1]}
+
     assert isinstance(token, str) == True
-    assert auth_decode_token(token) == test_users['login1']['auth_user_id']
+    assert auth_decode_token(token) == 1234567800
     assert auth_decode_token('whatisthis') == 'invalid token, log in again'
 
     time.sleep(6)
@@ -88,7 +93,9 @@ def test_encode_decode_token(test_users):
 
 
 def test_auth_token_ok():
-    token = auth_encode_token(123)
+    token = auth_encode_token(1234567800, 1)
+    data = retrieve_data()
+    data['users'][1234567800] = {'sessions' : [1]}
     assert auth_token_ok(token) == True
     bad_token = 'edaeddawedead'
     assert auth_token_ok(bad_token) == False
@@ -108,7 +115,7 @@ def test_auth_logout_logging_back(test_users):
     # logout
     resp_logout = auth_logout_v1(test_users['login1']['token'])
     assert resp_logout == {'is_success' : True}
-    assert test_users['login1']['auth_user_id'] in blacklist
+    #assert test_users['login1']['auth_user_id'] in blacklist
 
     # log back in
     resp_login = auth_login_v1('user1@email.com', 'User1_pass!')
