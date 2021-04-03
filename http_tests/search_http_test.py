@@ -34,7 +34,7 @@ def test_search_no_channel(setup_user_data):
         'message': "A message in no channels"
     }).json()
 
-    search_none = requests.get(config.url + 'search/v2', json={
+    search_none = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "A message in no channels"
     }).json()
@@ -83,7 +83,7 @@ def test_search_standard(setup_user_data):
         'message': "A message in channels",
     }).json()
 
-    search_message = requests.get(config.url + 'search/v2', json={
+    search_message = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "message"
     }).json()
@@ -123,7 +123,7 @@ def test_search_case_sensitive(setup_user_data):
         'message': "A message in no channels"
     }).json()
 
-    search_message = requests.get(config.url + 'search/v2', json={
+    search_message = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "Channels"
     }).json()
@@ -149,7 +149,7 @@ def test_search_too_long(setup_user_data):
     }).json()    
 
     # Query over 1000 chars call input error
-    assert requests.get(config.url + 'search/v2', json={
+    assert requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "To manage the transition from trimesters to hexamesters in 2020, UNSW has \
                     established a new focus on building an in-house digital collaboration and \
@@ -224,7 +224,7 @@ def test_search_leave_channel(setup_user_data):
         'message': "A message in channels",
     }).json()
 
-    search_message = requests.get(config.url + 'search/v2', json={
+    search_message = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "channel"
     }).json()
@@ -237,7 +237,7 @@ def test_search_leave_channel(setup_user_data):
         'channel_id': channel_id1['channel_id'],
     })
 
-    search_again = requests.get(config.url + 'search/v2', json={
+    search_again = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "channel"
     }).json()
@@ -299,7 +299,7 @@ def test_search_leave_dm(setup_user_data):
         'message': "A message in channels",
     }).json()
 
-    search_message = requests.get(config.url + 'search/v2', json={
+    search_message = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "channel"
     }).json()
@@ -312,7 +312,7 @@ def test_search_leave_dm(setup_user_data):
         'dm_id': dm_id1['dm_id'],
     })
 
-    search_again = requests.get(config.url + 'search/v2', json={
+    search_again = requests.get(config.url + 'search/v2', params={
         'token': users['user2']['token'],
         'query_str': "channel"
     }).json()

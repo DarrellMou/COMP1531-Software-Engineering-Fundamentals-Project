@@ -70,7 +70,7 @@ def test_message_senddm_v1_send_one(setup_user_data):
         'message': "Hello",
     }).json()
 
-    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
@@ -131,7 +131,7 @@ def test_message_senddm_v1_send_one(setup_user_data):
         'message': "Hello3",
     }).json()
 
-    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
@@ -190,14 +190,14 @@ def test_message_senddm_v1_send_two(setup_user_data):
     }).json()
 
     # Call dm/messages to view details
-    dm1_messages = requests.get(config.url + 'dm/messages/v1', json={
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'start': 0,
     }).json()
 
     # Call dm/messages to view details
-    dm2_messages = requests.get(config.url + 'dm/messages/v1', json={
+    dm2_messages = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user1']['token'],
         'dm_id': dm_id2['dm_id'],
         'start': 0,

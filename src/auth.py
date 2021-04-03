@@ -83,7 +83,9 @@ def auth_register_v1(email, password, name_first, name_last):
         'email' : email,
         'password' : auth_password_hash(password),
         'handle_str' : '',
-        'permission_id': permission_id
+        'permission_id': permission_id,
+        'is_removed': False,
+        'dms': [],
     }
 
     # Check to see if the handle is unique
@@ -155,5 +157,4 @@ def auth_logout_v1(token):
     else:
         responseObj = {'is_success':False}
         return responseObj
-
 

@@ -16,7 +16,7 @@ def test_channels_listall_access_error(setup_user_data):
     })
 
     # Ensure AccessError
-    assert requests.get(config.url + 'channels/listall/v2', json={
+    assert requests.get(config.url + 'channels/listall/v2', params={
         'token': invalid_token,
     }).status_code == 403
 
@@ -24,7 +24,7 @@ def test_channels_listall_access_error(setup_user_data):
 def test_channels_listall_empty(setup_user_data):
     users = setup_user_data
 
-    assert requests.get(config.url + 'channels/listall/v2', json={
+    assert requests.get(config.url + 'channels/listall/v2', params={
         'token': users['user1']['token'],
     }).json() == {'channels': []}
 
@@ -40,7 +40,7 @@ def test_channels_listall_single(setup_user_data):
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(config.url + 'channels/listall/v2', json={
+    channel_list = requests.get(config.url + 'channels/listall/v2', params={
         'token': users['user1']['token'],
     }).json()
 
@@ -70,7 +70,7 @@ def test_channels_listall_multiple(setup_user_data):
     }).json()
 
     # ensure channels_listall returns correct values
-    channel_list = requests.get(config.url + 'channels/listall/v2', json={
+    channel_list = requests.get(config.url + 'channels/listall/v2', params={
         'token': users['user1']['token'],
     }).json()
 
