@@ -1,4 +1,4 @@
-from src.other import clear_v1
+import json
 
 # Iteration 1 test data
 data = {
@@ -58,19 +58,43 @@ data = {
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
-                }
+                },
             ],
         },
     },
+    'dms': {
+        1691360831: {
+            'name': 'dms1',
+            'members': [35746842521, 11753764853],
+            'messages' : [
+                {
+                    'message_id': 12354122383,
+                    'u_id': 35746842521,
+                    'message': 'Hello World1',
+                    'time_created': 45132806512,
+                },
+                {
+                    'message_id': 123156231064,
+                    'u_id': 11753764853,
+                    'message': 'Hello World2',
+                    'time_created': 68741450315603,
+                },
+            ],
+        }
+    }
 }
-
-
-# Function to reset the data to default (assists in testing)
-def reset_data():
-    global data
-    data = clear_v1()
-    return data
 
 def retrieve_data():
     global data
     return data
+
+def read_data():
+    global data
+    with open("data.json", "r") as FILE:
+        data_json = json.load(FILE)
+        data = data_json
+
+def write_data():
+    data = retrieve_data()
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
