@@ -24,8 +24,9 @@ from channels import channels_create_v1
 
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
+    data = retrieve_data()
     
     for msg in data['messages']:
         if msg['message_id'] == message_id:
@@ -33,8 +34,9 @@ def get_channel_id(message_id):
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
+    data = retrieve_data()
 
     for msg in data['messages']:
         if msg['message_id'] == message_id:
@@ -42,8 +44,9 @@ def get_message(message_id):
 
 # Given a message_id, return whether the message is a shared message or not
 def get_share_status(message_id):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
+    data = retrieve_data()
 
     for msg in data['messages']:
         if msg['message_id'] == message_id:
@@ -131,8 +134,9 @@ def message_send_v2(token, channel_id, message):
     }
 
 def message_remove_v2(token, message_id):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
+    data = retrieve_data()
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -179,8 +183,10 @@ def message_remove_v2(token, message_id):
     }
 
 def message_edit_v2(token, message_id, message):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
+
+    data = retrieve_data()
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -250,9 +256,11 @@ def message_edit_v2(token, message_id, message):
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    #with open("data.json", "r") as FILE:
+    #    data = json.load(FILE)
     
+    data = retrieve_data()
+
     u_id = auth_decode_token(token)
     og_message = get_message(og_message_id)
 
