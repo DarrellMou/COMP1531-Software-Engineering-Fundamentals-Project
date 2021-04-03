@@ -40,25 +40,30 @@ def echo():
         'data': data
     })
 
-@APP.route("/auth/register/v2", methods=['POST'])
-def auth_register_v2_flask():
-    returnDict = auth_register_v1(request.args.get('email'), request.args.get('password'), request.args.get('name_first'), request.args.get('name_last'))
-
-    return dumps(returnDict)
-
-
 @APP.route("/auth/login/v2", methods=['POST'])
 def auth_login_v2_flask():
-    returnDict = auth_login_v1(request.args.get('email'), request.args.get('password'))
+    payload = request.get_json()
+    email = payload['email']
+    password = payload['password']
 
-    return dumps(returnDict)
-    
+    return dumps(auth_login_v1(email, password))
+
+@APP.route("/auth/register/v2", methods=['POST'])
+def auth_register_route():
+    payload = request.get_json()
+    email = payload['email']
+    password = payload['password']
+    name_first = payload['name_first']
+    name_last = payload['name_last']
+
+    return dumps(auth_register_v1(email, password, name_first, name_last))
 
 @APP.route("/auth/logout/v1", methods=['POST'])
 def auth_logout_route():
-    returnDict = auth_logout_v1(request.args.get('token'))
-    
-    return dumps(returnDict)
+    payload = request.get_json()
+    token = payload['token']
+
+    return dumps(auth_logout_v1(token))
 
 
 @APP.route("/channels/create/v2", methods=['POST'])
@@ -74,19 +79,17 @@ def channels_create_v2_flask():
 
 @APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall_v2_flask():
-    payload = request.get_json()
-    token = payload['token']
+    token = request.args.get('token')
 
     return dumps(channels_listall_v2(token))
 
 
 @APP.route("/channel/details/v2", methods=['GET'])
 def channel_details_v2_flask():
-    payload = request.get_json()
-    token = payload['token']
-    channel_id = payload['channel_id']
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
 
-    return dumps(channel_details_v2(token,channel_id))
+    return dumps(channel_details_v2(token, channel_id))
 
 
 @APP.route("/channel/join/v2", methods=['POST'])
@@ -120,12 +123,11 @@ def channel_addowner_v1_flask():
 
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages_v2_flask():
-    payload = request.get_json()
-    token = payload['token']
-    channel_id = payload['channel_id']
-    start = int(payload['start'])
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
 
-    return dumps(channel_messages_v2(token,channel_id,start))
+    return dumps(channel_messages_v2(token, channel_id, start))
 
 
 @APP.route('/dm/create/v1', methods=['POST'])
@@ -145,11 +147,11 @@ def dm_create_v1_flask():
 
 @APP.route('/dm/messages/v1', methods=['GET'])
 def dm_messages_v1_flask(): 
-    
-    data = request.get_json()
-    dm_messages = dm_messages_v1(data['token'], data['dm_id'], data['start'])
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
 
-    return dumps(dm_messages)
+    return dumps(dm_messages_v1(token, dm_id, start))
 
 
 @APP.route("/message/send/v2", methods=['POST'])
@@ -164,9 +166,10 @@ def message_send_v2_flask():
 
 @APP.route('/user/profile/v2', methods=['GET'])
 def user_profile_v2_flask():
-    returnDict = user_profile_v2(request.args.get('token'), request.args.get('u_id'))
-    
-    return dumps(returnDict)
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
+
+    return dumps(user_profile_v2(token, u_id))
 
 
 @APP.route('/user/profile/setname/v2', methods=['PUT'])
@@ -191,10 +194,10 @@ def user_profile_sethandle_v2_flask():
 
 
 @APP.route('/users/all/v1', methods=['GET'])
-def users_all_v2_flask():
-    returnDict = users_all_v1(request.args.get('token'))
+def users_all_v1_flask():
+    token = request.args.get('token')
 
-    return dumps(returnDict) 
+    return dumps(users_all_v1(token))
 
 
 @APP.route("/message/senddm/v1", methods=['POST'])
