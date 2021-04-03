@@ -80,13 +80,18 @@ def send_x_message(user, dm, num_messages):
 
 def send_x_messages_two_users(user1, user2, dm, num_messages):
     message_count = 0
+    message_id_list = []
     while message_count < num_messages:
         message_num = message_count + 1
         if message_count % 2 == 0:
-            requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user1, dm, str(message_num)))
+            r = requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user1, dm, str(message_num)))
         else:
-            requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user2, dm, str(message_num)))
+            r = requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user2, dm, str(message_num)))
+        message_id = r.json()
+        message_id_list.append(message_id["message_id"])
         message_count += 1
+
+    return message_id_list
 
 
 ###############################################################################
@@ -183,22 +188,20 @@ def test_dm_messages_v1_1_message():
     
     assert dm_messages['end'] == -1, "The most recent message has been reached - return 'end': -1"
     
-    print(dm_messages)
-    assert dm_messages['messages'][0] == {
-        "message": "1",
-        "message_id": message_id_list[0],
-        "u_id": user0["auth_user_id"]
-    }
-'''
+    assert dm_messages['messages'][0]["message"] == "1"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
+    
+
 # Testing for exactly 50 messages
 # ASSUMPTION: 50th message IS the last message so return 'end': -1 rather than 'end': 50
 # when there are 50 messages in the dm with start being 0
 def test_dm_messages_v1_50_messages():
     setup = set_up_data()
-    user1, user2, dm1 = setup['user0'], setup['user1'], setup['dm0']
+    user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
     # Add 50 messages
-    send_x_messages_two_users(user0, user1, dm1, 50)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 50)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
     dm_messages = r.json()
@@ -211,12 +214,23 @@ def test_dm_messages_v1_50_messages():
     
     assert len(dm_messages['messages']) == 50
     
-    assert dm_messages['messages'][49] == "50", "Error, messages do not match"
+    print(message_id_list)
+    #assert dm_messages['messages'][49] == "50", "Error, messages do not match"
+    assert dm_messages['messages'][49]["message"] == "1"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[49]
+    assert dm_messages['messages'][49]["u_id"] == user0["auth_user_id"]
     
-    assert dm_messages['messages'][34] == "35", "Error, messages do not match"
+    #assert dm_messages['messages'][34] == "35", "Error, messages do not match"
+    assert dm_messages['messages'][34]["message"] == "35"
+    assert dm_messages['messages'][34]["message_id"] == message_id_list[34]
+    assert dm_messages['messages'][34]["u_id"] == user0["auth_user_id"]
     
-    assert dm_messages['messages'][0] == "1", "Error, messages do not match"
+    #assert dm_messages['messages'][0] == "1", "Error, messages do not match"
+    assert dm_messages['messages'][0]["message"] == "1"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
+'''
 # Create 100 messages, with a given start of 50 (50th index means the 51st most
 # recent message). Should return 50 messages (index 50 up to index 99 which
 # corresponds with the 51st most recent message up to the least recent message,
