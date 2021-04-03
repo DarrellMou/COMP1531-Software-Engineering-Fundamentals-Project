@@ -83,14 +83,12 @@ def admin_user_remove_v1(token, u_id):
             if u_id in data['channels'][channel]['owner_members']: member_flag = True
         if member_flag == True and owner_flag == 1:
             raise InputError("The user is the only owner of a channel")
-
+        # Replace channel message with 'Removed user'
         for member in data['channels'][channel]['all_members']:
             if u_id in data['channels'][channel]['all_members']:
                 for message in data['channels'][channel]['messages']:
                     if message['u_id'] == u_id:
                         message['message'] = "Removed user"
-                        message['is_removed'] = True
-                data['channels'][channel]['all_members'].remove(member)
                 break
 
     # Replace dm message with 'Removed user'
@@ -99,24 +97,21 @@ def admin_user_remove_v1(token, u_id):
             if u_id in data['dms'][dm]['members']:
                 for message in data['dms'][dm]['messages']:
                     if message['u_id'] == u_id:
-                        message['message'] = "Removed user"
-                        message['is_removed'] = True   
-                data['dms'][dm]['members'].remove(member)
+                        message['message'] = "Removed user"  
                 break
 
     # Replace any messages from u_id with 'Removed user'
     for message in data['messages']:
         if message['u_id'] == u_id:
             message['message'] = "Removed user"
-            message['is_removed'] = True   
             break
 
     # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:
-            data['users'][user]['name_first'] = "Removed user"
-            data['users'][user]['is_removed'] = True
+            data['users'][user]['name_first'] = "Removed "
+            data['users'][user]['name_last'] = "user"
             break
     
     return {}
