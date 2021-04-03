@@ -47,7 +47,7 @@ def test_function():
 
     requests.post(f"{url}channel/invite/v2", json=channel_invite_body(user0, channel0, user1))
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(user0, channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(user0, channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -87,7 +87,7 @@ def test_multiple():
     for i in range(1,10):
         requests.post(f"{url}channel/invite/v2", json=channel_invite_body(users[0], channel0, users[i]))
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(users[0], channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(users[0], channel0))
     channel_details = payload.json()
 
     assert channel_details == {
@@ -173,7 +173,7 @@ def test_multiple_channels():
     for i in range(6,10):
         requests.post(f"{url}channel/invite/v2", json=channel_invite_body(users[5], channel1, users[i]))
 
-    payload0 = requests.get(f"{url}channel/details/v2", json=channel_details_body(users[2], channel0))
+    payload0 = requests.get(f"{url}channel/details/v2", params=channel_details_body(users[2], channel0))
     channel_details0 = payload0.json()
 
     assert channel_details0 == {
@@ -214,7 +214,7 @@ def test_multiple_channels():
         ],
     }
 
-    payload1 = requests.get(f"{url}channel/details/v2", json=channel_details_body(users[8], channel1))
+    payload1 = requests.get(f"{url}channel/details/v2", params=channel_details_body(users[8], channel1))
     channel_details1 = payload1.json()
 
     assert channel_details1 == {
@@ -261,7 +261,7 @@ def test_invalid_channel_id():
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(user0, {"channel_id": 126347542124}))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(user0, {"channel_id": 126347542124}))
     channel_details = payload.json()
 
     assert channel_details["code"] == 400
@@ -280,7 +280,7 @@ def test_unauthorized_user():
     ch_id0 = requests.post(f"{url}channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body(user1, channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body(user1, channel0))
     channel_details = payload.json()
 
     assert channel_details["code"] == 403
@@ -296,7 +296,7 @@ def test_invalid_token():
     ch_id0 = requests.post(f"{url}channels/create/v2", json=channel_create_body(user0, 0, True))
     channel0 = ch_id0.json()
 
-    payload = requests.get(f"{url}channel/details/v2", json=channel_details_body({"token": 18936087134}, channel0))
+    payload = requests.get(f"{url}channel/details/v2", params=channel_details_body({"token": 18936087134}, channel0))
     channel_details = payload.json()
 
     assert channel_details["code"] == 403
