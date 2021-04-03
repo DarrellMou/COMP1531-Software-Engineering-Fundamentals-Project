@@ -68,10 +68,15 @@ def set_up_data():
 
 def send_x_message(user, dm, num_messages):
     message_count = 0
+    message_id_list = []
     while message_count < num_messages:
         message_num = message_count + 1
-        requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user, dm, str(message_num)))
+        r = requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user, dm, str(message_num)))
+        message_id = r.json()
+        message_id_list.append(message_id["message_id"])
         message_count += 1
+
+    return message_id_list
 
 def send_x_messages_two_users(user1, user2, dm, num_messages):
     message_count = 0
@@ -112,7 +117,8 @@ def test_dm_messages_v1_AccessError():
 
     assert r.json()["code"] == 403
     assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p></p>"
+    assert r.json()["message"] == "<p>The user corresponding to the given token is not in the dm</p>"
+
 
 # Testing for when an invalid dm_id is used (testing input error)
 def test_dm_messages_v1_InputError_invalid_dm():
@@ -123,12 +129,12 @@ def test_dm_messages_v1_InputError_invalid_dm():
     send_x_message(user0, dm0, 1)
 
     # 2 is an invalid dm_id in this case
-    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, 2, 0))
+    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, {"dm_id": 2}, 0))
     dm_messages = r.json()
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p></p>"
+    assert r.json()["message"] == "<p>dm_id is not valid</p>"
 
 # Testing for when an invalid start is used (start > num messages in dm)
 def test_dm_messages_v1_InputError_invalid_start():
@@ -143,7 +149,7 @@ def test_dm_messages_v1_InputError_invalid_start():
 
     assert r.json()["code"] == 400
     assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p></p>"
+    assert r.json()["message"] == "<p>Inputted starting index is larger than the current number of messages in the dm</p>"
 
 
 ############################ END EXCEPTION TESTING ############################
@@ -168,15 +174,22 @@ def test_dm_messages_v1_1_message():
     setup = set_up_data()
     user0, dm0 = setup['user0'], setup['dm0']
 
-    send_x_message(user0, dm0, 1)
+    message_id_list = send_x_message(user0, dm0, 1)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
     dm_messages = r.json()
 
-    assert dm_messages == {
-        'messages': ["1"], 'start': 0, 'end': -1
+    assert dm_messages['start'] == 0, "Start should not change"
+    
+    assert dm_messages['end'] == -1, "The most recent message has been reached - return 'end': -1"
+    
+    print(dm_messages)
+    assert dm_messages['messages'][0] == {
+        "message": "1",
+        "message_id": message_id_list[0],
+        "u_id": user0["auth_user_id"]
     }
-
+'''
 # Testing for exactly 50 messages
 # ASSUMPTION: 50th message IS the last message so return 'end': -1 rather than 'end': 50
 # when there are 50 messages in the dm with start being 0
@@ -438,3 +451,5 @@ def test_dm_messages_v1_start_21_end_neg1():
     assert dm_messages['messages'][25] == "4"
     
     assert dm_messages['messages'][28] == "1"
+
+'''
