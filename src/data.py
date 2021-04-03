@@ -93,7 +93,6 @@ def read_data():
     with open("data.json", "r") as FILE:
         data_json = json.load(FILE)
         data = data_json
-    return data
 
 def write_data():
     data = retrieve_data()
