@@ -46,7 +46,7 @@ def test_function():
 
     requests.post(f"{url}dm/invite/v1", json=dm_invite_body(users[0], dm0, users[2]))
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
@@ -85,7 +85,7 @@ def test_multiple():
     for i in range(3):
         requests.post(f"{url}dm/invite/v1", json=dm_invite_body(users[0], dm0, users[i + 2]))
 
-    payload = requests.get(f"{url}dm/details/v1", json=dm_details_body(users[0], dm0))
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(users[0], dm0))
     dm_details = payload.json()
 
     assert dm_details == {
