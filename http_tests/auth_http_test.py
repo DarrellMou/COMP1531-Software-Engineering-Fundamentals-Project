@@ -1,123 +1,94 @@
 from src.error import InputError
-from http_tests import *
 import requests
 import time
-from src.auth import blacklist, auth_decode_token, auth_token_ok
+import pytest 
+from src import config
+import json
+from src.auth import blacklist, auth_decode_token, auth_token_ok, auth_decode_token
+
+@pytest.fixture(autouse=True)
+def reset():
+	requests.delete(config.url + 'clear/v1', params={})
 
 # client and app are pytest fixtures
-def test_auth_register_api_valid(client):
-
-	response = client.post('/register', json={'email':'12382193@outlook.com', 'password':'123123kjdfd', 'first_name':'winston', 'last_name':'lin'})
-	json_data = response.get_json() # or just json
-
-	assert response.status_code == 201
-	assert response.content_type == 'application/json'
+def test_auth_register_api_valid():
+	resp = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	json_data = json.loads(resp.text)
 
 	assert json_data['token'] and json_data['token'] != ''
-	assert json_data['auth_user_id'] and json_data['auth_user_id'] != -1
+	assert json_data['auth_user_id'] and json_data['auth_user_id'] != 1
 
-def test_auth_register_api_invalid_missing_args(client):
-	response = client.post('/register', json={'password':'jkdfnkfdsfd1213s', 'first_name':'winston', 'last_name':'lin'})
-	json_data = response.get_json()
 
-	assert response.content_type == 'application/json'
-	assert response.status_code == 408
-	assert json_data['token'] == ''
-	assert json_data['auth_user_id'] == -1
+# testing the exception handler, for this password is too short 
+def test_auth_register_api_invalid_exception():
+	resp = requests.post(config.url + 'auth/register/v2', params={'email' : 'exampleUserEmail@email.com', 'password':'123', 'first_name':'FIRSTNAME', 'last_name':'LASTNAME'})
+	json_data = json.loads(resp.text)
 
-# testing the somewhat redundant exception handler
-def test_auth_register_api_invalid_exception(client):
-	response_register = client.post('/register', json={'email' : '12382193@outlook.com', 'password':'123', 'first_name':'winston', 'last_name':'lin'})
-	json_data = response_register.get_json()
-	assert response_register.status_code == 400
-
-	assert response_register.content_type == 'application/json'
-	assert json_data['code'] == 400# exception 
-	assert json_data['name'] == 'System Error'
+	assert json_data['name']
+	assert json_data['code']
 	assert json_data['message']	# just '<p></p>'
 
 
-def test_auth_login_api_valid(client):
+def test_auth_login_api_valid():
 	# register first 
-	response_register = client.post('/register', json={'email':'1238293@outlook.com', 'password':'123123kjdfd', 'first_name':'winston', 'last_name':'lin'})
-	json_data_register = response_register.get_json() # or just json
-	assert response_register.status_code == 201
-	assert response_register.content_type == 'application/json'
+	resp = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	json_data_register = json.loads(resp.text)
 
-	response_login = client.post('/login', json={'email':'1238293@outlook.com', 'password':'123123kjdfd'})
-	assert response_login.content_type == 'application/json'
-	assert response_login.status_code == 201
+	resp_login = requests.post(config.url + 'auth/login/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword'})
+	json_data_login = json.loads(resp_login.text)
 
-	json_data_login = response_login.get_json()
 	assert json_data_login['token']
 	assert json_data_login['auth_user_id'] == json_data_register['auth_user_id']
 
 
-def test_auth_login_api_invalid(client):
-	# field missing from request
-	response_login = client.post('/login', json={'email':'12382193@outlook.com'})
-	assert response_login.content_type == 'application/json'
-	assert response_login.status_code == 408
-
-	json_data_login = response_login.get_json()
-	assert json_data_login['token'] == ''
-	assert json_data_login['auth_user_id'] == -1
-
+def test_auth_login_api_invalid():
 	# register 
-	response_register = client.post('/register', json={'email':'12382193@outlook.com', 'password':'123123kjdfd', 'first_name':'winston', 'last_name':'lin'})
-	json_data_register = response_register.get_json() # or just json
-	assert response_register.status_code == 201
-	assert response_register.content_type == 'application/json'
+	response_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	json_data_register = json.loads(response_register.text)
 	assert json_data_register['token']
 
 	# if credentials don't match, handled by customized exception handler 
-	response_login = client.post('/login', json={'email':'12382193@outlook.com', 'password':'123123kjdf'})
-	assert response_login.content_type == 'application/json'
-	assert response_login.status_code == 400
+	response_login = requests.post(config.url + 'auth/login/v2', params={'email':'exampleUserEmail@email.com', 'password':'wrongpassword'})
+	json_data_login = json.loads(response_login.text)
 
-	json_data_login = response_login.get_json()
 	assert json_data_login['code'] == 400 # this is just status_code
 	assert json_data_login['name'] == 'System Error'
 	assert json_data_login['message']
 
 
-def test_auth_logout_api(client):
+def test_auth_logout_api():
 	# register
-	response_register = client.post('/register', json={'email':'testing123@gmail.com', 'password':'1234567ABC', 'first_name':'winston', 'last_name':'lin'})
-	json_data_register = response_register.get_json() # or just json
-	assert response_register.content_type == 'application/json'
-	assert response_register.status_code == 201
+	response_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	json_data_register = json.loads(response_register.text)
 	token_kept_by_client = json_data_register['token']
 
 	# logout
-	response_logout = client.post('/logout', json={'token':token_kept_by_client})
-	assert response_logout.status_code == 201
-	assert response_logout.json['is_success'] == True
+	response_logout1 = requests.post(config.url + 'auth/logout/v1', params={'token':token_kept_by_client})
+	json_data_logout1 = json.loads(response_logout1.text)
+	assert json_data_logout1['is_success'] == True
 
 	# logout again with the same token, blacklisted since we've already logged out
-	response_logout2 = client.post('/logout', json={'token':token_kept_by_client})
-	assert response_logout2.json['is_success'] == False
-	assert response_logout2.status_code == 408
+	response_logout2 = requests.post(config.url + 'auth/logout/v1', params={'token':token_kept_by_client})
+	json_data_logout2 = json.loads(response_logout2.text)
+	assert json_data_logout2['is_success'] == False
 
 
-def test_auth_logout_api_logging_back(client):
+def test_auth_logout_api_logging_back():
 	# register
-	response_register = client.post('/register', json={'email':'testing123@gmail.com', 'password':'1234567ABC', 'first_name':'winston', 'last_name':'lin'})
-	json_data_register = response_register.get_json() # or just json
-	assert response_register.content_type == 'application/json'
-	assert response_register.status_code == 201
+	response_register = requests.post(config.url + 'auth/register/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
+	json_data_register = json.loads(response_register.text)
 	token_kept_by_client = json_data_register['token']
 	auth_user_id = auth_decode_token(token_kept_by_client)
 
 	# logout
-	response_logout = client.post('/logout', json={'token':token_kept_by_client})
-	assert response_logout.status_code == 201
-	assert response_logout.json['is_success'] == True
+	response_logout = requests.post(config.url + 'auth/logout/v1', params={'token':token_kept_by_client})
+	json_data_logout = json.loads(response_logout.text)
+	assert json_data_logout['is_success'] == True
 
 	# log back in
-	response_login = client.post('/login', json={'email':'testing123@gmail.com', 'password':'1234567ABC'})
-	assert response_login.content_type == 'application/json'
-	assert response_login.status_code == 201
+	response_login = requests.post(config.url + 'auth/login/v2', params={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword'})
+	json_data_login = json.loads(response_login.text)
+	assert json_data_login['token']
 
 	# assert the user is no longer in the blacklist and token is valid again
 	assert auth_user_id not in blacklist

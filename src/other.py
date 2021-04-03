@@ -99,22 +99,22 @@ def admin_user_remove_v1(token, u_id):
                 for message in data['dms'][dm]['messages']:
                     if message['u_id'] == u_id:
                         message['message'] = "Removed user"
-                        message['is_removed'] = True   
                 data['dms'][dm]['members'].remove(member)
                 break
 
     # Replace any messages from u_id with 'Removed user'
     for message in data['messages']:
         if message['u_id'] == u_id:
-            message['message'].replace(message['message'], 'Removed user')
-            message['is_removed'] = True   
+            message['message'] = "Removed user"
             break
 
     # Replace user name with 'Removed user'
     # Tell user/profile/v2 to have an if statement for is_removed and only show their name 'Removed user'
     for user in data['users']:
         if user == u_id:
-            data['users'][user]['name_first'].replace(data['users'][user]['name_first'], 'Removed user')
+            print(user)
+            data['users'][user]['name_first'] = "Removed"
+            data['users'][user]['name_last'] = "user"
             data['users'][user]['is_removed'] = True
             break
     
