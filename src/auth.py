@@ -12,10 +12,10 @@ import re
 import itertools
 import uuid
 
-blacklist = set()
 sessionID = 0
 
-def getNewSessionID():
+# generates a unique session ID for every login
+def getNewSessionID(id):
     global sessionID 
     sessionID += 1
     return sessionID
@@ -42,9 +42,6 @@ def auth_login_v1(email, password):
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
         if email == data_email and auth_password_hash(password) == data_password:
-            if key_it in blacklist:
-                blacklist.remove(key_it)
-
             new_sessionID = getNewSessionID()
 
             data['users'][key_it]['sessions'].append(new_sessionID)
@@ -112,6 +109,7 @@ def auth_register_v1(email, password, name_first, name_last):
 
 """
 Generate and return an expirable token based on auth_user_id
+This function does not work on itself, it is used in auth_register_v1 and auth_login_v1
 """
 def auth_encode_token(auth_user_id, sessionID):
     # try:
@@ -142,9 +140,7 @@ def auth_decode_token(token):
         auth_user_id = payload['auth_user_id']
         sessionID = payload['sessionID'] 
 
-        if auth_user_id in blacklist:
-            return 'User has logged out'
-        elif sessionID not in data['users'][auth_user_id]['sessions']:
+        if sessionID not in data['users'][auth_user_id]['sessions']:
             return 'This session is over'
 
         return auth_user_id
@@ -163,6 +159,7 @@ def auth_token_ok(token):
         return True
 
 
+# retrieves the sessionID embedded in the token, only used in auth, other modules don't need to use this
 def auth_get_token_session(token):
     if auth_token_ok(token):
         return jwt.decode(token, SECRET, algorithms=['HS256'])['sessionID']
@@ -173,12 +170,11 @@ def auth_password_hash(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
+# logs out the user session that owns the token
 def auth_logout_v1(token):
     data = retrieve_data()
 
     if auth_token_ok(token) == True:
-        # auth_user_id = auth_decode_token(token)
-        # blacklist.add(auth_user_id)
         auth_user_id = auth_decode_token(token)
         sessionID = auth_get_token_session(token)
         data['users'][auth_user_id]['sessions'].remove(sessionID)
