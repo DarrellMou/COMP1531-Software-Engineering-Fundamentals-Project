@@ -49,32 +49,31 @@ def echo():
     })
 
 
+@APP.route("/auth/register/v2", methods=['POST'])
+def auth_register_v2_flask():
+    payload = request.get_json()
+    returnDict = auth_register_v1(payload['email'], payload['password'], payload['name_first'], payload['name_last'])
+
+    write_data()
+    return dumps(returnDict)
+
+
 @APP.route("/auth/login/v2", methods=['POST'])
 def auth_login_v2_flask():
     payload = request.get_json()
-    email = payload['email']
-    password = payload['password']
+    returnDict = auth_login_v1(payload['email'], payload['password'])
 
     write_data()
-    return dumps(auth_login_v1(email, password))
-
-
-@APP.route('/auth/register/v2', methods=['POST'])
-def auth_register_v2_flask(): 
-    info = request.get_json()
-    a_u_id = auth_register_v1(info['email'], info['password'], info['name_first'], info['name_last'])
-
-    write_data()
-    return json.dumps(a_u_id)
+    return dumps(returnDict)
 
 
 @APP.route("/auth/logout/v1", methods=['POST'])
 def auth_logout_route():
     payload = request.get_json()
-    token = payload['token']
+    returnDict = auth_logout_v1(payload['token'])
 
     write_data()
-    return dumps(auth_logout_v1(token))
+    return dumps(returnDict)
 
 
 @APP.route("/channels/create/v2", methods=['POST'])
@@ -233,22 +232,25 @@ def message_send_v2_flask():
 def user_profile_v2_flask():
     token = request.args.get('token')
     u_id = int(request.args.get('u_id'))
+    returnDict = user_profile_v2(token, u_id)
 
     write_data()
-    return dumps(user_profile_v2(token, u_id))
-
+    return dumps(returnDict)
+    
 
 @APP.route('/user/profile/setname/v2', methods=['PUT'])
 def user_profile_setname_v2_flask():
-    returnDict = user_profile_setname_v2(request.args.get('token'), request.args.get('name_first'), request.args.get('name_last'))
-    
+    payload = request.get_json()
+    returnDict = user_profile_setname_v2(payload['token'], payload['name_first'], payload['name_last'])
+
     write_data()
     return dumps(returnDict)  
 
 
 @APP.route('/user/profile/setemail/v2', methods=['PUT'])
 def user_profile_setemail_v2_flask():
-    returnDict = user_profile_setemail_v2(request.args.get('token'), request.args.get('email'))
+    payload = request.get_json()
+    returnDict = user_profile_setemail_v2(payload['token'], payload['email'])
 
     write_data()
     return dumps(returnDict) 
@@ -256,7 +258,8 @@ def user_profile_setemail_v2_flask():
 
 @APP.route('/user/profile/sethandle/v2', methods=['PUT'])
 def user_profile_sethandle_v2_flask():
-    returnDict = user_profile_sethandle_v2(request.args.get('token'), request.args.get('handle_str'))
+    payload = request.get_json()
+    returnDict = user_profile_sethandle_v2(payload['token'], payload['handle_str'])
 
     write_data()
     return dumps(returnDict) 
