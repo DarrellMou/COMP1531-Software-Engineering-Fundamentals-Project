@@ -7,7 +7,6 @@ from src.auth import auth_token_ok, auth_decode_token
 
 from flask import jsonify, request, Blueprint, make_response
 from json import dumps
-import json
 # bp stands for blueprint, they are components of the DREAMS communication tool
 bp = Blueprint('channels', __name__, url_prefix='/')
 
@@ -18,9 +17,7 @@ bp = Blueprint('channels', __name__, url_prefix='/')
 #################################################################################
 
 def channels_list_v1(auth_user_id):
-    #data = retrieve_data()
-    with open("data.json", "r") as FILE:
-        data = json.load(FILE)
+    data = retrieve_data()
 
     # AccessError occurs when input is invalid auth_user_id
     if auth_user_id not in data['users']: raise AccessError("Invalid token")
@@ -41,8 +38,6 @@ def channels_list_v1(auth_user_id):
                     'name' : data['channels'][channel]['name'],
                 }
                 channel_list.append(channel_details)
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
     
     return{
         'channels': channel_list
