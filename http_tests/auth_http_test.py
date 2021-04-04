@@ -20,16 +20,6 @@ def test_auth_register_api_valid():
 	assert json_data['auth_user_id'] and json_data['auth_user_id'] != 1
 
 
-# testing the exception handler, for this password is too short 
-# def test_auth_register_api_invalid_exception():
-# 	resp = requests.post(config.url + 'auth/register/v2', json={'email' : 'exampleUserEmail@email.com', 'password':'123', 'first_name':'FIRSTNAME', 'last_name':'LASTNAME'})
-# 	json_data = json.loads(resp.text)
-
-# 	assert json_data['name']
-# 	assert json_data['code']
-# 	assert json_data['message']	# just '<p></p>'
-
-
 def test_auth_login_api_valid():
 	# register first 
 	resp = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})

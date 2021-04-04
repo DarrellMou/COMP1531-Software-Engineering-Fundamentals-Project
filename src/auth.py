@@ -168,7 +168,8 @@ def auth_token_ok(token):
 def auth_get_token_session(token):
     if auth_token_ok(token):
         return jwt.decode(token, SECRET, algorithms=['HS256'])['sessionID']
-
+    else:
+        return False
 
 # wrapper
 def auth_password_hash(password):

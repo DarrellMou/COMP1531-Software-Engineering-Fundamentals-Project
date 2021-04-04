@@ -1,7 +1,7 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1, auth_get_token_session
 from src.data import retrieve_data
 from src.other import clear_v1
 import time
@@ -67,9 +67,13 @@ def test_auth_register_v1_nonunique_handle():
 
     r1 = auth_register_v1('example1@hotmail.com', 'password1', 'bob', 'builder')
     r2 = auth_register_v1('example2@hotmail.com', 'password1', 'bob', 'builder')
+    r3 = auth_register_v1('example3@hotmail.com', 'password1', 'bob', 'builder')
+    r4 = auth_register_v1('example4@hotmail.com', 'password1', 'bob', 'builder')
 
     assert data['users'][r1['auth_user_id']]['handle_str'] == 'bobbuilder'
     assert data['users'][r2['auth_user_id']]['handle_str'] == 'bobbuilder0'
+    assert data['users'][r3['auth_user_id']]['handle_str'] == 'bobbuilder1'
+    assert data['users'][r4['auth_user_id']]['handle_str'] == 'bobbuilder2'
 
 
 def test_check_auth_permissions(test_users):
@@ -102,6 +106,12 @@ def test_auth_token_ok():
     assert auth_token_ok(token) == True
     bad_token = 'edaeddawedead'
     assert auth_token_ok(bad_token) == False
+
+
+def test_auth_get_token_session():
+    token = auth_encode_token(1234567800, 1)
+    assert auth_get_token_session(token) == 1
+    assert auth_get_token_session('invalidToken') == False
 
 
 def test_auth_logout(test_users):
