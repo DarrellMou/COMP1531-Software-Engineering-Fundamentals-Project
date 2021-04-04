@@ -36,10 +36,16 @@ def set_up_data():
         "u_id": user2["auth_user_id"]
     }).json()
 
+    dm1 = requests.post(f"{url}dm/create/v1", json = {
+        "token": user1["token"],
+        "u_ids": [user2["auth_user_id"]]
+    }).json()
+
     setup = {
         "user1": user1,
         "user2": user2,
-        "channel1": channel1["channel_id"]
+        "channel1": channel1["channel_id"],
+        "dm1": dm1["dm_id"]
     }
 
     return setup
@@ -726,3 +732,79 @@ def test_http_message_edit_v2_edit_removes_multiple_msg():
     }).json()
 
     assert channel_messages_answer == answer
+
+
+
+# Edit messages within a dm
+def test_message_edit_v2_edit_msg_in_dm():
+    setup = set_up_data()
+    user1, dm1 = setup['user1'], setup['dm1']
+
+    message_count = 0
+    while message_count < 5:
+        message_num = message_count + 1
+        requests.post(f"{url}message/senddm/v1", json= {
+            "token": user1["token"],
+            "dm_id": dm1,
+            "message": str(message_num)
+        }).json()
+        message_count += 1
+
+    dm_msgs = requests.get(f"{url}dm/messages/v1", params= {
+        "token": user1["token"],
+        "dm_id": dm1,
+        "start": 0
+    }).json()
+
+    msg0 = dm_msgs['messages'][4]
+    msg2 = dm_msgs['messages'][2]
+    msg3 = dm_msgs['messages'][1]
+
+    requests.put(f"{url}message/edit/v2", json={
+        "token": user1["token"],
+        "message_id": msg0["message_id"],
+        "message": "Hey"
+    }).json()
+
+    requests.put(f"{url}message/edit/v2", json={
+        "token": user1["token"],
+        "message_id": msg2["message_id"],
+        "message": ""
+    }).json()
+
+    requests.put(f"{url}message/edit/v2", json={
+        "token": user1["token"],
+        "message_id": msg3["message_id"],
+        "message": "Hello"
+    }).json()
+
+    m_dict1 = dm_msgs['messages'][3]
+    m_dict4 = dm_msgs['messages'][0]
+
+    m_dict0 = {
+        'message_id': msg0['message_id'],
+        'u_id': msg0['u_id'],
+        'message': 'Hey',
+        'time_created': msg0['time_created'],
+    }
+    m_dict3 = {
+        'message_id': msg3['message_id'],
+        'u_id': msg3['u_id'],
+        'message': 'Hello',
+        'time_created': msg3['time_created'],
+    }
+
+    answer = {
+        'messages': [m_dict4, m_dict3, m_dict1, m_dict0],
+        'start': 0,
+        'end': -1
+    }
+
+
+    dm_messages_answer = requests.get(f"{url}dm/messages/v1", params= {
+        "token": user1["token"],
+        "dm_id": dm1,
+        "start": 0
+    }).json()
+
+    assert dm_messages_answer == answer
