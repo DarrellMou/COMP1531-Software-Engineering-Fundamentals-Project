@@ -55,7 +55,7 @@ def auth_register_v2_flask():
     returnDict = auth_register_v1(payload['email'], payload['password'], payload['name_first'], payload['name_last'])
 
     write_data()
-    return dumps(auth_login_v1(email, password))
+    return dumps(returnDict)
 
 
 @APP.route("/auth/login/v2", methods=['POST'])
@@ -64,7 +64,7 @@ def auth_login_v2_flask():
     returnDict = auth_login_v1(payload['email'], payload['password'])
 
     write_data()
-    return dumps(a_u_id)
+    return dumps(returnDict)
 
 
 @APP.route("/auth/logout/v1", methods=['POST'])
@@ -210,10 +210,11 @@ def message_send_v2_flask():
 def user_profile_v2_flask():
     token = request.args.get('token')
     u_id = int(request.args.get('u_id'))
+    returnDict = user_profile_v2(token, u_id)
 
     write_data()
-    return dumps(user_profile_v2(token, u_id))
-
+    return dumps(returnDict)
+    
 
 @APP.route('/user/profile/setname/v2', methods=['PUT'])
 def user_profile_setname_v2_flask():

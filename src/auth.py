@@ -96,7 +96,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'password' : auth_password_hash(password),
         'handle_str' : '',
         'permission_id': permission_id,
-        'sessions' : [new_sessionID]
+        'sessions' : [new_sessionID],
         'is_removed': False,
         'dms': [],
     }
