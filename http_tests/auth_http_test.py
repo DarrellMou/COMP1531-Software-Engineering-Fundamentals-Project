@@ -69,8 +69,7 @@ def test_auth_logout_api_logging_back():
 	response_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(response_register.text)
 	token_kept_by_client = json_data_register['token']
-	auth_user_id = json_data_register['auth_user_id']
-
+	
 	# logout
 	response_logout = requests.post(config.url + 'auth/logout/v1', json={'token':token_kept_by_client})
 	json_data_logout = json.loads(response_logout.text)
