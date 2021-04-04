@@ -59,8 +59,8 @@ def set_up_data():
 
 ############################# EXCEPTION TESTING ##############################
 
-# Testing to see if the user who is sharing the message to a channel/dm is
-# actually in that channel/dm
+# Testing to see if the user who is sharing the message to a channel is
+# actually in that channel
 def test_message_share_v1_AccessError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
@@ -70,6 +70,19 @@ def test_message_share_v1_AccessError():
 
     with pytest.raises(AccessError):
         assert message_share_v1(user2["token"], m_id, "Optional Message", channel3, -1)
+
+# Testing to see if the user who is sharing the message to a dm is
+# actually in that dm
+def test_message_share_v1_AccessError_dm():
+    setup = set_up_data()
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
+    m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
+
+    dm3 = dm_create_v1(user1["token"], [user3["auth_user_id"]])['dm_id']
+
+    with pytest.raises(AccessError):
+        assert message_share_v1(user2["token"], m_id, "Optional Message", -1, dm3)
 
 
 # Default access error when token is invalid
