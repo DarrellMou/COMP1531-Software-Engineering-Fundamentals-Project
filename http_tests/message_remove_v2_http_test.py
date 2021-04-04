@@ -135,6 +135,24 @@ def test_http_message_remove_v2_InputError():
         "message_id": msg1["message_id"],
     }).status_code == 400
 
+
+def test_message_remove_v2_AccessError_not_dm_owner():
+    setup = set_up_data()
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+
+    msg1 = requests.post(f"{url}message/senddm/v1", json= {
+        "token": user1["token"],
+        "dm_id": dm1,
+        "message": "Hello"
+    }).json()
+    
+    # user2 who did not send the message with m_id tries to remove the message 
+    # - should raise an access error as they are not owner/dreams member
+    assert requests.delete(f"{url}message/remove/v1", json={
+        "token": user2["token"],
+        "message_id": msg1["message_id"],
+    }).status_code == 403
+
 ############################ END EXCEPTION TESTING ############################
 
 
