@@ -4,7 +4,8 @@ import time
 import pytest 
 from src import config
 import json
-from src.auth import blacklist, auth_decode_token, auth_token_ok, auth_decode_token
+from src.data import retrieve_data
+from src.auth import auth_decode_token, auth_token_ok, auth_decode_token
 
 @pytest.fixture(autouse=True)
 def reset():
@@ -23,7 +24,7 @@ def test_auth_register_api_valid():
 # def test_auth_register_api_invalid_exception():
 # 	resp = requests.post(config.url + 'auth/register/v2', json={'email' : 'exampleUserEmail@email.com', 'password':'123', 'first_name':'FIRSTNAME', 'last_name':'LASTNAME'})
 # 	json_data = json.loads(resp.text)
-	
+
 # 	assert json_data['name']
 # 	assert json_data['code']
 # 	assert json_data['message']	# just '<p></p>'
@@ -78,7 +79,7 @@ def test_auth_logout_api_logging_back():
 	response_register = requests.post(config.url + 'auth/register/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword', 'name_first':'FIRSTNAME', 'name_last':'LASTNAME'})
 	json_data_register = json.loads(response_register.text)
 	token_kept_by_client = json_data_register['token']
-	auth_user_id = auth_decode_token(token_kept_by_client)
+	auth_user_id = json_data_register['auth_user_id']
 
 	# logout
 	response_logout = requests.post(config.url + 'auth/logout/v1', json={'token':token_kept_by_client})
@@ -89,7 +90,3 @@ def test_auth_logout_api_logging_back():
 	response_login = requests.post(config.url + 'auth/login/v2', json={'email':'exampleUserEmail@email.com', 'password':'ExamplePassword'})
 	json_data_login = json.loads(response_login.text)
 	assert json_data_login['token']
-
-	# assert the user is no longer in the blacklist and token is valid again
-	assert auth_user_id not in blacklist
-	assert auth_token_ok(token_kept_by_client) == True

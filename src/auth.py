@@ -15,7 +15,7 @@ import uuid
 sessionID = 0
 
 # generates a unique session ID for every login
-def getNewSessionID(id):
+def getNewSessionID():
     global sessionID 
     sessionID += 1
     return sessionID
@@ -109,7 +109,7 @@ def auth_register_v1(email, password, name_first, name_last):
 
 """
 Generate and return an expirable token based on auth_user_id
-This function does not work on itself, it is used in auth_register_v1 and auth_login_v1
+This function does not work on itself, it is used only in auth_register_v1 and auth_login_v1
 """
 def auth_encode_token(auth_user_id, sessionID):
     # try:
@@ -159,7 +159,7 @@ def auth_token_ok(token):
         return True
 
 
-# retrieves the sessionID embedded in the token, only used in auth, other modules don't need to use this
+# retrieves the sessionID embedded in the token, only used in auth_logout_v1, other modules don't need to use this
 def auth_get_token_session(token):
     if auth_token_ok(token):
         return jwt.decode(token, SECRET, algorithms=['HS256'])['sessionID']

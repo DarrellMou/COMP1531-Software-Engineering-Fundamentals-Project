@@ -1,7 +1,7 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1, blacklist
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1
 from src.data import reset_data, retrieve_data
 import time
 
@@ -106,7 +106,7 @@ def test_auth_logout(test_users):
     resp_logout1 = auth_logout_v1(test_users['login1']['token'])
     assert resp_logout1 == {'is_success' : True}
 
-    # logout again with the same token, blacklisted since we've already logged out
+    # logout again with the same token, fail because session is already ended
     resp_logout2 = auth_logout_v1(test_users['login1']['token'])
     assert resp_logout2 == {'is_success' : False}
 
@@ -115,14 +115,11 @@ def test_auth_logout_logging_back(test_users):
     # logout
     resp_logout = auth_logout_v1(test_users['login1']['token'])
     assert resp_logout == {'is_success' : True}
-    #assert test_users['login1']['auth_user_id'] in blacklist
 
     # log back in
     resp_login = auth_login_v1('user1@email.com', 'User1_pass!')
     assert resp_login['auth_user_id'] == test_users['login1']['auth_user_id']
     assert resp_login['token']
 
-    # assert the user is no longer in the blacklist and token is valid again
-    assert resp_login['auth_user_id'] not in blacklist
     assert auth_token_ok(resp_login['token']) == True
 
