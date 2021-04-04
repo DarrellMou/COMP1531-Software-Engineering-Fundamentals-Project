@@ -1,9 +1,13 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Darrell Mounarath
+
 import json
 import requests
 import urllib
 
 from src.config import url
-# HELPER FUNCTIONS
+
+###                         HELPER FUNCTIONS                           ###
 
 def user_body(num):
     return {
@@ -32,6 +36,8 @@ def dm_invite_body(user1, dm, user2):
         "dm_id": dm["dm_id"],
         "u_id": user2["auth_user_id"]
     }
+
+###                       END HELPER FUNCTIONS                         ###
 
 def test_function():
     requests.delete(f"{url}clear/v1")
