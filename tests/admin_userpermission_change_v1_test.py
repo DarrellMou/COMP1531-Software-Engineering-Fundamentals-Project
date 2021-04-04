@@ -3,7 +3,7 @@
 
 import pytest
 
-from src.channel import channel_addowner_v1, channel_invite_v2, channel_join_v2
+from src.channel import channel_addowner_v1, channel_invite_v2, channel_join_v2, channel_details_v2
 from src.channels import channels_create_v2
 from src.error import InputError, AccessError
 from src.data import retrieve_data
@@ -62,10 +62,6 @@ def test_admin_userpermission_change_basic(setup_user):
     users = setup_user
     data = retrieve_data()
 
-    channel_id1 = channels_create_v2(users['user1']['token'],'Test Channel',True)
-    channel_id2 = channels_create_v2(users['user2']['token'],'Test Channel',False)
-    channel_join_v2(users['user3']['token'], channel_id1['channel_id'])
-
     admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
 
     assert data['users'][users['user2']['auth_user_id']]['permission_id'] == 1
@@ -74,7 +70,6 @@ def test_admin_userpermission_change_basic(setup_user):
 # Asserts that member turned owner can join private channels and add other owners
 def test_admin_userpermission_change_join_private_channels(setup_user):
     users = setup_user
-    data = retrieve_data()
 
     # User 1 makes channel 1 and User 3 joins. User 1 sends a message
     channel_id1 = channels_create_v2(users['user1']['token'],'Test Channel',False)
@@ -92,6 +87,11 @@ def test_admin_userpermission_change_join_private_channels(setup_user):
 
     # Global User 2 makes User 3 an owner of the channel
     channel_addowner_v1(users['user2']['token'],channel_id1['channel_id'],users['user3']['auth_user_id'])
+
+    channel_deets_d2 = channel_details_v2(users['user2']['token'],channel_id1['channel_id'])
+
+    assert channel_deets_d2['owner_members'][1]['u_id'] == users['user2']['auth_user_id']
+    assert channel_deets_d2['owner_members'][2]['u_id'] == users['user3']['auth_user_id']
 
 
 # Asserts that member turned owner can change the user permission of the original global owner
