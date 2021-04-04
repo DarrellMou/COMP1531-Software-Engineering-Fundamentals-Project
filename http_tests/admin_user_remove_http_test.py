@@ -62,38 +62,6 @@ def test_admin_user_remove_only_owner(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
     }).status_code == 400
 
-# Checks invalid removal as user is the only channel owner
-def test_admin_user_remove_only_channel_owner(setup_user_data):
-    users = setup_user_data
-
-    channel_id1 = requests.post(config.url + 'channels/create/v2', json={
-        'token': users['user1']['token'],
-        'name': "Public Channel",
-        'is_public': True,
-    }).json()
-
-    channel_id2 = requests.post(config.url + 'channels/create/v2', json={
-        'token': users['user2']['token'],
-        'name': "Private Channel",
-        'is_public': False,
-    }).json()
-
-    requests.post(config.url + 'channel/join/v2', json={
-        'token': users['user3']['token'],
-        'channel_id': channel_id1['channel_id'],
-    }).json()
-
-    requests.post(config.url + 'channel/join/v2', json={
-        'token': users['user1']['token'],
-        'channel_id': channel_id2['channel_id'],
-    }).json()
-    
-    # Ensure InputError
-    assert requests.delete(config.url + 'admin/user/remove/v1', json={
-        'token': users['user1']['token'],
-        'u_id': users['user2']['auth_user_id'],
-    }).status_code == 400
-
 # Asserts that channel_messages 'Removed user'
 def test_admin_user_remove_channel_messages(setup_user_data):
     users = setup_user_data
@@ -311,7 +279,7 @@ def test_admin_user_remove(setup_user_data):
     }).json()
 
     messages_channel_id2a = requests.get(config.url + 'channel/messages/v2', params={
-        'token': users['user1']['token'],
+        'token': users['user2']['token'],
         'channel_id': channel_id2['channel_id'],
         'start': 0
     }).json()

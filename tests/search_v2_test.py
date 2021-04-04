@@ -13,6 +13,13 @@ from src.other import clear_v1, search_v2
 #                                                                               #                                                                      #
 #################################################################################
 
+# Checks invalid token
+def test_admin_userpermission_change_invalid_token(setup_user):
+    users = setup_user
+
+    with pytest.raises(AccessError):
+        search_v2("Invalid owner", "hello")
+
 # Testing for query when a user is not in the channel
 def test_search_no_channel(setup_user):
     users = setup_user
@@ -113,3 +120,25 @@ def test_search_leave_dm(setup_user):
     dm_leave_v1(users['user2']['token'], dm_id1['dm_id'])
 
     assert len(search_v2(users['user2']['token'], 'channel')) == 3
+
+def test_search_empty_query(setup_user):
+    users = setup_user
+    channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
+    message_send_v2(users['user1']['token'], channel_id1['channel_id'], 'Welcome to channel')
+
+    channel_invite_v2(users['user1']['token'], channel_id1['channel_id'], users['user2']['auth_user_id'])
+    message_send_v2(users['user2']['token'], channel_id1['channel_id'], 'channel')
+
+    channel_join_v2(users['user3']['token'], channel_id1['channel_id'])
+    message_send_v2(users['user3']['token'], channel_id1['channel_id'], 'Hi channel!')
+
+    dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
+    message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
+
+    assert len(search_v2(users['user2']['token'], 'hi')) == 0
+
+    assert len(search_v2(users['user2']['token'], ' ')) == 3
+
+    dm_leave_v1(users['user2']['token'], dm_id1['dm_id'])
+
+    assert len(search_v2(users['user2']['token'], '')) == 3

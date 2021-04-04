@@ -30,6 +30,13 @@ def test_admin_userpermission_change_invalid_owner(setup_user):
     with pytest.raises(AccessError):
         admin_userpermission_change_v1(users['user2']['token'], users['user1']['auth_user_id'],2)
 
+# Checks invalid permission_id
+def test_admin_userpermission_change_invalid_uid(setup_user):
+    users = setup_user
+    
+    with pytest.raises(InputError):
+        admin_userpermission_change_v1(users['user1']['token'], "Invalid user",5)
+
 # Checks invalid removal as user is the only owner
 def test_admin_userpermission_change_only_owner(setup_user):
     users = setup_user
