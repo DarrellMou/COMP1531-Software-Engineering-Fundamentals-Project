@@ -11,10 +11,12 @@ from src.channel import channel_invite_v2
 from src.channel import channel_details_v2
 from src.other import clear_v1
 
-# Typical case
-def test_function():
+@pytest.fixture(autouse=True)
+def reset():
     clear_v1()
 
+# Typical case
+def test_function():
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') # returns auth_user_id e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') # returns auth_user_id e.g.
     ch_id = channels_create_v2(a_u_id1["token"], 'channel1', True) # returns channel_id e.g.
@@ -44,8 +46,6 @@ def test_function():
 
 # Channel_details printing a lot of data
 def test_many_channel_members():
-    clear_v1()
-    
     a_u_id_list = []
     token_list = []
     # Runs auth_register_v1 10 times, appends auth_user_id return value to a_u_id_list
@@ -122,8 +122,6 @@ def test_many_channel_members():
     }
 
 def test_multiple_channels():
-    clear_v1()
-    
     a_u_id_list = []
     token_list = []
     # Runs auth_register_v1 10 times, appends auth_user_id return value to a_u_id_list
@@ -219,18 +217,21 @@ def test_multiple_channels():
 
 # Channel_details given channel id belonging to a non-existent channel
 def test_invalid_channel_id():
-    clear_v1()
-    
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     with pytest.raises(InputError):
         channel_details_v2(a_u_id1['token'], 126347542124)
 
 # Channel_details executed by user not in given channel
 def test_unauthorized_user():
-    clear_v1()
-    
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
     ch_id = channels_create_v2(a_u_id1['token'], 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(AccessError):
         channel_details_v2(a_u_id2['token'], ch_id['channel_id'])
+
+# Channel_details given invalid token
+def test_invalid_token():
+    a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
+    ch_id = channels_create_v2(a_u_id1["token"], 'channel1', True) #returns channel_id1 e.g.
+    with pytest.raises(AccessError):
+        channel_details_v2(12345, ch_id['channel_id'])
