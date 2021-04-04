@@ -247,7 +247,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id != -1 and u_id not in data['channels'][channel_id]['all_members']:
         raise AccessError(description=\
             "User is not in the channel that they are trying to share to")
-    if dm_id != -1 and u_id not in data['channels'][dm_id]['all_members']:
+    if dm_id != -1 and u_id not in data['dms'][dm_id]['members']:
         raise AccessError(description=\
             "User is not in the channel that they are trying to share to")
 
@@ -261,7 +261,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         data['messages'][len(data['messages']) - 1]['was_shared'] = True
     else:
         shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
-        data['messages'][len(data['messages'] - 1)]['was_shared'] = True
+        data['messages'][len(data['messages']) - 1]['was_shared'] = True
 
 
     return {'shared_message_id': shared_message_id}
