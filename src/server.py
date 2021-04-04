@@ -6,7 +6,7 @@ from src.error import InputError
 from src import config
 
 from src.auth import auth_register_v1
-from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_share_v1, message_senddm_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2, channel_invite_v2, channel_messages_v2
 from src.channels import channels_create_v2, channels_listall_v2
@@ -86,7 +86,7 @@ def message_send_v2_flask():
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_remove_v1_flask():
     data = request.get_json()
-    message_remove_v2(data["token"], data["message_id"])
+    message_remove_v1(data["token"], data["message_id"])
     return json.dumps({})
 
 

@@ -4,7 +4,7 @@ from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v2
 from src.auth import auth_register_v1
 from src.channels import channels_create_v2
-from src.message import message_send_v2, message_remove_v2, message_senddm_v1
+from src.message import message_send_v2, message_remove_v1, message_senddm_v1
 from src.other import clear_v1
 from src.dm import dm_create_v1, dm_messages_v1
 
@@ -62,7 +62,7 @@ def send_x_messages(user, channel, num_messages):
 def remove_x_messages(user, id_list=[]):
     message_count = 0
     while message_count < len(id_list):
-        message_remove_v2(user["token"], id_list[message_count])
+        message_remove_v1(user["token"], id_list[message_count])
         message_count += 1
     
     return {}
@@ -77,7 +77,7 @@ def remove_x_messages(user, id_list=[]):
 
 # Access error when the user trying to remove the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_message_remove_v2_AccessError():
+def test_message_remove_v1_AccessError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -86,22 +86,22 @@ def test_message_remove_v2_AccessError():
     # user2 who did not send the message with m_id tries to remove the message 
     # - should raise an access error as they are not owner/dreams member
     with pytest.raises(AccessError):
-        assert message_remove_v2(user2["token"], m_id)
+        assert message_remove_v1(user2["token"], m_id)
 
 
 # Input error when the message_id has already been removed
-def test_message_remove_v2_InputError():
+def test_message_remove_v1_InputError():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
     
     m_id2 = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
-    message_remove_v2(user1["token"], m_id2)
+    message_remove_v1(user1["token"], m_id2)
 
     with pytest.raises(InputError):
-        assert message_remove_v2(user1["token"], m_id2)
+        assert message_remove_v1(user1["token"], m_id2)
 
-def test_message_remove_v2_AccessError_not_dm_owner():
+def test_message_remove_v1_AccessError_not_dm_owner():
     setup = set_up_data()
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
@@ -110,7 +110,7 @@ def test_message_remove_v2_AccessError_not_dm_owner():
     # user2 who did not send the message with m_id tries to remove the message 
     # - should raise an access error as they are not owner/dreams member
     with pytest.raises(AccessError):
-        assert message_remove_v2(user2["token"], m_id)
+        assert message_remove_v1(user2["token"], m_id)
 
 ############################ END EXCEPTION TESTING ############################
 
@@ -119,7 +119,7 @@ def test_message_remove_v2_AccessError_not_dm_owner():
 
 
 # Testing the removal of 1 message by user2
-def test_message_remove_v2_remove_one():
+def test_message_remove_v1_remove_one():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -129,7 +129,7 @@ def test_message_remove_v2_remove_one():
     channel_msgs = channel_messages_v2(user1["token"], channel1, 0)
     
     m_id = msgs_list[0]['message_id']
-    message_remove_v2(user2["token"], m_id)
+    message_remove_v1(user2["token"], m_id)
 
     m_dict1 = channel_msgs['messages'][1]
     m_dict2 = channel_msgs['messages'][0]
@@ -144,7 +144,7 @@ def test_message_remove_v2_remove_one():
 
 
 # Testing the removal of multiple messages
-def test_message_remove_v2_remove_multiple():
+def test_message_remove_v1_remove_multiple():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -156,9 +156,9 @@ def test_message_remove_v2_remove_multiple():
     m_id0 = msgs_list[0]['message_id']
     m_id2 = msgs_list[2]['message_id']
     m_id3 = msgs_list[3]['message_id']
-    message_remove_v2(user2["token"], m_id0)
-    message_remove_v2(user2["token"], m_id2)
-    message_remove_v2(user2["token"], m_id3)
+    message_remove_v1(user2["token"], m_id0)
+    message_remove_v1(user2["token"], m_id2)
+    message_remove_v1(user2["token"], m_id3)
 
     m_dict1 = channel_msgs['messages'][3]
     m_dict4 = channel_msgs['messages'][0]
@@ -173,7 +173,7 @@ def test_message_remove_v2_remove_multiple():
 
 
 # Testing the removal of all messages in the channel
-def test_message_remove_v2_remove_all():
+def test_message_remove_v1_remove_all():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -195,7 +195,7 @@ def test_message_remove_v2_remove_all():
 
 # Testing the removal of a message by the owner of the channel when the owner
 # didn't send the message
-def test_message_remove_v2_owner_removes_message():
+def test_message_remove_v1_owner_removes_message():
     clear_v1()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
@@ -209,7 +209,7 @@ def test_message_remove_v2_owner_removes_message():
     channel_msgs = channel_messages_v2(user2["token"], channel1, 0)    
 
     m_id = channel_msgs["messages"][1]["message_id"]
-    message_remove_v2(user2['token'], m_id)
+    message_remove_v1(user2['token'], m_id)
 
 
     m_dict0 = channel_msgs['messages'][2]
@@ -226,7 +226,7 @@ def test_message_remove_v2_owner_removes_message():
 
 # Testing the removal of a message by the owner of dreams when the owner did
 # not send the message and is not part of the channel
-def test_message_remove_v2_dream_owner_removes_message():
+def test_message_remove_v1_dream_owner_removes_message():
     clear_v1()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
@@ -239,7 +239,7 @@ def test_message_remove_v2_dream_owner_removes_message():
     send_x_messages(user3, channel1, 3)
     channel_msgs = channel_messages_v2(user2["token"], channel1, 0)
     m_id = channel_msgs["messages"][1]["message_id"]
-    message_remove_v2(user1['token'], m_id)
+    message_remove_v1(user1['token'], m_id)
 
     m_dict0 = channel_msgs["messages"][2]
     m_dict2 = channel_msgs["messages"][0]
@@ -255,7 +255,7 @@ def test_message_remove_v2_dream_owner_removes_message():
 
 # Testing the removal of a message by the owner of dreams when the owner did
 # not send the message and is part of the channel
-def test_message_remove_v2_dream_owner_removes_message_in_channel():
+def test_message_remove_v1_dream_owner_removes_message_in_channel():
     clear_v1()
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder') # Dreams owner
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
@@ -269,7 +269,7 @@ def test_message_remove_v2_dream_owner_removes_message_in_channel():
     send_x_messages(user3, channel1, 3)
     channel_msgs = channel_messages_v2(user2["token"], channel1, 0)
     m_id = channel_msgs["messages"][1]["message_id"]
-    message_remove_v2(user1['token'], m_id)
+    message_remove_v1(user1['token'], m_id)
 
 
     m_dict0 = channel_msgs["messages"][2]
@@ -285,7 +285,7 @@ def test_message_remove_v2_dream_owner_removes_message_in_channel():
 
 # Testing the removal of the same message in 2 different channels (different
 # message_ids though)
-def test_message_remove_v2_remove_same_msg_diff_channels():
+def test_message_remove_v1_remove_same_msg_diff_channels():
     setup = set_up_data()
     user2, channel1 = setup['user2'], setup['channel1']
 
@@ -301,8 +301,8 @@ def test_message_remove_v2_remove_same_msg_diff_channels():
     m_id_ch1 = channel1_msgs["messages"][0]["message_id"]
     m_id_ch2 = channel2_msgs["messages"][0]["message_id"]
 
-    message_remove_v2(user2["token"], m_id_ch1)
-    message_remove_v2(user2["token"], m_id_ch2)
+    message_remove_v1(user2["token"], m_id_ch1)
+    message_remove_v1(user2["token"], m_id_ch2)
 
     ans1 = {
         'messages': [],
@@ -334,9 +334,9 @@ def test_message_edit_v2_edit_msg_in_dm():
     msg0 = dm_msgs['messages'][4]
     msg2 = dm_msgs['messages'][2]
     msg3 = dm_msgs['messages'][1]
-    message_remove_v2(user1["token"], msg0['message_id'])
-    message_remove_v2(user1["token"], msg2['message_id'])
-    message_remove_v2(user1["token"], msg3['message_id'])
+    message_remove_v1(user1["token"], msg0['message_id'])
+    message_remove_v1(user1["token"], msg2['message_id'])
+    message_remove_v1(user1["token"], msg3['message_id'])
 
     m_dict1 = dm_msgs['messages'][3]
     m_dict4 = dm_msgs['messages'][0]

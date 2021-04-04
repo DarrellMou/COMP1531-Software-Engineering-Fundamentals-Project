@@ -128,7 +128,7 @@ def message_send_v2(token, channel_id, message):
         'message_id': unique_message_id
     }
 
-def message_remove_v2(token, message_id):
+def message_remove_v1(token, message_id):
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -227,7 +227,7 @@ def message_edit_v2(token, message_id, message):
 
     # Remove the message if the new message is an empty string
     if message == "":
-        message_remove_v2(token, message_id)
+        message_remove_v1(token, message_id)
     
     # Otherwise, update the message in both data['messages'] and the channel
     for msg in data['messages']:

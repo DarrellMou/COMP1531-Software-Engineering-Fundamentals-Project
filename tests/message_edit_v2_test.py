@@ -4,7 +4,7 @@ from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v2
 from src.auth import auth_register_v1
 from src.channels import channels_create_v2
-from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_senddm_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_senddm_v1
 from src.other import clear_v1
 from src.dm import dm_create_v1, dm_messages_v1
 
@@ -59,7 +59,7 @@ def send_x_messages(user, channel, num_messages):
 def remove_x_messages(user, id_list=[]):
     message_count = 0
     while message_count < len(id_list):
-        message_remove_v2(user["token"], id_list[message_count])
+        message_remove_v1(user["token"], id_list[message_count])
         message_count += 1
     
     return {}
@@ -95,7 +95,7 @@ def test_message_edit_v2_InputError_msg_removed():
     
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
-    message_remove_v2(user1["token"], m_id)
+    message_remove_v1(user1["token"], m_id)
 
     with pytest.raises(InputError):
         assert message_edit_v2(user1["token"], m_id, "Hi")

@@ -96,7 +96,7 @@ def remove_x_messages(user, id_list=[]):
 
 # Access error when the user trying to remove the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_http_message_remove_v2_AccessError():
+def test_http_message_remove_v1_AccessError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     print(str(channel1) + "\n\n\n")
@@ -115,7 +115,7 @@ def test_http_message_remove_v2_AccessError():
 
 
 # Input error when the message_id has already been removed
-def test_http_message_remove_v2_InputError():
+def test_http_message_remove_v1_InputError():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
     
@@ -136,7 +136,7 @@ def test_http_message_remove_v2_InputError():
     }).status_code == 400
 
 
-def test_message_remove_v2_AccessError_not_dm_owner():
+def test_message_remove_v1_AccessError_not_dm_owner():
     setup = set_up_data()
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
@@ -159,7 +159,7 @@ def test_message_remove_v2_AccessError_not_dm_owner():
 ########################### TESTING MESSAGE REMOVE ############################
 
 # Testing the removal of 1 message by user2
-def test_http_message_remove_v2_remove_one():
+def test_http_message_remove_v1_remove_one():
     setup = set_up_data()
     user2, channel1 = setup['user2'], setup['channel1']
 
@@ -209,7 +209,7 @@ def test_http_message_remove_v2_remove_one():
 
 
 # Testing the removal of multiple messages
-def test_http_message_remove_v2_remove_multiple():
+def test_http_message_remove_v1_remove_multiple():
     setup = set_up_data()
     user2, channel1 = setup['user2'], setup['channel1']
 
@@ -261,7 +261,7 @@ def test_http_message_remove_v2_remove_multiple():
 
 
 # Testing the removal of all messages in the channel
-def test_http_message_remove_v2_remove_all():
+def test_http_message_remove_v1_remove_all():
     setup = set_up_data()
     user2, channel1 = setup['user2'], setup['channel1']
 
@@ -293,7 +293,7 @@ def test_http_message_remove_v2_remove_all():
 
 # Testing the removal of a message by the owner of the channel when the owner
 # didn't send the message
-def test_http_message_remove_v2_owner_removes_message():
+def test_http_message_remove_v1_owner_removes_message():
     requests.delete(f"{url}clear/v1")
 
     user1 = requests.post(f"{url}auth/register/v2", json = { # Dreams owner
@@ -373,7 +373,7 @@ def test_http_message_remove_v2_owner_removes_message():
 
 # Testing the removal of a message by the owner of dreams when the owner did
 # not send the message and is not part of the channel
-def test_http_message_remove_v2_dream_owner_removes_message():
+def test_http_message_remove_v1_dream_owner_removes_message():
 
     requests.delete(f"{url}clear/v1")
 
@@ -449,7 +449,7 @@ def test_http_message_remove_v2_dream_owner_removes_message():
 
 # Testing the removal of a message by the owner of dreams when the owner did
 # not send the message and is part of the channel
-def test_http_message_remove_v2_dream_owner_removes_message_in_channel():
+def test_http_message_remove_v1_dream_owner_removes_message_in_channel():
     requests.delete(f"{url}clear/v1")
 
     user1 = requests.post(f"{url}auth/register/v2", json = { # Dreams owner
@@ -528,7 +528,7 @@ def test_http_message_remove_v2_dream_owner_removes_message_in_channel():
 
 # Testing the removal of the same message in 2 different channels (different
 # message_ids though)
-def test_http_message_remove_v2_remove_same_msg_diff_channels():
+def test_http_message_remove_v1_remove_same_msg_diff_channels():
     setup = set_up_data()
     user2, channel1 = setup['user2'], setup['channel1']
 
