@@ -4,7 +4,13 @@
 import pytest
 
 from src.data import retrieve_data
+<<<<<<< HEAD
 from src.error import InputError, AccessError
+=======
+
+from src.error import InputError, AccessError
+
+>>>>>>> darrell/dm_remove_v1_flask
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1
 from src.other import clear_v1

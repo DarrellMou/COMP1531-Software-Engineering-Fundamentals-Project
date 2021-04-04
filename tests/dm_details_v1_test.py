@@ -1,9 +1,14 @@
 # PROJECT-BACKEND: Team Echo
 # Written by Darrell Mounarath
 
+<<<<<<< HEAD
 import pytest
 
 from src.error import InputError, AccessError
+=======
+from src.error import InputError, AccessError
+
+>>>>>>> darrell/dm_remove_v1_flask
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1, dm_details_v1
 from src.other import clear_v1

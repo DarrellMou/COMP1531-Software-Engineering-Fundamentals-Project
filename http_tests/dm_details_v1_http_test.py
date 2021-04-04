@@ -6,8 +6,12 @@ import requests
 import urllib
 
 from src.config import url
+<<<<<<< HEAD
 
 ###                         HELPER FUNCTIONS                           ###
+=======
+# HELPER FUNCTIONS
+>>>>>>> darrell/dm_remove_v1_flask
 
 def user_body(num):
     return {
@@ -30,8 +34,11 @@ def dm_details_body(user, dm):
         "dm_id": dm["dm_id"]
     }
 
+<<<<<<< HEAD
 ###                       END HELPER FUNCTIONS                         ###
 
+=======
+>>>>>>> darrell/dm_remove_v1_flask
 def test_invalid_dm_id():
     requests.delete(f"{url}clear/v1")
     
