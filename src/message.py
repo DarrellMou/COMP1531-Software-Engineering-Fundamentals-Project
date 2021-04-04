@@ -6,6 +6,14 @@ from uuid import uuid4
 from datetime import datetime
 import json
 
+###############################################################################
+#                                 ASSUMPTIONS                                 #
+###############################################################################
+
+# All dm members are owners of the dm. Therefore, they are allowed to remove
+# and edit any messages within that dm regardless of if they sent the message
+# or not
+
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
