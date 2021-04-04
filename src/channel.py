@@ -49,6 +49,8 @@ def channel_invite_v2(token, channel_id, u_id):
     # Assume no inviting themselves
     # Assume inviting people outside channel only
     # if not any(user == u_id for user in data['channels'][channel_id]['all_members']):
+    if data['users'][u_id]['permission_id'] == 1:
+        data['channels'][channel_id]['owner_members'].append(u_id)
     data['channels'][channel_id]['all_members'].append(u_id)
     '''
     # Create notification for added user
