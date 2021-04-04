@@ -80,43 +80,19 @@ def auth_logout_route():
 def channels_create_v2_flask():
     data = request.get_json()
     channel_id = channels_create_v2(data['token'], data['name'], data['is_public'])
+
+    write_data()
     return json.dumps(channel_id)
 
-
-@APP.route("/channel/invite/v2", methods=['POST'])
-def channel_invite_v2_flask():
-    data = request.get_json()
-    channel_invite_v2(data["token"], data["channel_id"], data["u_id"])
-
-    return json.dumps({})
-
-
-@APP.route("/channel/messages/v2", methods=['GET'])
-def channel_messages_v2_flask():
-    token = request.args.get("token")
-    channel_id = request.args.get("channel_id")
-    start = request.args.get("start")
-    messages_list = channel_messages_v2(token, int(channel_id), int(start))
-
-    return json.dumps(messages_list)
-
-
-@APP.route("/message/send/v2", methods=['POST'])
-def message_send_v2_flask():
-    data = request.get_json()
-    message_id = message_send_v2(data['token'], data['channel_id'], data['message'])
-
-    return json.dumps(message_id)
 
 
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_remove_v1_flask():
     data = request.get_json()
     message_remove_v1(data["token"], data["message_id"])
-    return json.dumps({})
-
+    
     write_data()
-    return dumps(channels_create_v2(token, name, is_public))
+    return json.dumps({})
 
 
 @APP.route("/channels/listall/v2", methods=['GET'])
@@ -314,6 +290,25 @@ def message_senddm_v1_flask():
     write_data()
     return dumps(message_senddm_v1(token,dm_id,message))
 
+@APP.route("/message/share/v1", methods=['POST'])
+def message_share_v1_flask():
+    data = request.get_json()
+    token, og_message_id = data["token"], data["og_message_id"]
+    message, channel_id, dm_id = data["message"], data['channel_id'], data['dm_id']
+    shared = message_share_v1(token, og_message_id, message, channel_id, dm_id)
+
+    write_data()
+    return json.dumps(shared)
+
+
+@APP.route("/message/edit/v2", methods=['PUT'])
+def message_edit_v2_flask():
+    data = request.get_json()
+    message_edit_v2(data["token"], data["message_id"], data["message"])
+
+    write_data()
+    return json.dumps({})
+
 
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
 def admin_userpermission_change_v1_flask():
@@ -348,7 +343,6 @@ def search_v2_flask():
 def clear_v1_flask():
     clear_v1()
 
-    write_data()
     return {}
 
 if __name__ == "__main__":

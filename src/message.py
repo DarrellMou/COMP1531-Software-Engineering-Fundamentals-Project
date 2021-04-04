@@ -199,7 +199,7 @@ def message_edit_v2(token, message_id, message):
     # Check if the message_id given is already deleted
     for message_dict in data['messages']:
         if message_dict['message_id'] == message_id:
-            if message_dict['is_removed'] == True or message_dict['is_owner_removed'] == True:
+            if message_dict['is_removed'] == True:
                 raise InputError(description="Message (based on id) no longer exists")
 
     # Check if the message is within the character limits
