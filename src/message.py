@@ -22,44 +22,52 @@ import json
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
     data = retrieve_data()
-    
+    ch_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['channel_id']
+            ch_id = msg['channel_id']
+    return ch_id
 
 # Given a message_id return the channel in which it was sent
 def get_dm_id(message_id):
     data = retrieve_data()
-    
+    dm_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['dm_id']
+            dm_id = msg["dm_id"]
+    return dm_id
 
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
     data = retrieve_data()
-
+    message = ""
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['message']
+            message = msg["message"]
+    return message
 
 # Given a message_id, return whether the message is a shared message or not
 def get_share_status(message_id):
     data = retrieve_data()
-
+    share_status = False
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['was_shared']
+            share_status = msg['was_shared']
+    return share_status
 
 
 # Given a message, return a tab in front of the relevant lines
 def tab_given_message(msg):
     index = 0
-    for n in range(0, len(msg)):
+    flag = 0
+    for n in range(0, len(msg) - 2):
         if msg[n] == msg[n + 1] == msg[n + 2] == '"':
+            if flag != 2:
+                flag = 1
+        if flag == 1:
             index = n - 2
-            break
+            flag = 2
     beginning_of_string = msg[0:index]
     to_be_changed_str = msg[index:]
     changed_string = to_be_changed_str.replace("\n", "\n    ")

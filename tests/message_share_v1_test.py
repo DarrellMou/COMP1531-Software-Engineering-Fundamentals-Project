@@ -72,6 +72,12 @@ def test_message_share_v1_AccessError():
         assert message_share_v1(user2["token"], m_id, "Optional Message", channel3, -1)
 
 
+# Default access error when token is invalid
+def test_message_share_v1_default_Access_Error():
+
+    with pytest.raises(AccessError):
+        message_share_v1("invalid token", 123, "Wrong", 456654, -1)
+
 ############################ END EXCEPTION TESTING ############################
 
 

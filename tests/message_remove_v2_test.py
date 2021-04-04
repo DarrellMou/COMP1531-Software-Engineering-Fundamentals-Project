@@ -112,6 +112,13 @@ def test_message_remove_v1_AccessError_not_dm_owner():
     with pytest.raises(AccessError):
         assert message_remove_v1(user2["token"], m_id)
 
+# Default access error when token is invalid
+def test_message_remove_v1_default_Access_Error():
+
+    with pytest.raises(AccessError):
+        message_remove_v1("invalid token", 123)
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

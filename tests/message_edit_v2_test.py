@@ -120,6 +120,13 @@ def test_message_edit_v2_AccessError():
         assert message_edit_v2(user2["token"], m_id, "Hi")
 
 
+# Default access error when token is invalid
+def test_message_edit_v2_default_Access_Error():
+
+    with pytest.raises(AccessError):
+        message_edit_v2("invalid token", 123, "hello")
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

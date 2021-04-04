@@ -93,6 +93,12 @@ def test_message_send_v2_InputError():
         assert message_send_v2(user1["token"], channel1, long_message)
 
 
+# Default access error when token is invalid
+def test_message_send_v1_default_Access_Error():
+
+    with pytest.raises(AccessError):
+        message_send_v2("invalid token", "channel1", "Wrong")
+
 ############################ END EXCEPTION TESTING ############################
 
 
