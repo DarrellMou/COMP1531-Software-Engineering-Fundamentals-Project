@@ -10,9 +10,9 @@ import json
 #                                 ASSUMPTIONS                                 #
 ###############################################################################
 
-# All dm members are owners of the dm. Therefore, they are allowed to remove
-# and edit any messages within that dm regardless of if they sent the message
-# or not
+# The first member of the dm in the dm list is the owner. Only they are allowed
+# to remove and edit any messages within that dm regardless of if they sent the
+# message or not
 
 
 ###############################################################################
@@ -143,7 +143,7 @@ def message_remove_v2(token, message_id):
     
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_member, is_dreams_owner, is_owner = True, False, False, False, False
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
@@ -156,13 +156,12 @@ def message_remove_v2(token, message_id):
             if given_id == member:
                 is_ch_owner = True
     else:
-        for member in data['dms'][dm_id]['members']:
-            if given_id == member:
-                is_dm_member = True
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_member:
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
 
@@ -199,7 +198,7 @@ def message_edit_v2(token, message_id, message):
 
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_member, is_dreams_owner, is_owner = True, False, False, False, False
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
@@ -212,13 +211,12 @@ def message_edit_v2(token, message_id, message):
             if given_id == member:
                 is_ch_owner = True
     else:
-        for member in data['dms'][dm_id]['members']:
-            if given_id == member:
-                is_dm_member = True
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_member:
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
 
