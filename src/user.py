@@ -1,16 +1,19 @@
-"""
-A user's profile is set when he registers, in auth_register
-"""
-from src.data import retrieve_data
-from src.error import InputError
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
+from src.data import data, retrieve_data
+from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token, auth_email_format
+
+###############################################################################
+'''       A user's profile is set when he registers, in auth_register       '''
+###############################################################################
 
 def user_profile_v2(token, u_id):
     data = retrieve_data()
 
     if not auth_token_ok(token):
-        raise InputError('invalid token')
-    #auth_user_id = auth_decode_token(token)
+        raise AccessError('invalid token')
 
     #if not auth_user_id in data['users']:
     #    raise InputError 
@@ -28,8 +31,12 @@ def user_profile_v2(token, u_id):
 
     userDict = data['users'][u_id]
 
-    # if userDict['is_removed']:
-    #     return {'user' : {}}
+    if data['users'][u_id]['is_removed']:
+        return {'user' : {
+                    'name_first': "Removed",
+                    'name_last' : "user"
+                    }
+                }
 
     return {'user' : {
                 'auth_user_id' : u_id,
@@ -39,7 +46,6 @@ def user_profile_v2(token, u_id):
                 'handle_str'   : userDict['handle_str']
                 }
            }
-
 
 def user_profile_setname_v2(token, name_first, name_last):
 

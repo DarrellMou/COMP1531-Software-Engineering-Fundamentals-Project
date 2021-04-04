@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 from src.error import InputError 
 from src.data import retrieve_data
 
@@ -94,6 +97,8 @@ def auth_register_v1(email, password, name_first, name_last):
         'handle_str' : '',
         'permission_id': permission_id,
         'sessions' : [new_sessionID]
+        'is_removed': False,
+        'dms': [],
     }
 
     # Check to see if the handle is unique
