@@ -11,7 +11,8 @@ def clear_v1():
     src.data.data = {
         "users" : {},
         "channels" : {},
-        "dms" : {}
+        "dms" : {},
+        "messages" : []
     }
     '''
     data = {

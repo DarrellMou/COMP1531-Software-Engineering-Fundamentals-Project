@@ -1,7 +1,7 @@
 # PROJECT-BACKEND: Team Echo
 # Written by Brendan Ye
 
-from src.data import data, retrieve_data
+from src.data import retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
