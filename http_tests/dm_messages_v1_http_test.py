@@ -120,9 +120,9 @@ def test_dm_messages_v1_AccessError():
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user2, dm0, 0))
     dm_messages = r.json()
 
-    assert dm_messages()["code"] == 403
-    assert dm_messages()["name"] == "System Error"
-    assert dm_messages()["message"] == "<p>The user corresponding to the given token is not in the dm</p>"
+    assert dm_messages["code"] == 403
+    assert dm_messages["name"] == "System Error"
+    assert dm_messages["message"] == "<p>The user corresponding to the given token is not in the dm</p>"
 
 
 # Testing for when an invalid dm_id is used (testing input error)
