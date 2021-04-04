@@ -2,7 +2,6 @@
 # Written by Winston Lin
 
 from src.error import InputError 
-from src.data import retrieve_data
 
 import datetime
 import jwt
@@ -26,7 +25,10 @@ def auth_email_format(email):
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
 def auth_login_v1(email, password):  
+<<<<<<< HEAD
 
+=======
+>>>>>>> darrell/channel_details_v2_flask
     data = retrieve_data()
 
     # Checks for invalid email format

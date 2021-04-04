@@ -14,28 +14,9 @@ def clear_v1():
         "dms" : {},
         "messages" : []
     }
-    '''
-    data = {
-        "users" : {},
-        "channels" : {},
-        "dms" : {}
-    }
-    '''
     with open("data.json", "w") as FILE:
         json.dump(src.data.data, FILE)
     return {}
-
-    '''
-    data = {
-        "users" : {},
-        "channels" : {},
-        "dms" : {},
-        "messages" : []
-    }
-    with open("data.json", "w") as FILE:
-        json.dump(data, FILE)
-'''
-
 
 def search_v2(token, query_str):
     
