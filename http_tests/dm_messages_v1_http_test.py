@@ -120,9 +120,9 @@ def test_dm_messages_v1_AccessError():
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user2, dm0, 0))
     dm_messages = r.json()
 
-    assert r.json()["code"] == 403
-    assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p>The user corresponding to the given token is not in the dm</p>"
+    assert dm_messages()["code"] == 403
+    assert dm_messages()["name"] == "System Error"
+    assert dm_messages()["message"] == "<p>The user corresponding to the given token is not in the dm</p>"
 
 
 # Testing for when an invalid dm_id is used (testing input error)
@@ -137,9 +137,9 @@ def test_dm_messages_v1_InputError_invalid_dm():
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, {"dm_id": 2}, 0))
     dm_messages = r.json()
 
-    assert r.json()["code"] == 400
-    assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p>dm_id is not valid</p>"
+    assert dm_messages["code"] == 400
+    assert dm_messages["name"] == "System Error"
+    assert dm_messages["message"] == "<p>dm_id is not valid</p>"
 
 # Testing for when an invalid start is used (start > num messages in dm)
 def test_dm_messages_v1_InputError_invalid_start():
@@ -152,9 +152,9 @@ def test_dm_messages_v1_InputError_invalid_start():
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 2))
     dm_messages = r.json()
 
-    assert r.json()["code"] == 400
-    assert r.json()["name"] == "System Error"
-    assert r.json()["message"] == "<p>Inputted starting index is larger than the current number of messages in the dm</p>"
+    assert dm_messages["code"] == 400
+    assert dm_messages["name"] == "System Error"
+    assert dm_messages["message"] == "<p>Inputted starting index is larger than the current number of messages in the dm</p>"
 
 
 ############################ END EXCEPTION TESTING ############################
@@ -214,23 +214,18 @@ def test_dm_messages_v1_50_messages():
     
     assert len(dm_messages['messages']) == 50
     
-    print(message_id_list)
-    #assert dm_messages['messages'][49] == "50", "Error, messages do not match"
     assert dm_messages['messages'][49]["message"] == "1"
-    assert dm_messages['messages'][49]["message_id"] == message_id_list[49]
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[0]
     assert dm_messages['messages'][49]["u_id"] == user0["auth_user_id"]
     
-    #assert dm_messages['messages'][34] == "35", "Error, messages do not match"
-    assert dm_messages['messages'][34]["message"] == "35"
-    assert dm_messages['messages'][34]["message_id"] == message_id_list[34]
-    assert dm_messages['messages'][34]["u_id"] == user0["auth_user_id"]
+    assert dm_messages['messages'][34]["message"] == "16"
+    assert dm_messages['messages'][34]["message_id"] == message_id_list[15]
+    assert dm_messages['messages'][34]["u_id"] == user1["auth_user_id"]
     
-    #assert dm_messages['messages'][0] == "1", "Error, messages do not match"
-    assert dm_messages['messages'][0]["message"] == "1"
-    assert dm_messages['messages'][0]["message_id"] == message_id_list[0]
-    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
+    assert dm_messages['messages'][0]["message"] == "50"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[49]
+    assert dm_messages['messages'][0]["u_id"] == user1["auth_user_id"]
 
-'''
 # Create 100 messages, with a given start of 50 (50th index means the 51st most
 # recent message). Should return 50 messages (index 50 up to index 99 which
 # corresponds with the 51st most recent message up to the least recent message,
@@ -240,9 +235,9 @@ def test_dm_messages_v1_100_messages_start_50():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
     # Add 100 messages
-    send_x_messages_two_users(user0, user1, dm0, 100)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 100)
 
-    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
+    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 50))
     dm_messages = r.json()
 
     assert dm_messages['start'] == 50, "Start should not change"
@@ -251,9 +246,13 @@ def test_dm_messages_v1_100_messages_start_50():
     
     assert len(dm_messages['messages']) == 50
 
-    assert dm_messages['messages'][0] == "1"
+    assert dm_messages['messages'][0]["message"] == "50"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[49]
+    assert dm_messages['messages'][0]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages['messages'][49] == "50"
+    assert dm_messages['messages'][49]["message"] == "1"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][49]["u_id"] == user0["auth_user_id"]
 
 # Given a dm with 10 messages and a start of 9 (10th most recent message
 # i.e. the least recent message), return that last message as the only one in
@@ -263,7 +262,7 @@ def test_dm_messages_start_is_last_message():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
     # Add 10 messages
-    send_x_messages_two_users(user0, user1, dm0, 10)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 10)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 9))
     dm_messages = r.json()
@@ -274,8 +273,10 @@ def test_dm_messages_start_is_last_message():
     
     assert len(dm_messages['messages']) == 1
 
-    assert dm_messages['messages'] == ["1,2,3,4,5,6,7,8,9,10"]
-
+    assert dm_messages['messages'][0]["message"] == "1"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
+    
 # Given a start being equal to the number of messages in the given dm,
 # return and empty messages list and an end of -1 as per spec and this
 # forum post: https://edstem.org/courses/5306/discussion/384787
@@ -303,7 +304,7 @@ def test_dm_messages_v1_48_messages():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
     
     # Add members 1 and 2 into dm 1 and add 48 messages with the message just being the message id
-    send_x_messages_two_users(user0, user1, dm0, 48)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 48)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
     dm_messages = r.json()
@@ -312,16 +313,20 @@ def test_dm_messages_v1_48_messages():
 
     assert dm_messages['end'] == -1, "48 < start + 50 so the funtion should return 'end': -1"
 
-    assert dm_messages['messages'][47] == "48"
+    assert dm_messages['messages'][47]["message"] == "1"
+    assert dm_messages['messages'][47]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][47]["u_id"] == user0["auth_user_id"]
 
-    assert dm_messages['messages'][0] == "1"
+    assert dm_messages['messages'][0]["message"] == "48"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[47]
+    assert dm_messages['messages'][0]["u_id"] == user1["auth_user_id"]
 
 # Testing for >50 messages (checking if the correct final message is returned)
 def test_dm_messages_v1_51_messages_start_0():
     setup = set_up_data()
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
-    send_x_messages_two_users(user0, user1, dm0, 51)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 51)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
     dm_messages = r.json()
@@ -330,18 +335,22 @@ def test_dm_messages_v1_51_messages_start_0():
 
     assert dm_messages['end'] == 50, "51 > start + 50 so the funtion should return 'end': 50"
 
-    assert dm_messages['messages'][49] == "50"
+    assert dm_messages['messages'][49]["message"] == "2"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[1]
+    assert dm_messages['messages'][49]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages_v1(user1, dm1, 0)['messages'][0] == "1"
+    assert dm_messages['messages'][0]["message"] == "51"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[50]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
 # Testing for >50 messages wit start being 50
 def test_dm_messages_v1_51_messages_start_50():
     setup = set_up_data()
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
-    send_x_messages_two_users(user0, user1, dm0, 51)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 51)
 
-    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
+    r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 50))
     dm_messages = r.json()
 
     assert dm_messages['start'] == 50, "Start should not change"
@@ -350,7 +359,9 @@ def test_dm_messages_v1_51_messages_start_50():
 
     assert len(dm_messages['messages']) == 1
 
-    assert dm_messages['messages'] == ["1"]
+    assert dm_messages['messages'][0]["message"] == "1"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
 # Testing for between 100 and 150 messages with start being 0
 def test_dm_messages_v1_111_messages_start_0():
@@ -358,22 +369,28 @@ def test_dm_messages_v1_111_messages_start_0():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
     
     # Add members 1 and 2 into dm 1 and add 111 messages with the message just being the message id
-    send_x_messages_two_users(user0, user1, dm0, 111)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 111)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 0))
     dm_messages = r.json()
 
     assert dm_messages['start'] == 0, "Start should not change"
 
-    assert dm_messages_v1['end'] == 50, "111 > start + 50 - function should return 'end': 50"
+    assert dm_messages['end'] == 50, "111 > start + 50 - function should return 'end': 50"
 
     assert len(dm_messages['messages']) == 50, "function should return 50 messages max"
 
-    assert dm_messages['messages'][0] == "111"
+    assert dm_messages['messages'][0]["message"] == "111"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[110]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
-    assert dm_messages['messages'][25] == "86"
+    assert dm_messages['messages'][25]["message"] == "86"
+    assert dm_messages['messages'][25]["message_id"] == message_id_list[85]
+    assert dm_messages['messages'][25]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages['messages'][49] == "61"
+    assert dm_messages['messages'][49]["message"] == "62"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[61]
+    assert dm_messages['messages'][49]["u_id"] == user1["auth_user_id"]
 
 # Testing for between 100 and 150 messages with start being 50
 def test_dm_messages_v1_111_messages_start_50():
@@ -381,7 +398,7 @@ def test_dm_messages_v1_111_messages_start_50():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
     
     # Add members 1 and 2 into dm 1 and add 111 messages with the message just being the message id
-    send_x_messages_two_users(user0, user1, dm0, 111)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 111)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 50))
     dm_messages = r.json()
@@ -392,11 +409,17 @@ def test_dm_messages_v1_111_messages_start_50():
 
     assert len(dm_messages['messages']) == 50, "function should return 50 messages max"
 
-    assert dm_messages['messages'][0] == "61"
+    assert dm_messages['messages'][0]["message"] == "61"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[60]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
-    assert dm_messages['messages'][25] == "36"
+    assert dm_messages['messages'][25]["message"] == "36"
+    assert dm_messages['messages'][25]["message_id"] == message_id_list[35]
+    assert dm_messages['messages'][25]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages['messages'][49] == "12"
+    assert dm_messages['messages'][49]["message"] == "12"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[11]
+    assert dm_messages['messages'][49]["u_id"] == user1["auth_user_id"]
 
 # Testing for between 100 and 150 messages with start being 100
 def test_dm_messages_v1_111_messages_start_100():
@@ -404,7 +427,7 @@ def test_dm_messages_v1_111_messages_start_100():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
 
     # Add members 1 and 2 into dm 1 and add 111 messages with the message just being the message id
-    send_x_messages_two_users(user0, user1, dm1, 111)
+    message_id_list= send_x_messages_two_users(user0, user1, dm0, 111)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 100))
     dm_messages = r.json()
@@ -415,11 +438,17 @@ def test_dm_messages_v1_111_messages_start_100():
 
     assert len(dm_messages['messages']) == 11, "function should return remaining 11 messages"
 
-    assert dm_messages['messages'][0] == "11"
+    assert dm_messages['messages'][0]["message"] == "11"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[10]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
 
-    assert dm_messages['messages'][5] == "5"
+    assert dm_messages['messages'][5]["message"] == "6"
+    assert dm_messages['messages'][5]["message_id"] == message_id_list[5]
+    assert dm_messages['messages'][5]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages['messages'][10] == "1"
+    assert dm_messages['messages'][10]["message"] == "1"
+    assert dm_messages['messages'][10]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][10]["u_id"] == user0["auth_user_id"]
 
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
 def test_dm_messages_v1_start_21():
@@ -427,7 +456,7 @@ def test_dm_messages_v1_start_21():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
     
     # Add members 1 and 2 into dm 1 and add 111 messages with the message just being the message id
-    send_x_messages_two_users(user0, user1, dm0, 111)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 111)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 21))
     dm_messages = r.json()
@@ -437,11 +466,17 @@ def test_dm_messages_v1_start_21():
     assert dm_messages['end'] == 71, "End = start + 50 if the least recent message is not returned"
 
     # The 22nd most recent message of the whole dm is the first one to be returned
-    assert dm_messages['messages'][0] == "90"
+    assert dm_messages['messages'][0]["message"] == "90"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[89]
+    assert dm_messages['messages'][0]["u_id"] == user1["auth_user_id"]
 
-    assert dm_messages['messages'][25] == "65"
+    assert dm_messages['messages'][25]["message"] == "65"
+    assert dm_messages['messages'][25]["message_id"] == message_id_list[64]
+    assert dm_messages['messages'][25]["u_id"] == user0["auth_user_id"]
 
-    assert dm_messages['messages'][49] == "41"
+    assert dm_messages['messages'][49]["message"] == "41"
+    assert dm_messages['messages'][49]["message_id"] == message_id_list[40]
+    assert dm_messages['messages'][49]["u_id"] == user0["auth_user_id"]
 
 # Test for when start is not a multiple of 50 and there are less than 50 messages remaining
 def test_dm_messages_v1_start_21_end_neg1():
@@ -449,7 +484,7 @@ def test_dm_messages_v1_start_21_end_neg1():
     user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
     
     # Add members 1 and 2 into dm 1 and add 50 messages with the message just being the message id 
-    send_x_messages_two_users(user1, user2, dm1, 50)
+    message_id_list = send_x_messages_two_users(user0, user1, dm0, 50)
 
     r = requests.get(f"{url}dm/messages/v1", params=dm_messages_body(user0, dm0, 21))
     dm_messages = r.json()
@@ -460,10 +495,16 @@ def test_dm_messages_v1_start_21_end_neg1():
 
     # The 22nd most recent message of the whole dm is the first one to be returned
     # (essentially data['messages'][21] - the 21st index)
-    assert dm_messages['messages'][0] == "29"
 
-    assert dm_messages['messages'][25] == "4"
+    assert dm_messages['messages'][0]["message"] == "29"
+    assert dm_messages['messages'][0]["message_id"] == message_id_list[28]
+    assert dm_messages['messages'][0]["u_id"] == user0["auth_user_id"]
+
+    assert dm_messages['messages'][25]["message"] == "4"
+    assert dm_messages['messages'][25]["message_id"] == message_id_list[3]
+    assert dm_messages['messages'][25]["u_id"] == user1["auth_user_id"]
+
+    assert dm_messages['messages'][28]["message"] == "1"
+    assert dm_messages['messages'][28]["message_id"] == message_id_list[0]
+    assert dm_messages['messages'][28]["u_id"] == user0["auth_user_id"]
     
-    assert dm_messages['messages'][28] == "1"
-
-'''
