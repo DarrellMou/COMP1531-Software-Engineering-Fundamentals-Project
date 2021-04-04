@@ -46,7 +46,7 @@ def test_admin_userpermission_change_invalid_permissionid(setup_user):
     users = setup_user
     
     with pytest.raises(InputError):
-        admin_userpermission_change_v1(users['user1']['token'], "Invalid user",5)
+        admin_userpermission_change_v1(users['user1']['token'], users['user2']['token'],5)
 
 
 # Checks invalid removal as user is the only owner
