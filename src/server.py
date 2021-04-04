@@ -1,9 +1,16 @@
 import sys
 from json import dumps
-from flask import Flask, request
+import json
+from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS
+
 from src.error import InputError
-import src.config
+from src import config
+
+from src.other import clear_v1
+from src.auth import auth_register_v1
+from src.channels import channels_create_v2
+from src.channel import channel_invite_v2, channel_details_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -16,39 +23,98 @@ def defaultHandler(err):
     response.content_type = 'application/json'
     return response
 
-# these are left as comment for you to compare the changes 
-# APP = Flask(__name__)
-# CORS(APP)
+APP = Flask(__name__)
+CORS(APP)
 
-# APP.config['TRAP_HTTP_EXCEPTIONS'] = True
-# APP.register_error_handler(Exception, defaultHandler)
+APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.register_error_handler(Exception, defaultHandler)
 
+# Example
+@APP.route("/echo", methods=['GET'])
+def echo():
+    data = request.args.get('data')
+    if data == 'echo':
+   	    raise InputError(description='Cannot echo "echo"')
+    return dumps({
+        'data': data
+    })
 
-# create new app instance
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
+# Initialize
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+    return {}
 
-    app.config['TRAP_HTTP_EXCEPTIONS'] = True
-    app.register_error_handler(Exception, defaultHandler)
+@APP.route('/auth/register/v2', methods=['POST'])
+def auth_register_v2_flask(): 
+    data = request.get_json()
+    a_u_id = auth_register_v1(data['email'], data['password'], data['name_first'], data['name_last'])
 
-    from src import auth
-    app.register_blueprint(auth.bp)
-    # add more blueprints here from channel, message, etc
+    return json.dumps(a_u_id)
 
-    return app
+@APP.route('/channel/invite/v2', methods=['POST'])
+def channel_invite_v2_flask(): 
+    data = request.get_json()
+    channel_invite_v2(data["token"], data["channel_id"], data["u_id"])
 
+    return json.dumps({})
 
-# # Example
-# @app.route("/echo", methods=['GET'])
-# def echo():
-#     data = request.args.get('data')
-#     if data == 'echo':
-#    	    raise InputError(description='Cannot echo "echo"')
-#     return dumps({
-#         'data': data
-#     })
+@APP.route('/channel/details/v2', methods=['GET'])
+def channel_details_v2_flask(): 
+    token = request.args.get("token")
+    channel_id = int(request.args.get("channel_id"))
+    channel_details = channel_details_v2(token, channel_id)
+
+    return json.dumps(channel_details)
+
+@APP.route('/channel/join/v2', methods=['POST'])
+def channel_join_v2_flask(): 
+    data = request.get_json()
+    channel_join_v2(data["token"], data["channel_id"])
+
+    return json.dumps({})
+
+@APP.route('/channel/addowner/v1', methods=['POST'])
+def channel_addowner_v1_flask(): 
+    data = request.get_json()
+    channel_addowner_v1(data["token"], data["channel_id"], data["u_id"])
+
+    return json.dumps({})
+
+@APP.route('/channel/removeowner/v1', methods=['POST'])
+def channel_removeowner_v1_flask(): 
+    data = request.get_json()
+    channel_removeowner_v1(data["token"], data["channel_id"], data["u_id"])
+
+    return json.dumps({})
+
+@APP.route('/notifications/get/v1', methods=['GET'])
+def notifications_get_v1_flask(): 
+    token = request.args.get("token")
+    notifications = notifications_get_v1(token)
+
+    return json.dumps(channel_details)
+
+@APP.route("/channels/create/v2", methods=['POST'])
+def channels_create_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    name = payload['name']
+    is_public = bool(payload['is_public'])
+
+    return dumps(channels_create_v2(token, name, is_public))
+
+@APP.route("/channels/list/v2", methods=['GET'])
+def channels_list_v2_flask():
+    token = request.args.get('token')
+
+    return dumps(channels_list_v2(token))
+
+@APP.route("/channels/listall/v2", methods=['GET'])
+def channels_listall_v2_flask():
+    token = request.args.get('token')
+
+    return dumps(channels_listall_v2(token))
 
 if __name__ == "__main__":
-    APP = create_app()
-    APP.run(port=config.port) # Do not edit this port
+    APP.run(port=config.port,debug=True) # Do not edit this port

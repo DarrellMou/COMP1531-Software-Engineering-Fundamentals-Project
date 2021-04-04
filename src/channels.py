@@ -17,7 +17,9 @@ bp = Blueprint('channels', __name__, url_prefix='/')
 #################################################################################
 
 def channels_list_v1(auth_user_id):
-    data = retrieve_data()
+    #data = retrieve_data()
+    with open("data.json", "r") as FILE:
+        data = json.load(FILE)
 
     # AccessError occurs when input is invalid auth_user_id
     if auth_user_id not in data['users']: raise AccessError("Invalid token")
@@ -38,6 +40,8 @@ def channels_list_v1(auth_user_id):
                     'name' : data['channels'][channel]['name'],
                 }
                 channel_list.append(channel_details)
+    with open("data.json", "w") as FILE:
+        json.dump(data, FILE)
     
     return{
         'channels': channel_list
