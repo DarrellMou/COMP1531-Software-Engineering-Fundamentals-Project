@@ -171,7 +171,6 @@ def test_unauthorized_user():
 def test_invalid_token():
     a_u_id1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1') #returns auth_user_id1 e.g.
     a_u_id2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2') #returns auth_user_id2 e.g.
-    a_u_id3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3') #returns auth_user_id3 e.g.
     ch_id = channels_create_v2(a_u_id1["token"], 'channel1', True) #returns channel_id1 e.g.
     with pytest.raises(AccessError):
-        channel_invite_v2(12345, ch_id['channel_id'], a_u_id3['auth_user_id'])
+        channel_invite_v2(12345, ch_id['channel_id'], a_u_id2['auth_user_id'])
