@@ -151,6 +151,25 @@ def test_http_message_edit_v2_AccessError():
     }).status_code == 403
 
 
+def test_message_edit_v2_AccessError_not_dm_owner():
+    setup = set_up_data()
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+
+    m_id = requests.post(f"{url}message/senddm/v1", json= {
+        "token": user1["token"],
+        "dm_id": dm1,
+        "message": "Hello"
+    }).json()
+    
+    # user2 who did not send the message with m_id tries to remove the message 
+    # - should raise an access error as they are not dm owner/dreams member
+    assert requests.put(f"{url}message/edit/v2", json={
+        "token": user2["token"],
+        "message_id": m_id["message_id"],
+        "message": "Hi"
+    }).status_code == 403
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

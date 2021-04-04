@@ -101,6 +101,18 @@ def test_message_edit_v2_InputError_msg_removed():
         assert message_edit_v2(user1["token"], m_id, "Hi")
 
 
+def test_message_edit_v2_AccessError_not_dm_owner():
+    setup = set_up_data()
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+
+    m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
+    
+    # user2 who did not send the message with m_id tries to remove the message 
+    # - should raise an access error as they are not dm owner/dreams member
+    with pytest.raises(AccessError):
+        assert message_edit_v2(user2["token"], m_id, "Hi")
+
+
 # Access error when the user trying to edit the message did not send the
 # message OR is not an owner of the channel/dreams
 def test_message_edit_v2_AccessError():
