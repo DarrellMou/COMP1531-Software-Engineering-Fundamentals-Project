@@ -1,10 +1,11 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.channel import channel_messages_v2, channel_invite_v1
-from src.data import reset_data, retrieve_data
-from src.auth import auth_register_v1, auth_decode_token
-from src.channels import channels_create_v1
+from src.channel import channel_messages_v2, channel_invite_v2
+from src.auth import auth_register_v1
+from src.channels import channels_create_v2
+from src.message import message_send_v2
+from src.other import clear_v1
 
 
 # ASSUMPTION: Start refers to the starting index of the
@@ -24,39 +25,27 @@ from src.channels import channels_create_v1
 # Simple data population helper function; registers users 1 and 2,
 # creates channel_1 with member u_id = 1
 def set_up_data():
-    reset_data()
+    clear_v1()
     
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
 
     setup = {
-        'user1': user1['token'],
-        'user2': user2['token'],
+        'user1': user1,
+        'user2': user2,
         'channel1': channel1['channel_id']
     }
 
     return setup
 
 
-def add_1_message(user1, channel1):
-    data = retrieve_data()
-
-    # Physically creating messages because we don't have message_send available yet
-    data['channels'][channel1]['messages'].\
-        append({'message_id': 1, 'u_id': user1, 'message': "Test message", 'time_created': 1})
-    
-    return data
-
-
 # Add members 1 and 2 into channel 1 and add x messages with the message just being the message id
 def add_x_messages(user1, user2, channel1, num_messages):
-    data = retrieve_data()
 
-    u_id1, u_id2 = auth_decode_token(user1), auth_decode_token(user2)
     # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v1(u_id1, channel1, u_id2)
+    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
     # Physically creating num_messages amount of messages
     # The most recent message is at the beginning of the list as per spec
@@ -64,15 +53,12 @@ def add_x_messages(user1, user2, channel1, num_messages):
     while message_count < num_messages:
         message_num = message_count + 1
         if message_num % 2 == 1:
-            message = {'message_id': message_num, 'u_id': user1,\
-            'message': str(message_num), 'time_created': message_num}
+            message = message_send_v2(user1["token"], channel1, str(message_num))
         else:
-            message = {'message_id': message_num, 'u_id': user2,\
-            'message': str(message_num), 'time_created': message_num}
-        data['channels'][channel1]['messages'].append(message)
+            message = message_send_v2(user2["token"], channel1, str(message_num))
         message_count += 1
 
-    return data
+    return {}
 
 
 ###############################################################################
@@ -93,11 +79,11 @@ def test_channel_messages_v2_AccessError():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add 1 message to channel1
-    add_1_message(user1, channel1)
+    message_send_v2(user1["token"], channel1, "Test Message")
 
     # user2 is not part of channel_1 - should raise an access error
     with pytest.raises(AccessError):
-        assert channel_messages_v2(user2, channel1, 0)
+        assert channel_messages_v2(user2["token"], channel1, 0)
 
 
 # Testing for when an invalid channel_id is used (testing input error)
@@ -106,11 +92,11 @@ def test_channel_messages_v2_InputError_invalid_channel():
     user1, channel1 = setup['user1'], setup['channel1']
     
     # Add 1 message to channel1
-    add_1_message(user1, channel1)
+    message_send_v2(user1["token"], channel1, "Test Message")
 
     # 2 is an invalid channel_id in this case
     with pytest.raises(InputError):
-        assert channel_messages_v2(user1, 2, 0)
+        assert channel_messages_v2(user1["token"], 2, 0)
 
 
 # Testing for when an invalid start is used (start > num messages in channel)
@@ -119,10 +105,10 @@ def test_channel_messages_v2_InputError_invalid_start():
     user1, channel1 = setup['user1'], setup['channel1']
 
     # Add 1 message to channel1
-    add_1_message(user1, channel1) # Only has 1 message
+    message_send_v2(user1["token"], channel1, "Test Message")
 
     with pytest.raises(InputError):
-        assert channel_messages_v2(user1, channel1, 2)
+        assert channel_messages_v2(user1["token"], channel1, 2)
 
 
 ############################ END EXCEPTION TESTING ############################
@@ -137,7 +123,7 @@ def test_channel_messages_v2_no_messages():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
-    assert channel_messages_v2(user1, channel1, 0) ==\
+    assert channel_messages_v2(user1["token"], channel1, 0) ==\
     {'messages': [], 'start': 0, 'end': -1}, "No messages - should return end: -1"
 
 
@@ -146,16 +132,18 @@ def test_channel_messages_v2_1_message():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
-    add_1_message(user1, channel1)
+    message_send_v2(user1["token"], channel1, "Test message")
 
-    assert channel_messages_v2(user1, channel1, 0)['start'] == 0,\
+    messages_list = channel_messages_v2(user1["token"], channel1, 0)
+
+    assert messages_list['start'] == 0,\
     "Start should not change"
     
-    assert channel_messages_v2(user1, channel1, 0)['end'] == -1,\
+    assert messages_list['end'] == -1,\
     "The most recent message has been reached - return 'end': -1"
     
-    assert channel_messages_v2(user1, channel1, 0)['messages'][0] ==\
-    {'message_id': 1, 'u_id': user1, 'message': "Test message", 'time_created': 1}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "Test message"
 
 
 
@@ -169,22 +157,17 @@ def test_channel_messages_v2_50_messages():
     # Add 50 messages
     add_x_messages(user1, user2, channel1, 50)
 
-    assert channel_messages_v2(user1, channel1, 0)['start'] == 0,\
+    messages_list = channel_messages_v2(user1["token"], channel1, 0)
+
+    assert messages_list['start'] == 0,\
     "Start should not change"
     
-    assert channel_messages_v2(user1, channel1, 0)['end'] == -1,\
+    assert messages_list['end'] == -1,\
     "50th message IS the least recent message so it should return 'end': -1"
     
-    assert len(channel_messages_v2(user1, channel1, 0)['messages']) == 50
+    assert len(messages_list['messages']) == 50
 
-    message_list = []
-    for i in range(50,0,-1):
-        if i % 2 == 0:
-            message_list.append({'message_id': i, 'u_id': user2, 'message': f'{i}', 'time_created': i})
-        else:
-            message_list.append({'message_id': i, 'u_id': user1, 'message': f'{i}', 'time_created': i})
-    
-    assert channel_messages_v2(user1, channel1, 0)['messages'] == message_list, "Error, messages do not match"
+
 
 # Create 100 messages, with a given start of 50 (50th index means the 51st most
 # recent message). Should return 50 messages (index 50 up to index 99 which
@@ -197,19 +180,20 @@ def test_channel_messages_v2_100_messages_start_50():
     # Add 100 messages
     add_x_messages(user1, user2, channel1, 100)
 
-    assert channel_messages_v2(user1, channel1, 50)['start'] == 50,\
-    "Start should not change"
-    
-    assert channel_messages_v2(user1, channel1, 50)['end'] == -1,\
+    messages_list = channel_messages_v2(user1["token"], channel1, 50)
+
+    assert messages_list['start'] == 50, "Start should not change"
+
+    assert messages_list['end'] == -1,\
     "50th message from start IS the least recent message so it should return 'end': -1"
     
-    assert len(channel_messages_v2(user1, channel1, 50)['messages']) == 50
+    assert len(messages_list['messages']) == 50
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'][0] ==\
-        {'message_id': 50, 'u_id': user2, 'message': '50', 'time_created': 50}
+    assert messages_list['messages'][0]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "50"
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'][49] ==\
-        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
+    assert messages_list['messages'][49]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][49]["message"] == "1"
 
 
 # Given a channel with 10 messages and a start of 9 (10th most recent message
@@ -222,16 +206,17 @@ def test_channel_messages_start_is_last_message():
     # Add 10 messages
     add_x_messages(user1, user2, channel1, 10)
 
-    assert channel_messages_v2(user1, channel1, 9)['start'] == 9,\
-    "Start should not change"
-    
-    assert channel_messages_v2(user1, channel1, 9)['end'] == -1,\
-    "50th message from start IS the least recent message so it should return 'end': -1"
-    
-    assert len(channel_messages_v2(user1, channel1, 9)['messages']) == 1
+    messages_list = channel_messages_v2(user1["token"], channel1, 9)
 
-    assert channel_messages_v2(user1, channel1, 9)['messages'] ==\
-        [{'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}]
+    assert messages_list['start'] == 9, "Start should not change"
+    
+    assert messages_list['end'] == -1,\
+    "10th message from start IS the least recent message so it should return 'end': -1"
+    
+    assert len(messages_list['messages']) == 1
+
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "1"
 
 
 # Given a start being equal to the number of messages in the given channel,
@@ -244,15 +229,16 @@ def test_start_equals_num_messages():
     # Add 10 messages
     add_x_messages(user1, user2, channel1, 10)
 
-    assert channel_messages_v2(user1, channel1, 10)['start'] == 10,\
-    "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 10)
+
+    assert messages_list['start'] == 10, "Start should not change"
     
-    assert channel_messages_v2(user1, channel1, 10)['end'] == -1,\
+    assert messages_list['end'] == -1,\
     "No messages so the most recent message has been returned so function should return 'end': -1"
     
-    assert len(channel_messages_v2(user1, channel1, 10)['messages']) == 0
+    assert len(messages_list['messages']) == 0
 
-    assert channel_messages_v2(user1, channel1, 10)['messages'] == []
+    assert messages_list['messages'] == []
 
 
 # Testing for <50 messages (checking if 'end' returns -1)
@@ -263,17 +249,19 @@ def test_channel_messages_v2_48_messages():
     # Add members 1 and 2 into channel 1 and add 48 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 48)
 
-    assert channel_messages_v2(user1, channel1, 0)['start'] == 0,\
+    messages_list = channel_messages_v2(user1["token"], channel1, 0)
+
+    assert messages_list['start'] == 0,\
         "Start should not change"
 
-    assert channel_messages_v2(user1, channel1, 0)['end'] == -1,\
+    assert messages_list['end'] == -1,\
         "48 < start + 50 so the funtion should return 'end': -1"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][47] ==\
-        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
+    assert messages_list['messages'][47]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][47]["message"] == "1"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][0] ==\
-        {'message_id': 48, 'u_id': user2, 'message': '48', 'time_created': 48}
+    assert messages_list['messages'][0]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "48"
 
 
 # Testing for >50 messages (checking if the correct final message is returned)
@@ -283,17 +271,18 @@ def test_channel_messages_v2_51_messages_start_0():
 
     add_x_messages(user1, user2, channel1, 51)
 
-    assert channel_messages_v2(user1, channel1, 0)['start'] == 0,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert channel_messages_v2(user1, channel1, 0)['end'] == 50,\
+    assert messages_list['start'] == 0, "Start should not change"
+
+    assert messages_list['end'] == 50,\
         "51 > start + 50 so the funtion should return 'end': 50"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][49] ==\
-        {'message_id': 2, 'u_id': user2, 'message': '2', 'time_created': 2}
+    assert messages_list['messages'][49]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][49]["message"] == "2"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][0] ==\
-        {'message_id': 51, 'u_id': user1, 'message': "51", 'time_created': 51}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "51"
 
 
 # Testing for >50 messages wit start being 50
@@ -303,16 +292,17 @@ def test_channel_messages_v2_51_messages_start_50():
 
     add_x_messages(user1, user2, channel1, 51)
 
-    assert channel_messages_v2(user1, channel1, 50)['start'] == 50,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 50)
 
-    assert channel_messages_v2(user1, channel1, 50)['end'] == -1,\
+    assert messages_list['start'] == 50, "Start should not change"
+
+    assert messages_list['end'] == -1,\
         "51 < start + 50 so the funtion should return 'end': -1"
 
-    assert len(channel_messages_v2(user1, channel1, 50)['messages']) == 1
+    assert len(messages_list['messages']) == 1
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'] ==\
-        [{'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}]
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "1"
 
 
 # Testing for between 100 and 150 messages with start being 0
@@ -323,23 +313,24 @@ def test_channel_messages_v2_111_messages_start_0():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    assert channel_messages_v2(user1, channel1, 0)['start'] == 0,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert channel_messages_v2(user1, channel1, 0)['end'] == 50,\
+    assert messages_list['start'] == 0, "Start should not change"
+
+    assert messages_list['end'] == 50,\
         "111 > start + 50 - function should return 'end': 50"
 
-    assert len(channel_messages_v2(user1, channel1, 0)['messages']) == 50,\
+    assert len(messages_list['messages']) == 50,\
         "function should return 50 messages max"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][0] ==\
-        {'message_id': 111, 'u_id': user1, 'message': "111", 'time_created': 111}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "111"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][25] ==\
-        {'message_id': 86, 'u_id': user2, 'message': '86', 'time_created': 86}
+    assert messages_list['messages'][25]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][25]["message"] == "86"
 
-    assert channel_messages_v2(user1, channel1, 0)['messages'][49] ==\
-        {'message_id': 62, 'u_id': user2, 'message': '62', 'time_created': 62}
+    assert messages_list['messages'][49]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][49]["message"] == "62"
 
 
 # Testing for between 100 and 150 messages with start being 50
@@ -350,23 +341,24 @@ def test_channel_messages_v2_111_messages_start_50():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    assert channel_messages_v2(user1, channel1, 50)['start'] == 50,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 50)
 
-    assert channel_messages_v2(user1, channel1, 50)['end'] == 100,\
+    assert messages_list['start'] == 50, "Start should not change"
+
+    assert messages_list['end'] == 100,\
         "111 > start + 50 - function should return 'end': 100"
 
-    assert len(channel_messages_v2(user1, channel1, 50)['messages']) == 50,\
+    assert len(messages_list['messages']) == 50,\
         "function should return 50 messages max"
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'][0] ==\
-        {'message_id': 61, 'u_id': user1, 'message': "61", 'time_created': 61}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "61"
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'][25] ==\
-        {'message_id': 36, 'u_id': user2, 'message': "36", 'time_created': 36}
+    assert messages_list['messages'][25]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][25]["message"] == "36"
 
-    assert channel_messages_v2(user1, channel1, 50)['messages'][49] ==\
-        {'message_id': 12, 'u_id': user2, 'message': '12', 'time_created': 12}
+    assert messages_list['messages'][49]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][49]["message"] == "12"
 
 
 # Testing for between 100 and 150 messages with start being 100
@@ -377,23 +369,24 @@ def test_channel_messages_v2_111_messages_start_100():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    assert channel_messages_v2(user1, channel1, 100)['start'] == 100,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 100)
 
-    assert channel_messages_v2(user1, channel1, 100)['end'] == -1,\
+    assert messages_list['start'] == 100, "Start should not change"
+
+    assert messages_list['end'] == -1,\
         "111 < start + 50 - function should return 'end': -1"
 
-    assert len(channel_messages_v2(user1, channel1, 100)['messages']) == 11,\
+    assert len(messages_list['messages']) == 11,\
         "function should return remaining 11 messages"
 
-    assert channel_messages_v2(user1, channel1, 100)['messages'][0] ==\
-        {'message_id': 11, 'u_id': user1, 'message': "11", 'time_created': 11}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "11"
 
-    assert channel_messages_v2(user1, channel1, 100)['messages'][5] ==\
-        {'message_id': 6, 'u_id': user2, 'message': '6', 'time_created': 6}
+    assert messages_list['messages'][5]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][5]["message"] == "6"
 
-    assert channel_messages_v2(user1, channel1, 100)['messages'][10] ==\
-        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
+    assert messages_list['messages'][10]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][10]["message"] == "1"
 
 
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
@@ -404,21 +397,22 @@ def test_channel_messages_v2_start_21():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    assert channel_messages_v2(user1, channel1, 21)['start'] == 21,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 21)
 
-    assert channel_messages_v2(user1, channel1, 21)['end'] == 71,\
+    assert messages_list['start'] == 21, "Start should not change"
+
+    assert messages_list['end'] == 71,\
         "End = start + 50 if the least recent message is not returned"
 
     # The 22nd most recent message of the whole channel is the first one to be returned
-    assert channel_messages_v2(user1, channel1, 21)['messages'][0] ==\
-        {'message_id': 90, 'u_id': user2, 'message': '90', 'time_created': 90}
+    assert messages_list['messages'][0]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "90"
 
-    assert channel_messages_v2(user1, channel1, 21)['messages'][25] ==\
-        {'message_id': 65, 'u_id': user1, 'message': '65', 'time_created': 65}
+    assert messages_list['messages'][25]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][25]["message"] == "65"
 
-    assert channel_messages_v2(user1, channel1, 21)['messages'][49] ==\
-        {'message_id': 41, 'u_id': user1, 'message': '41', 'time_created': 41}
+    assert messages_list['messages'][49]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][49]["message"] == "41"
 
 
 # Test for when start is not a multiple of 50 and there are less than 50 messages remaining
@@ -429,19 +423,20 @@ def test_channel_messages_v2_start_21_end_neg1():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id 
     add_x_messages(user1, user2, channel1, 50)
 
-    assert channel_messages_v2(user1, channel1, 21)['start'] == 21,\
-        "Start should not change"
+    messages_list = channel_messages_v2(user1["token"], channel1, 21)
 
-    assert channel_messages_v2(user1, channel1, 21)['end'] == -1,\
+    assert messages_list['start'] == 21, "Start should not change"
+
+    assert messages_list['end'] == -1,\
         "50 < start + 50 if so return 'end': -1"
 
     # The 22nd most recent message of the whole channel is the first one to be returned
     # (essentially data['messages'][21] - the 21st index)
-    assert channel_messages_v2(user1, channel1, 21)['messages'][0] ==\
-        {'message_id': 29, 'u_id': user1, 'message': '29', 'time_created': 29}
+    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][0]["message"] == "29"
 
-    assert channel_messages_v2(user1, channel1, 21)['messages'][25] ==\
-        {'message_id': 4, 'u_id': user2, 'message': '4', 'time_created': 4}
+    assert messages_list['messages'][25]["u_id"] == user2["auth_user_id"]
+    assert messages_list['messages'][25]["message"] == "4"
     
-    assert channel_messages_v2(user1, channel1, 21)['messages'][28] ==\
-        {'message_id': 1, 'u_id': user1, 'message': '1', 'time_created': 1}
+    assert messages_list['messages'][28]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][28]["message"] == "1"
