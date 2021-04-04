@@ -5,7 +5,12 @@ from src.channel import channel_join_v1
 from src.channels import channels_create_v2, channels_listall_v2
 from src.error import InputError, AccessError
 from src.other import clear_v1
-import json
+
+######################### Tests channels_listall #########################
+                                                         
+#   * uses pytest fixtures from src.conftest                                    
+                                                                                                                                                
+##########################################################################
 
 # listing channels with invalid token
 def test_channels_listall_invalid_user():
