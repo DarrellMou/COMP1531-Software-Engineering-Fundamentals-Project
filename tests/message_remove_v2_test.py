@@ -190,7 +190,7 @@ def test_message_remove_v2_owner_removes_message():
     channel_invite_v2(user2['token'], channel1, user3['auth_user_id'])
     channel_invite_v2(user2['token'], channel1, user1['auth_user_id'])
 
-    # user3 sends 3 messages and user2 removes the very first message sent
+    # user3 sends 3 messages and user2 removes the second message sent
     send_x_messages(user3, channel1, 3)
     channel_msgs = channel_messages_v2(user2["token"], channel1, 0)    
 
