@@ -1,9 +1,9 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Kellen, Brendan Ye (channel_messages)
+
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
-#from data import data, retrieve_data
-#from error import AccessError, InputError
-
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #

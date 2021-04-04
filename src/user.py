@@ -1,9 +1,13 @@
-"""
-A user's profile is set when he registers, in auth_register
-"""
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token, auth_email_format
+
+###############################################################################
+'''       A user's profile is set when he registers, in auth_register       '''
+###############################################################################
 
 def user_profile_v2(token, u_id):
     data = retrieve_data()

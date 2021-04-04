@@ -1,17 +1,12 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Darrell Mounarath
 
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
-
 from src.auth import auth_token_ok, auth_decode_token
 
 import uuid
-'''
-from data import data, retrieve_data, reset_data
-from error import AccessError, InputError
 
-from auth import auth_token_ok, auth_decode_token, auth_register_v1
-from message import message_senddm_v1
-'''
 # Creates dm given list of users
 def dm_create_v1(token, u_ids):
     data = retrieve_data()
@@ -249,9 +244,6 @@ def dm_messages_v1(token, dm_id, start):
         messages_dict['end'] = start + 50
 
     return messages_dict
-
-
-
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #

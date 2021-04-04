@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 from src.error import InputError 
 from src.data import retrieve_data
 

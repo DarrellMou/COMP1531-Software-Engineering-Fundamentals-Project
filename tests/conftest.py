@@ -1,6 +1,18 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 from src.auth import auth_register_v1
 from src.other import clear_v1
+
+'''
+The following fixtures are used in:
+- channels/create
+- channels/listall
+- admin/userpermission/change
+- admin/user/remove
+- search
+'''
 
 @pytest.fixture
 def reset():
