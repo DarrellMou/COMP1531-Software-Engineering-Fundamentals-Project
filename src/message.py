@@ -6,6 +6,16 @@ from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
+import json
+
+###############################################################################
+#                                 ASSUMPTIONS                                 #
+###############################################################################
+
+# The first member of the dm in the dm list is the owner. Only they are allowed
+# to remove and edit any messages within that dm regardless of if they sent the
+# message or not
+
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
@@ -14,32 +24,52 @@ from datetime import datetime
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
     data = retrieve_data()
+    ch_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['channel_id']
+            ch_id = msg['channel_id']
+    return ch_id
+
+# Given a message_id return the channel in which it was sent
+def get_dm_id(message_id):
+    data = retrieve_data()
+    dm_id = -1
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            dm_id = msg["dm_id"]
+    return dm_id
+
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
     data = retrieve_data()
+    message = ""
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['message']
+            message = msg["message"]
+    return message
 
 # Given a message_id, return whether the message is a shared message or not
 def get_share_status(message_id):
     data = retrieve_data()
+    share_status = False
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            return msg['was_shared']
+            share_status = msg['was_shared']
+    return share_status
 
 
 # Given a message, return a tab in front of the relevant lines
 def tab_given_message(msg):
     index = 0
-    for n in range(0, len(msg)):
+    flag = 0
+    for n in range(0, len(msg) - 2):
         if msg[n] == msg[n + 1] == msg[n + 2] == '"':
+            if flag != 2:
+                flag = 1
+        if flag == 1:
             index = n - 2
-            break
+            flag = 2
     beginning_of_string = msg[0:index]
     to_be_changed_str = msg[index:]
     changed_string = to_be_changed_str.replace("\n", "\n    ")
@@ -102,15 +132,14 @@ def message_send_v2(token, channel_id, message):
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
+
 
     return {
         'message_id': unique_message_id
     }
     
 
-def message_remove_v2(token, message_id):
+def message_remove_v1(token, message_id):
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -125,23 +154,28 @@ def message_remove_v2(token, message_id):
     
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dreams_owner, is_owner = True, False, False, False
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
                 did_user_send = False
     # Now, check to see if the user is an owner of the channel
     ch_id = get_channel_id(message_id)
-    for member in data['channels'][ch_id]['owner_members']:
-        if given_id == member:
-            is_ch_owner = True
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner:
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
-    #return AccessErrorConditions
+
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -150,10 +184,12 @@ def message_remove_v2(token, message_id):
         if msg['message_id'] == message_id:
             msg['is_removed'] = True
 
+
     return {
     }
 
 def message_edit_v2(token, message_id, message):
+
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -163,7 +199,7 @@ def message_edit_v2(token, message_id, message):
     # Check if the message_id given is already deleted
     for message_dict in data['messages']:
         if message_dict['message_id'] == message_id:
-            if message_dict['is_removed'] == True or message_dict['is_owner_removed'] == True:
+            if message_dict['is_removed'] == True:
                 raise InputError(description="Message (based on id) no longer exists")
 
     # Check if the message is within the character limits
@@ -173,23 +209,28 @@ def message_edit_v2(token, message_id, message):
 
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dreams_owner, is_owner = True, False, False, False
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
                 did_user_send = False
     # Now, check to see if the user is an owner of the channel
     ch_id = get_channel_id(message_id)
-    for member in data['channels'][ch_id]['owner_members']:
-        if given_id == member:
-            is_ch_owner = True
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner:
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
-    #return AccessErrorConditions
+
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -197,7 +238,7 @@ def message_edit_v2(token, message_id, message):
 
     # Remove the message if the new message is an empty string
     if message == "":
-        message_remove_v2(token, message_id)
+        message_remove_v1(token, message_id)
     
     # Otherwise, update the message in both data['messages'] and the channel
     for msg in data['messages']:
@@ -220,6 +261,7 @@ def message_edit_v2(token, message_id, message):
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     data = retrieve_data()
+
     u_id = auth_decode_token(token)
     og_message = get_message(og_message_id)
 
@@ -231,7 +273,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id != -1 and u_id not in data['channels'][channel_id]['all_members']:
         raise AccessError(description=\
             "User is not in the channel that they are trying to share to")
-    if dm_id != -1 and u_id not in data['channels'][dm_id]['all_members']:
+    if dm_id != -1 and u_id not in data['dms'][dm_id]['members']:
         raise AccessError(description=\
             "User is not in the channel that they are trying to share to")
 
@@ -243,8 +285,10 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id != -1:
         shared_message_id = message_send_v2(token, channel_id, shared_message)['message_id']
         data['messages'][len(data['messages']) - 1]['was_shared'] = True
-    #else:
-        #shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
+    else:
+        shared_message_id = message_senddm_v1(token, dm_id, shared_message)['message_id']
+        data['messages'][len(data['messages']) - 1]['was_shared'] = True
+
 
     return {'shared_message_id': shared_message_id}
 
