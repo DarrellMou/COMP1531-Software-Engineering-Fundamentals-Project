@@ -195,6 +195,13 @@ def dm_leave_v1_flask():
     write_data()
     return json.dumps({})
 
+@APP.route('/dm/invite/v1', methods=['POST'])
+def dm_invite_v1_flask(): 
+    data = request.get_json()
+    dm_invite_v1(data["token"], data["dm_id"], data["u_id"])
+
+    write_data()
+    return json.dumps({})
 
 @APP.route("/message/send/v2", methods=['POST'])
 def message_send_v2_flask():
@@ -294,14 +301,6 @@ def clear_v1_flask():
 
     write_data()
     return {}
-
-
-@APP.route('/dm/invite/v1', methods=['POST'])
-def dm_invite_v1_flask(): 
-    data = request.get_json()
-    dm_invite_v1(data["token"], data["dm_id"], data["u_id"])
-
-    return json.dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
