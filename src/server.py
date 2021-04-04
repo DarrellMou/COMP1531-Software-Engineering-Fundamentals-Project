@@ -203,6 +203,13 @@ def dm_invite_v1_flask():
     write_data()
     return json.dumps({})
 
+@APP.route('/dm/list/v1', methods=['GET'])
+def dm_list_v1_flask(): 
+    token = request.args.get("token")
+    dm_list = dm_list_v1(token)
+
+    return json.dumps(dm_list)
+
 @APP.route("/message/send/v2", methods=['POST'])
 def message_send_v2_flask():
     payload = request.get_json()
@@ -301,13 +308,6 @@ def clear_v1_flask():
 
     write_data()
     return {}
-
-@APP.route('/dm/list/v1', methods=['GET'])
-def dm_list_v1_flask(): 
-    token = request.args.get("token")
-    dm_list = dm_list_v1(token)
-
-    return json.dumps(dm_list)
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
