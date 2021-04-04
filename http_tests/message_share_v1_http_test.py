@@ -59,14 +59,12 @@ def set_up_data():
 
     dm1 = requests.post(f"{url}dm/create/v1", json = {
         "token": user1["token"],
-        "u_ids": [user2["auth_user_id"]],
-        "is_public": True
+        "u_ids": [user2["auth_user_id"]]
     }).json()
 
     dm2 = requests.post(f"{url}dm/create/v1", json = {
         "token": user2["token"],
-        "u_ids": [user1["auth_user_id"]],
-        "is_public": True
+        "u_ids": [user1["auth_user_id"]]
     }).json()
 
     setup = {
@@ -421,7 +419,7 @@ def test_http_message_share_v1_share_dm_multiple_times():
         "og_message_id": shared_m_id1,
         "message": "Shared Message 2",
         "channel_id": -1,
-        "dm_id": dm1
+        "dm_id": dm2
     }).json()
     shared_m_id2 = shared_msg2["shared_message_id"]
 
@@ -434,21 +432,30 @@ def test_http_message_share_v1_share_dm_multiple_times():
     }).json()
     shared_m_id3 = shared_msg3["shared_message_id"]
 
-    dm_messages = requests.get(f"{url}dm/messages/v1", params= {
+    dm1_messages = requests.get(f"{url}dm/messages/v1", params= {
         "token": user1["token"],
         "dm_id": dm1,
         "start": 0
     }).json()
 
-    assert dm_messages["messages"][3]["message_id"] == m_id
-    assert dm_messages["messages"][3]["message"] == "Hello"
-    assert dm_messages["messages"][2]["message_id"] == shared_m_id1
-    assert dm_messages["messages"][2]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
-    assert dm_messages["messages"][1]["message_id"] == shared_m_id2
-    assert dm_messages["messages"][1]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n    \n    """\n    Hello\n    """\n"""'
-    assert dm_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
-    assert len(dm_messages["messages"]) == 4
+    
+    dm2_messages = requests.get(f"{url}dm/messages/v1", params= {
+        "token": user1["token"],
+        "dm_id": dm2,
+        "start": 0
+    }).json()
+
+    assert dm1_messages["messages"][2]["message_id"] == m_id
+    assert dm1_messages["messages"][2]["message"] == "Hello"
+    assert dm1_messages["messages"][1]["message_id"] == shared_m_id1
+    assert dm1_messages["messages"][1]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
+    assert dm1_messages["messages"][0]["message_id"] == shared_m_id3
+    assert dm1_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert len(dm1_messages["messages"]) == 3
+
+    assert dm2_messages["messages"][0]["message_id"] == shared_m_id2
+    assert dm2_messages["messages"][0]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n    \n    """\n    Hello\n    """\n"""'
+    assert len(dm2_messages["messages"]) == 1
 
 # There is no additional message that is attached to the og message which was
 # sent from dm
