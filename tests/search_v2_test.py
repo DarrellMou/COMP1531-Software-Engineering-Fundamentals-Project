@@ -15,7 +15,6 @@ from src.other import clear_v1, search_v2
 
 # Checks invalid token
 def test_admin_userpermission_change_invalid_token(setup_user):
-    users = setup_user
 
     with pytest.raises(AccessError):
         search_v2("Invalid owner", "hello")

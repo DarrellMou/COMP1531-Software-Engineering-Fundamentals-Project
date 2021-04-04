@@ -46,7 +46,6 @@ def channels_listall_v2(token):
     
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError("Invalid token")
-    auth_user_id = auth_decode_token(token)
 
     # Create list of all channels
     channel_listall = []

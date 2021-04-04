@@ -63,18 +63,18 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     # User 1 makes User 3 an owner
     channel_addowner_v1(users['user1']['token'], channel_id1['channel_id'], users['user3']['auth_user_id'])
     # User 1 sends a message
-    message_id1 = message_send_v2(users['user1']['token'],channel_id1['channel_id'],'Nice day')
+    message_send_v2(users['user1']['token'],channel_id1['channel_id'],'Nice day')
 
     # User 2 makes channel 2 
     channel_id2 = channels_create_v2(users['user2']['token'],'Test Channel',False)
     # User 1 joins the private channel as global owner
     channel_join_v2(users['user1']['token'], channel_id2['channel_id'])
     # User 1 sends a message
-    message_id2 = message_send_v2(users['user1']['token'],channel_id2['channel_id'],'Hello user2')
+    message_send_v2(users['user1']['token'],channel_id2['channel_id'],'Hello user2')
 
     # User 1 creates a dm to User 2 and User 3. User 1 sends a message
     dm_id1 = dm_create_v1(users['user1']['token'],[users['user2']['auth_user_id'],users['user3']['auth_user_id']])
-    message_dm_id1 = message_senddm_v1(users['user1']['token'],dm_id1['dm_id'],'Hi guys')
+    message_senddm_v1(users['user1']['token'],dm_id1['dm_id'],'Hi guys')
 
     # Set up variables to test function outputs
     user_profile_id1 = user_profile_v2(users['user2']['token'],users['user1']['auth_user_id'])

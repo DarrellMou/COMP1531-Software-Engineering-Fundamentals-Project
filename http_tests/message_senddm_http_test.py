@@ -107,7 +107,7 @@ def test_message_senddm_v1_user_sends_identical_messages(setup_user_data):
 
     # Creating dm2
     u_id_list2 = [users['user3']]
-    dm_id2 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list1)).json()
+    dm_id2 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list2)).json()
 
     second_message_id = requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
@@ -120,7 +120,7 @@ def test_message_senddm_v1_user_sends_identical_messages(setup_user_data):
 
 
 # Testing for messages sent by multiple users
-def test_message_senddm_v1_send_one(setup_user_data):
+def test_message_senddm_v1_send_multiple(setup_user_data):
     users = setup_user_data
 
     # Creating a dm

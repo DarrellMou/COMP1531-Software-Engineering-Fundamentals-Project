@@ -14,7 +14,6 @@ def user_profile_v2(token, u_id):
 
     if not auth_token_ok(token):
         raise AccessError('invalid token')
-    auth_user_id = auth_decode_token(token)
 
     #if not auth_user_id in data['users']:
     #    raise InputError 

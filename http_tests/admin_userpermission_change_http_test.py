@@ -72,12 +72,6 @@ def test_admin_userpermission_change_only_owner(setup_user_data):
 def test_admin_userpermission_change_basic(setup_user_data):
     users = setup_user_data
 
-    channel_id1 = requests.post(config.url + 'channels/create/v2', json={
-        'token': users['user1']['token'],
-        'name': "Test Channel",
-        'is_public': True,
-    }).json()
-
     channel_id2 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user3']['token'],
         'name': "Test Channel",

@@ -210,7 +210,7 @@ def test_admin_user_remove(setup_user_data):
     u_id_list = [users['user2'],users['user3']]
     dm_id1 = requests.post(config.url + '/dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
-    message_dm_id1 = requests.post(config.url + 'message/senddm/v1', json={
+    requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': "Hi guys",

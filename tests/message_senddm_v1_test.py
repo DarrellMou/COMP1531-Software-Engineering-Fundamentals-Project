@@ -39,7 +39,6 @@ def set_up_data():
         'user3': user3['token'],
         'dm1': dm1['dm_id']
     }
-    return setup
 
 def send_x_messages(user1, user2, dm1, num_messages):
     data = retrieve_data()
@@ -90,7 +89,7 @@ def test_channels_create_access_error():
 # Testing for when the user is not part of the dm (testing Access Error)
 def test_message_senddm_v1_AccessError():
     setup = set_up_data()
-    user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
+    user3, dm1 = setup['user3'], setup['dm1']
     
     # user3 who is not a part of dm1 tries to send message 
     # - should raise an access error
@@ -101,7 +100,7 @@ def test_message_senddm_v1_AccessError():
 # Testing to see if message is of valid length
 def test_message_senddm_v1_InputError():
     setup = set_up_data()
-    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    user1, dm1 = setup['user1'], setup['dm1']
     
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
@@ -123,7 +122,7 @@ def test_message_senddm_v1_send_empty():
     setup = set_up_data()
     data = retrieve_data()
 
-    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    user1, dm1 = setup['user1'], setup['dm1']
 
     assert message_senddm_v1(user1, dm1, " ")['message_id'] ==\
            data['dms'][dm1]['messages'][0]['message_id']
@@ -136,7 +135,7 @@ def test_message_senddm_v1_send_one():
     setup = set_up_data()
     data = retrieve_data()
 
-    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    user1, dm1 = setup['user1'], setup['dm1']
 
     assert message_senddm_v1(user1, dm1, "Hello")['message_id'] ==\
            data['dms'][dm1]['messages'][0]['message_id']
@@ -145,7 +144,7 @@ def test_message_senddm_v1_send_one():
 # Testing for 2 identical messages being sent by user1
 def test_message_senddm_v1_user_sends_identical_messages():
     setup = set_up_data()
-    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+    user1, dm1 = setup['user1'], setup['dm1']
 
     data = retrieve_data()
 
@@ -251,11 +250,11 @@ def test_message_senddm_v1_data_messages_in_order():
     data = retrieve_data()
 
     m_id0_ch1 = data['dms'][dm1]['messages'][0]
-    m_id0_ch2 = data['dms'][dm2]['messages'][0]
-    m_id5_ch1 = data['dms'][dm1]['messages'][5]
-    m_id5_ch2 = data['dms'][dm2]['messages'][5]
-    m_id9_ch1 = data['dms'][dm1]['messages'][9]['message_id']
-    m_id9_ch2 = data['dms'][dm2]['messages'][9]['message_id']
+    data['dms'][dm2]['messages'][0]
+    data['dms'][dm1]['messages'][5]
+    data['dms'][dm2]['messages'][5]
+    data['dms'][dm1]['messages'][9]['message_id']
+    data['dms'][dm2]['messages'][9]['message_id']
 
     assert data['messages'][0]['message_id'] == m_id0_ch1['message_id']
     assert data['messages'][0]['message'] == m_id0_ch1['message']

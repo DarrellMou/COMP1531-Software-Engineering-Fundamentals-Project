@@ -148,13 +148,7 @@ def dm_create_v1_flask():
     dm_id = dm_create_v1(data['token'], data['u_ids'])
 
     return dumps(dm_id)
-    '''
-    payload = request.get_json()
-    token = payload['token']
-    u_id = payload['u_ids']
-
-    return dumps(dm_create_v1(token, u_id))
-    '''
+    
 
 @APP.route('/dm/messages/v1', methods=['GET'])
 def dm_messages_v1_flask(): 

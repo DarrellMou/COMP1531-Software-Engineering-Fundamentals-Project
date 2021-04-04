@@ -42,7 +42,7 @@ def test_admin_userpermission_change_invalid_owner(setup_user):
 
 
 # Checks invalid permission_id
-def test_admin_userpermission_change_invalid_uid(setup_user):
+def test_admin_userpermission_change_invalid_permissionid(setup_user):
     users = setup_user
     
     with pytest.raises(InputError):

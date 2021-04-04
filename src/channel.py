@@ -259,7 +259,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {
     }
 
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
