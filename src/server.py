@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye, Darrell Mounarath, Kellen, Winston Lin, Nikki Yao
+
 import sys
 from json import dumps
 import json
@@ -8,9 +11,13 @@ from src.error import InputError
 from src import config
 
 from src.data import read_data, write_data
-from src.other import clear_v1
-from src.auth import auth_register_v1
-from src.dm import dm_create_v1, dm_details_v1, dm_leave_v1
+from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2, channel_leave_v1
+from src.channels import channels_create_v2, channels_listall_v2
+from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1
+from src.message import message_send_v2, message_senddm_v1
+from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
+from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -41,11 +48,16 @@ def echo():
         'data': info
     })
 
-# Initialize
-@APP.route("/clear/v1", methods=['DELETE'])
-def clear_v1_flask():
-    clear_v1()
-    return {}
+
+@APP.route("/auth/login/v2", methods=['POST'])
+def auth_login_v2_flask():
+    payload = request.get_json()
+    email = payload['email']
+    password = payload['password']
+
+    write_data()
+    return dumps(auth_login_v1(email, password))
+
 
 @APP.route('/auth/register/v2', methods=['POST'])
 def auth_register_v2_flask(): 
@@ -55,6 +67,97 @@ def auth_register_v2_flask():
     write_data()
     return json.dumps(a_u_id)
 
+
+@APP.route("/auth/logout/v1", methods=['POST'])
+def auth_logout_route():
+    payload = request.get_json()
+    token = payload['token']
+
+    write_data()
+    return dumps(auth_logout_v1(token))
+
+
+@APP.route("/channels/create/v2", methods=['POST'])
+def channels_create_v2_flask():
+
+    payload = request.get_json()
+    token = payload['token']
+    name = payload['name']
+    is_public = bool(payload['is_public'])
+
+    write_data()
+    return dumps(channels_create_v2(token, name, is_public))
+
+
+@APP.route("/channels/listall/v2", methods=['GET'])
+def channels_listall_v2_flask():
+    token = request.args.get('token')
+
+    write_data()
+    return dumps(channels_listall_v2(token))
+
+
+@APP.route("/channel/details/v2", methods=['GET'])
+def channel_details_v2_flask():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+
+    write_data()
+    return dumps(channel_details_v2(token, channel_id))
+
+
+@APP.route("/channel/join/v2", methods=['POST'])
+def channel_join_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+
+    write_data()
+    return dumps(channel_join_v2(token,channel_id))
+
+
+@APP.route("/channel/invite/v2", methods=['POST'])
+def channel_invite_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    u_id = payload['u_id']
+
+    write_data()
+    return dumps(channel_invite_v2(token,channel_id,u_id))
+
+
+@APP.route("/channel/addowner/v1", methods=['POST'])
+def channel_addowner_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    u_id = payload['u_id']
+
+    write_data()
+    return dumps(channel_addowner_v1(token,channel_id,u_id))
+
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages_v2_flask():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
+
+    write_data()
+    return dumps(channel_messages_v2(token, channel_id, start))
+
+
+@APP.route("/channel/leave/v1", methods=['POST'])
+def channel_leave_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+
+    write_data()
+    return dumps(channel_leave_v1(token,channel_id))
+
+
 @APP.route('/dm/create/v1', methods=['POST'])
 def dm_create_v1_flask(): 
     info = request.get_json()
@@ -62,6 +165,17 @@ def dm_create_v1_flask():
 
     write_data()
     return json.dumps(dm_id)
+    
+
+@APP.route('/dm/messages/v1', methods=['GET'])
+def dm_messages_v1_flask(): 
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+
+    write_data()
+    return dumps(dm_messages_v1(token, dm_id, start))
+
 
 @APP.route('/dm/details/v1', methods=['GET'])
 def dm_details_v1_flask(): 
@@ -71,6 +185,7 @@ def dm_details_v1_flask():
 
     write_data()
     return json.dumps(dm_details)
+    
 
 @APP.route('/dm/leave/v1', methods=['POST'])
 def dm_leave_v1_flask(): 
@@ -80,5 +195,107 @@ def dm_leave_v1_flask():
     write_data()
     return json.dumps({})
 
+
+@APP.route("/message/send/v2", methods=['POST'])
+def message_send_v2_flask():
+    payload = request.get_json()
+    token = payload['token']
+    channel_id = payload['channel_id']
+    message = payload['message']
+
+    write_data()
+    return dumps(message_send_v2(token,channel_id,message))
+
+
+@APP.route('/user/profile/v2', methods=['GET'])
+def user_profile_v2_flask():
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
+
+    write_data()
+    return dumps(user_profile_v2(token, u_id))
+
+
+@APP.route('/user/profile/setname/v2', methods=['PUT'])
+def user_profile_setname_v2_flask():
+    returnDict = user_profile_setname_v2(request.args.get('token'), request.args.get('name_first'), request.args.get('name_last'))
+    
+    write_data()
+    return dumps(returnDict)  
+
+
+@APP.route('/user/profile/setemail/v2', methods=['PUT'])
+def user_profile_setemail_v2_flask():
+    returnDict = user_profile_setemail_v2(request.args.get('token'), request.args.get('email'))
+
+    write_data()
+    return dumps(returnDict) 
+
+
+@APP.route('/user/profile/sethandle/v2', methods=['PUT'])
+def user_profile_sethandle_v2_flask():
+    returnDict = user_profile_sethandle_v2(request.args.get('token'), request.args.get('handle_str'))
+
+    write_data()
+    return dumps(returnDict) 
+
+
+@APP.route('/users/all/v1', methods=['GET'])
+def users_all_v1_flask():
+    token = request.args.get('token')
+
+    write_data()
+    return dumps(users_all_v1(token))
+
+
+@APP.route("/message/senddm/v1", methods=['POST'])
+def message_senddm_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    dm_id = payload['dm_id']
+    message = payload['message']
+
+    write_data()
+    return dumps(message_senddm_v1(token,dm_id,message))
+
+
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def admin_userpermission_change_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    u_id = payload['u_id']
+    permission_id = payload['permission_id']
+
+    write_data()
+    return dumps(admin_userpermission_change_v1(token, u_id, permission_id))
+
+
+@APP.route("/admin/user/remove/v1", methods=['DELETE'])
+def admin_user_remove_v1_flask():
+    payload = request.get_json()
+    token = payload['token']
+    u_id = int(payload['u_id'])
+
+    write_data()
+    return dumps(admin_user_remove_v1(token, u_id))
+
+@APP.route("/search/v2", methods=['GET'])
+def search_v2_flask():
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+
+    write_data()
+    return dumps(search_v2(token, query_str))
+
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear_v1_flask():
+    clear_v1()
+
+    write_data()
+    return {}
+
+
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
+    

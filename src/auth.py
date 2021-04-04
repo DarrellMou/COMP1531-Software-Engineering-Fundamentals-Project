@@ -1,23 +1,21 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 from src.error import InputError 
 from src.data import retrieve_data
 
 import datetime
 import jwt
 import hashlib 
-from flask import jsonify, request
 
 SECRET = 'CHAMPAGGNE?'
+TOKEN_DURATION=5 # 5 seconds
 
-'''
-# For testing
-from error import InputError 
-from data import retrieve_data
-'''
 import re
 import itertools
 import uuid
 
-session = {}
+blacklist = set()
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -40,8 +38,10 @@ def auth_login_v1(email, password):
         data_email = data['users'][key_it]['email']
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
-        if email == data_email and hashlib.sha256(password.encode()).hexdigest() == data_password:
-            return {'token' : auth_encode_token(key_it), 'auth_user_id' : key_it}        
+        if email == data_email and auth_password_hash(password) == data_password:
+            if key_it in blacklist:
+                blacklist.remove(key_it)
+            return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it)}        
     raise InputError
 
 
@@ -74,6 +74,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # Randomly generate a unique auth_user_id
     new_auth_user_id = int(uuid.uuid4())
 
+    # type 1 is owner, type 2 is member 
     if not data['users']:
         permission_id = 1
     else:
@@ -83,59 +84,80 @@ def auth_register_v1(email, password, name_first, name_last):
         'name_first' : name_first, 
         'name_last' : name_last, 
         'email' : email,
-        'password' : hashlib.sha256(password.encode()).hexdigest(),
+        'password' : auth_password_hash(password),
         'handle_str' : '',
         'permission_id': permission_id,
+        'is_removed': False,
         'dms': [],
     }
 
     # Check to see if the handle is unique
-    if any(new_handle == data['users'][user]['handle_str']\
-    for user in data['users']):
+    if any(new_handle == data['users'][user]['handle_str'] for user in data['users']):
         # If the handle already exists, append with a number starting from 0
         for epilogue in itertools.count(0, 1):
-            if(not any((new_handle + str(epilogue)) ==\
-            data['users'][user]['handle_str'] for user in data['users'])):
-                data['users'][new_auth_user_id]['handle_str'] =\
-                new_handle + str(epilogue)
+            if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
+                data['users'][new_auth_user_id]['handle_str'] = new_handle + str(epilogue)
                 return {'auth_user_id' : new_auth_user_id}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
-        return {'token' : auth_encode_token(new_auth_user_id), 'auth_user_id' : new_auth_user_id}
+        return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
 
 """
 Generate and return an expirable token based on auth_user_id
 """
 def auth_encode_token(auth_user_id):
-    try:
-        payload = {
-            'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=30)),
-            'iat' : datetime.datetime.utcnow(),
-            'sub' : auth_user_id
-        }
+    # try:
+    payload = {
+        'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=TOKEN_DURATION)),
+        'iat' : datetime.datetime.utcnow(),
+        'sub' : auth_user_id
+    }
 
-        return jwt.encode(
-            payload,
-            SECRET,
-            algorithm='HS256'
-        )
-    except Exception as e: # catch all kinds of exception
-        return e
+    return jwt.encode(
+        payload,
+        SECRET,
+        algorithm='HS256'
+    )
+    # except Exception as e: # catch all kinds of exception
+    #     return e
 
+"""
+returns auth_user_id for others to use 
+"""
 def auth_decode_token(token):
     try:
         payload = jwt.decode(token, SECRET, algorithms=['HS256'])
+        auth_user_id = payload['sub']
+        if auth_user_id in blacklist:
+            return 'User has logged out'
 
         return payload['sub']
     except jwt.ExpiredSignatureError:
         return 'Session expired, log in again'
     except jwt.InvalidTokenError:
         return 'invalid token, log in again'
-    except jwt.DecodeError as e:
-        return e
 
+
+# check before using auth_token_decode
 def auth_token_ok(token):
     if(isinstance(auth_decode_token(token), str)):
         return False
     else:
         return True
+
+# wrapper
+def auth_password_hash(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def auth_logout_v1(token):
+    if auth_token_ok(token) == True:
+        auth_user_id = auth_decode_token(token)
+        blacklist.add(auth_user_id)
+
+        responseObj = {'is_success':True}
+        return responseObj
+    else:
+        responseObj = {'is_success':False}
+        return responseObj
+

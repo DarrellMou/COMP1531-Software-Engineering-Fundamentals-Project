@@ -1,16 +1,12 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Darrell Mounarath
 
 from src.data import retrieve_data
 from src.error import AccessError, InputError
-
 from src.auth import auth_token_ok, auth_decode_token
 
 import uuid
-'''
-from data import data, retrieve_data, reset_data
-from error import AccessError, InputError
 
-from auth import auth_token_ok, auth_decode_token, auth_register_v1
-'''
 # Creates dm given list of users
 def dm_create_v1(token, u_ids):
     data = retrieve_data()
@@ -21,7 +17,7 @@ def dm_create_v1(token, u_ids):
 
     # Checks if users in u_ids exists
     for u_id in u_ids:
-        if u_id not in data['users']: raise InputError
+        if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
 
     # Create temporary list for dm members
     users_list = []
@@ -40,11 +36,23 @@ def dm_create_v1(token, u_ids):
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
-        'members': users_list
+        'members': users_list,
+        'messages': []
     }   
-
+    '''
+    # Create notification for users added to dm's
+    for u_id in u_ids:
+        data['users'][u_id]['notifications'].append({
+            'channel_id' : -1,
+            'dm_id' : dm_id,
+            'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + dm_name)
+        })
+        # Make sure notification list is len 20
+        if len(data['users'][u_id]['notifications']) > 20:
+            data['users'][u_id]['notifications'].pop(0)
+    '''
     return {'dm_id': dm_id, 'dm_name': dm_name}
-
+    
 # Returns details of given dm
 def dm_details_v1(token, dm_id):
     data = retrieve_data()
@@ -132,13 +140,22 @@ def dm_invite_v1(token, dm_id, u_id):
     if dm_id not in data['dms']: raise InputError
 
     # Checks if user exists
-    if u_id not in data['users']: raise InputError
+    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
 
     # Checks if user belongs in dm
     if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError
 
     data['dms'][dm_id]['members'].append(u_id)
-
+    '''
+    data['users'][u_id]['notifications'].append({
+        'channel_id' : -1,
+        'dm_id' : dm_id,
+        'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + str(data['dms'][dm_id]['name']))
+    })
+    # Make sure notification list is len 20
+    if len(data['users'][u_id]['notifications']) > 20:
+        data['users'][u_id]['notifications'].pop(0)
+    '''
     return {}
 
 # Given a DM ID, the user is removed as a member of this DM
@@ -158,3 +175,87 @@ def dm_leave_v1(token, dm_id):
     data['dms'][dm_id]['members'].remove(auth_user_id)
 
     return {}
+
+
+def dm_messages_v1(token, dm_id, start):
+    data = retrieve_data()
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError("The given token is not valid")
+
+    # Check to see if the given dm_id is a valid dm
+    if dm_id not in data['dms']:
+        raise InputError("dm_id is not valid")
+
+    # Check to see if the given user (token) is actully in the given dm
+    user_id = auth_decode_token(token)
+    if user_id not in data['dms'][dm_id]['members']:
+        raise AccessError("The user corresponding to the given token is not in the dm")
+
+    
+    # Check to see if the given start value is larger than the number of
+    # messages in the given dm
+    num_messages = len(data['dms'][dm_id]['messages'])
+    if start > num_messages:
+        raise InputError("Inputted starting index is larger than the current number of messages in the dm")
+
+    # Initialise our message dictionary which we will be returning
+    messages_dict = {
+        'messages': [],
+        'start': start,
+        'end': 0
+    }
+
+    # Get our current dm
+    dm = data['dms'][dm_id]
+    # ASSUMPTION: messages are APPENDED to our message list within the dm
+    # key of our data dictionary
+    # Reverse the order of the dm messages so the most recent message
+    # appears in index 0 and the least recent in the last index
+    messages_list = dm['messages'][::-1]
+
+
+    # Loop through our list and return up to 50 of the most recent messages
+    # starting our index with the given start
+    count = 0
+    for message in messages_list:
+        # Check to see if the message has been removed and if it has then
+        # skip it
+        if is_message_removed(message['message_id']):
+            continue
+        
+        # Starting off at the start index, add up to 50 messages to the list
+        # in the messages dictionary
+        if count >= start and count < (start + 50):
+            messages_dict['messages'].append(message)
+        count += 1
+
+    # If 50 messages were added, then the most recent message is going to be
+    # returned and as per the spec, 'end' should return -1. Otherwise, end
+    # should return (start + 50)
+    if len(messages_dict['messages']) != 50:
+        messages_dict['end'] = -1
+    # If the number of messages in the dm minus the given start divided
+    # by 50 returns 1, this mean the most recent message has been returned
+    elif (num_messages - start) / 50 == 1:
+        messages_dict['end'] = -1
+    else:
+        messages_dict['end'] = start + 50
+
+    return messages_dict
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# A function to check whether a message with given message_id is removed
+def is_message_removed(msg_id):
+    data = retrieve_data()
+    count = 0
+    while count < len(data['messages']):
+        if data['messages'][count]['message_id'] == msg_id:
+            if data['messages'][count]['is_removed']:
+                return True
+        count += 1
+    return False
