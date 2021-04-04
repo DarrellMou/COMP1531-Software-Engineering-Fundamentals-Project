@@ -170,6 +170,17 @@ def test_message_edit_v2_AccessError_not_dm_owner():
     }).status_code == 403
 
 
+
+# Default access error when token is invalid
+def test_http_message_edit_v2_default_Access_Error():
+
+    assert requests.put(f"{url}message/edit/v2", json={
+        "token": "Invalid",
+        "message_id": 123,
+        "message": "Hi"
+    }).status_code == 403
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

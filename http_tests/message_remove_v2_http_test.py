@@ -153,6 +153,15 @@ def test_message_remove_v1_AccessError_not_dm_owner():
         "message_id": msg1["message_id"],
     }).status_code == 403
 
+# Default access error when token is invalid
+def test_http_message_remove_v1_default_Access_Error():
+    
+    assert requests.delete(f"{url}message/remove/v1", json={
+        "token": "Invalid token",
+        "message_id": 123,
+    }).status_code == 403
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

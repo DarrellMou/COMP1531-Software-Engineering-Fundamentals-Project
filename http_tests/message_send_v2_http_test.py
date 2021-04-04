@@ -119,6 +119,16 @@ def test_http_message_send_v2_InputError():
     }).status_code == 400
 
 
+# Default access error when token is invalid
+def test_http_message_send_v2_default_Access_Error():
+
+    assert requests.post(url + 'message/send/v2', json={
+        'token': "invalid token",
+        'channel_id': 123312,
+        'message': "Wrong",
+    }).status_code == 403
+
+
 ############################ END EXCEPTION TESTING ############################
 
 

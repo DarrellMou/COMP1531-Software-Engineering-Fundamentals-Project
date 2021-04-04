@@ -114,6 +114,18 @@ def test_http_message_share_v1_AccessError():
     }).status_code == 403
 
 
+# Default access error when token is invalid
+def test_http_message_share_v1_default_Access_Error():
+
+    assert requests.post(f"{url}message/share/v1", json={
+        "token": "Invalid",
+        "og_message_id": 123,
+        "message": "Optional Message",
+        "channel_id": 456654,
+        "dm_id": -1
+    }).status_code == 403
+
+
 ############################ END EXCEPTION TESTING ############################
 
 
