@@ -80,7 +80,7 @@ def remove_x_messages(user, id_list=[]):
 # Testing to see if message is of valid length
 def test_http_message_edit_v2_InputError_msg_too_long():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     m_id = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
         "channel_id": channel1,
@@ -103,7 +103,7 @@ def test_http_message_edit_v2_InputError_msg_too_long():
 # Testing to see if message being edited has already been removed
 def test_http_message_edit_v2_InputError_msg_removed():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     
     m_id = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
@@ -111,27 +111,15 @@ def test_http_message_edit_v2_InputError_msg_removed():
         "message": "Hello"
     }).json()
 
-    m_id1 = requests.post(f"{url}message/send/v2", json= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "message": "Hello"
-    }).json()
-
-    m_id2 = requests.post(f"{url}message/send/v2", json= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "message": "Hello"
-    }).json()
-
     requests.delete(f"{url}message/remove/v1", json={
         "token": user1["token"],
-        "message_id": m_id2["message_id"]
+        "message_id": m_id["message_id"]
     }).json()
 
 
     assert requests.put(f"{url}message/edit/v2", json={
         "token": user1["token"],
-        "message_id": m_id2["message_id"],
+        "message_id": m_id["message_id"],
         "message": "Hi"
     }).status_code == 400
 
@@ -213,7 +201,7 @@ def test_http_message_edit_v2_edit_one():
 # Testing the edit of multiple messages
 def test_http_message_edit_v2_edit_multiple():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
     send_x_messages(user2, channel1, 5)
@@ -285,7 +273,7 @@ def test_http_message_edit_v2_edit_multiple():
 # Editing all messages in the channel
 def test_http_message_edit_v2_edit_all_messages():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
     send_x_messages(user2, channel1, 5)
@@ -419,6 +407,12 @@ def test_http_message_edit_v2_owner_edits_message():
         "token": user2["token"],
         "channel_id": channel1["channel_id"],
         "u_id": user3["auth_user_id"]
+    }).json()
+
+    requests.post(f"{url}channel/invite/v2", json = {
+        "token": user2["token"],
+        "channel_id": channel1["channel_id"],
+        "u_id": user1["auth_user_id"]
     }).json()
 
     # user3 sends 3 messages and user2 edits the very first message sent
@@ -677,7 +671,7 @@ def test_http_message_edit_v2_edit_removes_1_msg():
 # removes the message
 def test_http_message_edit_v2_edit_removes_multiple_msg():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3 
     send_x_messages(user2, channel1, 5)
