@@ -29,11 +29,8 @@ def dm_list_body(user):
         "token": user["token"],
     }
 
-<<<<<<< HEAD
 ###                       END HELPER FUNCTIONS                         ###
 
-=======
->>>>>>> darrell/dm_remove_v1_flask
 def test_function():
     requests.delete(f"{url}clear/v1")
     

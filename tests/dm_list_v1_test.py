@@ -1,14 +1,9 @@
 # PROJECT-BACKEND: Team Echo
 # Written by Darrell Mounarath
 
-<<<<<<< HEAD
 import pytest
 
 from src.error import InputError, AccessError
-=======
-from src.error import InputError, AccessError
-
->>>>>>> darrell/dm_remove_v1_flask
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1, dm_list_v1
 from src.other import clear_v1
@@ -81,10 +76,6 @@ def test_multiple():
 # dm_list given invalid token
 def test_invalid_token():
     clear_v1()
-<<<<<<< HEAD
     
-=======
-
->>>>>>> darrell/dm_remove_v1_flask
     with pytest.raises(AccessError):
         dm_list_v1(12345)
