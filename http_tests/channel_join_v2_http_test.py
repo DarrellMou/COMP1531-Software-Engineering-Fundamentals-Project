@@ -31,7 +31,7 @@ def test_channel_join_access_error(setup_user_data):
     # Ensure AccessError
     assert requests.post(config.url + 'channel/join/v2', json={
         'token': users['user2']['token'],
-        'channel_id': channel_id
+        'channel_id': channel_id['channel_id']
     }).status_code == 403
 
 # Test joining a public channel
@@ -48,7 +48,7 @@ def test_channels_join_basic(setup_user_data):
     # Join user2
     requests.post(config.url + 'channel/join/v2', json={
         'token': users['user2']['token'],
-        'channel_id': channel_id
+        'channel_id': channel_id['channel_id']
     }).json()
 
     # Ensure user2 is properly joined
@@ -73,7 +73,7 @@ def test_channels_join_dreams(setup_user_data):
     # Join user1 (Dreams owner)
     requests.post(config.url + 'channel/join/v2', json={
         'token': users['user1']['token'],
-        'channel_id': channel_id
+        'channel_id': channel_id['channel_id']
     }).json()
 
     # Ensure user2 is properly joined
