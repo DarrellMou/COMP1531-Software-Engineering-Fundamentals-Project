@@ -248,11 +248,14 @@ def channel_addowner_v1(token, channel_id, u_id):
 
     # All error checks passed, continue on to add owner
     data['channels'][channel_id]['owner_members'].append(u_id)
+    # If not already in server, add on to all members
+    if (u_id not in data['channels'][channel_id]['all_members']):
+        data['channels'][channel_id]['all_members'].append(u_id)
 
     return {
     }
 
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
