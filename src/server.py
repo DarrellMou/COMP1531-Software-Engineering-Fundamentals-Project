@@ -6,11 +6,13 @@ from src.error import InputError
 from src import config
 
 from src.auth import auth_register_v1
-from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_share_v1
+from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_share_v1, message_senddm_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2, channel_invite_v2, channel_messages_v2
 from src.channels import channels_create_v2, channels_listall_v2
 from src.other import clear_v1
+from src.dm import dm_create_v1, dm_messages_v1, dm_invite_v1
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -63,7 +65,6 @@ def channel_invite_v2_flask():
     return json.dumps({})
 
 
-
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_messages_v2_flask():
     token = request.args.get("token")
@@ -72,7 +73,6 @@ def channel_messages_v2_flask():
     messages_list = channel_messages_v2(token, int(channel_id), int(start))
 
     return json.dumps(messages_list)
-
 
 
 @APP.route("/message/send/v2", methods=['POST'])
@@ -103,6 +103,40 @@ def message_share_v1_flask():
     message, channel_id, dm_id = data["message"], data['channel_id'], data['dm_id']
     shared = message_share_v1(token, og_message_id, message, channel_id, dm_id)
     return json.dumps(shared)
+
+
+@APP.route('/dm/create/v1', methods=['POST'])
+def dm_create_v1_flask(): 
+    data = request.get_json()
+    dm_id = dm_create_v1(data["token"], data["u_ids"])
+
+    return json.dumps(dm_id)
+
+
+@APP.route('/dm/invite/v1', methods=['POST'])
+def dm_invite_v1_flask(): 
+    data = request.get_json()
+    dm_invite_v1(data["token"], data["dm_id"], data["u_id"])
+
+    return json.dumps({})
+
+
+@APP.route('/dm/messages/v1', methods=['GET'])
+def dm_messages_v1_flask(): 
+    token = request.args.get("token")
+    dm_id = int(request.args.get("dm_id"))
+    start = int(request.args.get("start"))
+    dm_messages = dm_messages_v1(token, dm_id, start)
+
+    return json.dumps(dm_messages)
+
+
+@APP.route('/message/senddm/v1', methods=['POST'])
+def message_senddm_v1_flask(): 
+    data = request.get_json()
+    message_id = message_senddm_v1(data["token"], data["dm_id"], data["message"])
+
+    return json.dumps(message_id)
 
 
 @APP.route("/clear/v1", methods=['DELETE'])
