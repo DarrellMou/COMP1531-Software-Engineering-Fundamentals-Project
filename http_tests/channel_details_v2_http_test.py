@@ -1,9 +1,13 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Darrell Mounarath
+
 import json
 import requests
 import urllib
 
 from src.config import url
-# HELPER FUNCTIONS
+
+###                         HELPER FUNCTIONS                           ###
 
 def user_body(num):
     return {
@@ -32,6 +36,8 @@ def channel_details_body(user, channel):
         "token": user["token"],
         "channel_id": channel["channel_id"]
     }
+
+###                       END HELPER FUNCTIONS                         ###
 
 def test_function():
     requests.delete(f"{url}/clear/v1")
@@ -285,7 +291,7 @@ def test_unauthorized_user():
 
     assert channel_details["code"] == 403
     assert channel_details["name"] == "System Error"
-    assert channel_details["message"] == "<p></p>"
+    assert channel_details["message"] == "<p>The user corresponding to the given token is not in the channel</p>"
 
 def test_invalid_token():
     requests.delete(f"{url}/clear/v1")

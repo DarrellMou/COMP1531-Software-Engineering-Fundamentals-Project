@@ -1,5 +1,5 @@
 # PROJECT-BACKEND: Team Echo
-# Written by Kellen, Brendan Ye (channel_messages)
+# Written by Kellen (channel_join), Brendan Ye (channel_messages), Darrell (channel_invite, channel_details)
 
 from src.data import retrieve_data
 from src.error import AccessError, InputError

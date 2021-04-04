@@ -1,5 +1,5 @@
 # PROJECT-BACKEND: Team Echo
-# Written by Nikki Yao
+# Written by Nikki Yao (channels_listall, channels_create), Kellen (channels_list)
 
 from src.data import retrieve_data
 import uuid

@@ -1,5 +1,5 @@
 # PROJECT-BACKEND: Team Echo
-# Written by Darrell Mounarath
+# Written by Darrell Mounarath (dm_create, dm_details, dm_list, dm_remove, dm_invite, dm_leave), Brendan Ye (dm_messages)
 
 from src.data import retrieve_data
 from src.error import AccessError, InputError
