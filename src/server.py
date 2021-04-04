@@ -15,14 +15,14 @@ from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2, channel_leave_v1
 from src.channels import channels_create_v2, channels_listall_v2
 from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1, dm_invite_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
-from src.message import message_send_v2, message_senddm_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
 from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 
 def defaultHandler(err):
     response = err.get_response()
     print('response', err, err.get_response())
-    response.data = dumps({
+    response.data = json.dumps({
         "code": err.code,
         "name": "System Error",
         "message": err.get_description(),
@@ -78,11 +78,42 @@ def auth_logout_route():
 
 @APP.route("/channels/create/v2", methods=['POST'])
 def channels_create_v2_flask():
+    data = request.get_json()
+    channel_id = channels_create_v2(data['token'], data['name'], data['is_public'])
+    return json.dumps(channel_id)
 
-    payload = request.get_json()
-    token = payload['token']
-    name = payload['name']
-    is_public = bool(payload['is_public'])
+
+@APP.route("/channel/invite/v2", methods=['POST'])
+def channel_invite_v2_flask():
+    data = request.get_json()
+    channel_invite_v2(data["token"], data["channel_id"], data["u_id"])
+
+    return json.dumps({})
+
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_messages_v2_flask():
+    token = request.args.get("token")
+    channel_id = request.args.get("channel_id")
+    start = request.args.get("start")
+    messages_list = channel_messages_v2(token, int(channel_id), int(start))
+
+    return json.dumps(messages_list)
+
+
+@APP.route("/message/send/v2", methods=['POST'])
+def message_send_v2_flask():
+    data = request.get_json()
+    message_id = message_send_v2(data['token'], data['channel_id'], data['message'])
+
+    return json.dumps(message_id)
+
+
+@APP.route("/message/remove/v1", methods=['DELETE'])
+def message_remove_v1_flask():
+    data = request.get_json()
+    message_remove_v1(data["token"], data["message_id"])
+    return json.dumps({})
 
     write_data()
     return dumps(channels_create_v2(token, name, is_public))
@@ -321,5 +352,4 @@ def clear_v1_flask():
     return {}
 
 if __name__ == "__main__":
-    APP.run(port=config.port,debug=True) # Do not edit this port
-    
+    APP.run(debug=True, port=config.port) # Do not edit this port

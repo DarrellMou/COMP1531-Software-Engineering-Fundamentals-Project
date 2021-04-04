@@ -8,7 +8,7 @@ import time
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
-#from data import reset_data, retrieve_data
+#from data import clear_v1, retrieve_data
 
 @pytest.fixture
 def test_users():
@@ -59,7 +59,7 @@ def test_auth_register_v1():
     with pytest.raises(InputError):
         auth_register_v1('sampleemail2@gmail.com', '12345', 'test', 'user1') # password too short, less than 6 chars
     with pytest.raises(InputError):
-        auth_register_v1('sampleemail2@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
+        auth_register_v1('sampleemail3@gmail.com', 'passwo', '', 'user1') # invalid firstname length 
 
 def test_auth_register_v1_nonunique_handle():
     clear_v1()
