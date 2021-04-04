@@ -14,7 +14,7 @@ from src.data import read_data, write_data
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
 from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_messages_v2, channel_leave_v1
 from src.channels import channels_create_v2, channels_listall_v2
-from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1
+from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1, dm_invite_v1
 from src.message import message_send_v2, message_senddm_v1
 from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
@@ -295,6 +295,13 @@ def clear_v1_flask():
     write_data()
     return {}
 
+
+@APP.route('/dm/invite/v1', methods=['POST'])
+def dm_invite_v1_flask(): 
+    data = request.get_json()
+    dm_invite_v1(data["token"], data["dm_id"], data["u_id"])
+
+    return json.dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port,debug=True) # Do not edit this port
