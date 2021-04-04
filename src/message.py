@@ -1,23 +1,11 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye
 
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
-
-from json import dumps
-import json
-'''
-from data import data, retrieve_data, reset_data
-from error import AccessError, InputError
-from auth import auth_token_ok, auth_decode_token, auth_register_v1
-from uuid import uuid4
-from datetime import datetime
-
-from channel import channel_invite_v1
-from channels import channels_create_v1
-'''
-
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
@@ -120,6 +108,7 @@ def message_send_v2(token, channel_id, message):
     return {
         'message_id': unique_message_id
     }
+    
 
 def message_remove_v2(token, message_id):
     data = retrieve_data()
@@ -229,7 +218,6 @@ def message_edit_v2(token, message_id, message):
     }
 
 
-
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     data = retrieve_data()
     u_id = auth_decode_token(token)
@@ -261,10 +249,9 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     return {'shared_message_id': shared_message_id}
 
 
+# Send a message from a token to a dm_id
 def message_senddm_v1(token, dm_id, message):
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     # Check to see if token is valid
     if not auth_token_ok(token):
@@ -280,9 +267,9 @@ def message_senddm_v1(token, dm_id, message):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
 
-    # Creating a unique id for our message_id
+    # Create a unique id for our message_id
     unique_message_id = int(uuid4())
-    # Creating a timestamp for our time_created key for our messages dictionary
+    # Create a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
 
@@ -309,37 +296,7 @@ def message_senddm_v1(token, dm_id, message):
     # Append our dictionaries to their appropriate lists
     data['dms'][dm_id]['messages'].append(dm_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
-
-    #with open("data.json", "w") as FILE:
-    #    json.dump(data, FILE)  
 
     return {
         'message_id': unique_message_id
     }
-
-
-'''
-data = reset_data()
-
-user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
-channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
-
-m_id = message_send_v2(user1['token'], channel1['channel_id'], "Hey")['message_id']
-
-
-print(data)
-
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-
-blah = message_remove_v2(user2['token'], m_id)
-print(blah)
-'''

@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 
 from src.channel import channel_addowner_v1, channel_invite_v2, channel_join_v2
@@ -8,12 +11,19 @@ from src.dm import dm_create_v1
 from src.message import message_send_v2
 from src.other import admin_user_remove_v1, admin_userpermission_change_v1
 
+################## Tests admin_userpermission_change #####################
+                                                         
+#   * uses pytest fixtures from src.conftest                                    
+                                                                                                                                                
+##########################################################################
+
 # Checks invalid token
 def test_admin_userpermission_change_invalid_token(setup_user):
     users = setup_user
 
     with pytest.raises(AccessError):
         admin_userpermission_change_v1("Invalid owner", users['user1']['auth_user_id'],2)
+
 
 # Checks invalid u_id
 def test_admin_userpermission_change_invalid_uid(setup_user):
@@ -22,12 +32,14 @@ def test_admin_userpermission_change_invalid_uid(setup_user):
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user1']['token'], "Invalid user",2)
 
+
 # Checks invalid owner access
 def test_admin_userpermission_change_invalid_owner(setup_user):
     users = setup_user
 
     with pytest.raises(AccessError):
         admin_userpermission_change_v1(users['user2']['token'], users['user1']['auth_user_id'],2)
+
 
 # Checks invalid permission_id
 def test_admin_userpermission_change_invalid_uid(setup_user):
@@ -36,12 +48,14 @@ def test_admin_userpermission_change_invalid_uid(setup_user):
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user1']['token'], "Invalid user",5)
 
+
 # Checks invalid removal as user is the only owner
 def test_admin_userpermission_change_only_owner(setup_user):
     users = setup_user
 
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user1']['token'], users['user1']['auth_user_id'],2)
+
 
 # Checks basic test of changing a member into owner
 def test_admin_userpermission_change_basic(setup_user):
@@ -55,6 +69,7 @@ def test_admin_userpermission_change_basic(setup_user):
     admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
 
     assert data['users'][users['user2']['auth_user_id']]['permission_id'] == 1
+
 
 # Asserts that member turned owner can join private channels and add other owners
 def test_admin_userpermission_change_join_private_channels(setup_user):
@@ -77,6 +92,7 @@ def test_admin_userpermission_change_join_private_channels(setup_user):
 
     # Global User 2 makes User 3 an owner of the channel
     channel_addowner_v1(users['user2']['token'],channel_id1['channel_id'],users['user3']['auth_user_id'])
+
 
 # Asserts that member turned owner can change the user permission of the original global owner
 def test_admin_userpermission_change_ogowner(setup_user):

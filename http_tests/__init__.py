@@ -1,12 +1,10 @@
 import pytest
 import requests
 import json
-from src.other import clear_v1
 from src import config
 
 @pytest.fixture
 def reset():
-    #clear_v1()
     requests.delete(config.url+'clear/v1')
 
 @pytest.fixture

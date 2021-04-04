@@ -43,7 +43,7 @@ def test_user_profile(test_users):
 
 
 def test_user_profile_invalid_token(test_users):
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         user_profile_v2('someRandomToken', test_users['login1']['auth_user_id'])
 
 

@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 
 from src.channels import channels_create_v2, channels_listall_v2

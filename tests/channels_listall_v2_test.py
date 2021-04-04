@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 
 from src.auth import auth_register_v1

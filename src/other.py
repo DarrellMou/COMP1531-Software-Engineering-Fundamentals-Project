@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from src.error import InputError, AccessError 
 from src.data import retrieve_data
 from src.auth import auth_token_ok, auth_decode_token
@@ -11,8 +14,7 @@ def clear_v1():
         "messages" : []
     }
     return {}
-    #with open("data.json", "w") as FILE:
-    #    json.dump(data, FILE)
+
 
 def search_v2(token, query_str):
     
@@ -22,7 +24,7 @@ def search_v2(token, query_str):
     if len(query_str) > 1000: raise InputError("Query cannot be longer than 1000 characters")
 
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError
+    if not auth_token_ok(token): raise AccessError("Invalid token")
     auth_user_id = auth_decode_token(token)
 
     # Create a collection of messages
@@ -46,19 +48,20 @@ def search_v2(token, query_str):
     
     return collection_messages
 
+
 def admin_user_remove_v1(token, u_id):
 
     data = retrieve_data()
 
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError("Invalid User")
+    if not auth_token_ok(token): raise AccessError("Invalid token")
     user_id = auth_decode_token(token)
 
     # Check if u_id exists
-    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError("Invalid User")
+    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError("This u_id does not exist")
 
     # Checks if authorised user is an owner
-    if data['users'][user_id]['permission_id'] == 2: raise AccessError("Not an admin user")
+    if data['users'][user_id]['permission_id'] == 2: raise AccessError("Token is not an admin user")
 
     # Checks if the user is the currently the only owner
     admin_flag = 0
@@ -68,7 +71,7 @@ def admin_user_remove_v1(token, u_id):
             admin_flag += 1
             if user == u_id:
                 only_owner = True
-    if admin_flag == 1 and only_owner == True: raise InputError("You are currently the only owner")
+    if admin_flag == 1 and only_owner == True: raise InputError("Token is currently the only global owner")
 
     # Iterate through channels to identify which channels the user is in
     for channel in data['channels']:      
@@ -112,18 +115,19 @@ def admin_user_remove_v1(token, u_id):
     
     return {}
 
+
 def admin_userpermission_change_v1(token, u_id, permission_id):
     data = retrieve_data()
 
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError("Invalid User")
+    if not auth_token_ok(token): raise AccessError("Invalid token")
     auth_user_id = auth_decode_token(token)
 
     # Check if u_id exists
-    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError("Invalid User")
+    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError("This u_id does not exist")
 
     # Checks if authorised user is an owner
-    if not data['users'][auth_user_id]['permission_id'] == 1: raise AccessError("Not an admin user")
+    if not data['users'][auth_user_id]['permission_id'] == 1: raise AccessError("Token is not an admin user")
 
     # Checks if permission_id refers to a value permission
     if not (permission_id == 1 or permission_id == 2): raise InputError("Not a value permission")
@@ -134,7 +138,7 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
         for user in data['users']:
             if data['users'][user]['permission_id'] == 1:
                 admin_flag += 1
-        if admin_flag <= 1: raise InputError("The user is currently the only owner")
+        if admin_flag <= 1: raise InputError("The user is currently the only global owner")
 
     # Change u_id permission to permission_id
     data['users'][u_id]['permission_id'] = permission_id

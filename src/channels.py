@@ -1,11 +1,11 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from src.data import retrieve_data
 import uuid
 
 from src.error import InputError, AccessError
 from src.auth import auth_token_ok, auth_decode_token
-
-from flask import jsonify, request, Blueprint, make_response
-from json import dumps
 
 def channels_list_v1(auth_user_id):
     data = retrieve_data()
@@ -45,7 +45,7 @@ def channels_listall_v2(token):
     data = retrieve_data()
     
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError
+    if not auth_token_ok(token): raise AccessError("Invalid token")
     auth_user_id = auth_decode_token(token)
 
     # Create list of all channels
@@ -71,7 +71,7 @@ def channels_create_v2(token, name, is_public):
     if len(name) > 20: raise InputError("Channel name cannot be longer than 20 characters")
 
     # Checks if token exists
-    if not auth_token_ok(token): raise AccessError
+    if not auth_token_ok(token): raise AccessError("Invalid token")
     auth_user_id = auth_decode_token(token)
 
     # Generate unique channel_id

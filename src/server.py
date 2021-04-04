@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye, Darrell Mounarath, Kellen, Winston Lin, Nikki Yao
+
 import sys
 from json import dumps
 from flask import Flask, request

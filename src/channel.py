@@ -37,6 +37,9 @@ def channel_invite_v2(token, channel_id, u_id):
     # Checks if the auth_user is in channel
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
+    # Checks if u_id exists
+    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
+
     # Appends new user to given channel
     # Assume no duplicate entries allowed
     # Assume no inviting themselves

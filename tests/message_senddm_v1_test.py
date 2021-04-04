@@ -1,3 +1,5 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye, edited by Nikki Yao
 
 import pytest
 
@@ -7,7 +9,6 @@ from src.other import clear_v1
 from src.auth import auth_register_v1, auth_decode_token
 from src.dm import dm_create_v1, dm_invite_v1
 from src.message import message_senddm_v1
-
 
 ###############################################################################
 #                                 ASSUMPTIONS                                 #
@@ -77,12 +78,21 @@ def send_x_messages_two_dms(user, dm1, dm2, num_messages):
 
 ############################# EXCEPTION TESTING ##############################
 
+# Testing for an invalid token
+def test_channels_create_access_error():
+    setup = set_up_data()
+    dm1 = setup['dm1']
+
+    with pytest.raises(AccessError):
+        message_senddm_v1("invalid a_u_id", dm1, True)
+
+
 # Testing for when the user is not part of the dm (testing Access Error)
 def test_message_senddm_v1_AccessError():
     setup = set_up_data()
     user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
     
-    # user2 who is not a part of dm1 tries to send message 
+    # user3 who is not a part of dm1 tries to send message 
     # - should raise an access error
     with pytest.raises(AccessError):
         assert message_senddm_v1(user3, dm1, "Hello")
@@ -108,12 +118,23 @@ def test_message_senddm_v1_InputError():
 
 ############################ TESTING MESSAGE SEND #############################
 
+# Testing for empty message being sent by user1
+def test_message_senddm_v1_send_empty():
+    setup = set_up_data()
+    data = retrieve_data()
+
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
+
+    assert message_senddm_v1(user1, dm1, " ")['message_id'] ==\
+           data['dms'][dm1]['messages'][0]['message_id']
+    
+    assert message_senddm_v1(user1, dm1, "")['message_id'] ==\
+           data['dms'][dm1]['messages'][1]['message_id']
+
 # Testing for 1 message being sent by user1
 def test_message_senddm_v1_send_one():
     setup = set_up_data()
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
@@ -127,8 +148,6 @@ def test_message_senddm_v1_user_sends_identical_messages():
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     first_message_id = message_senddm_v1(user1, dm1, "Hello")['message_id']
     second_message_id = message_senddm_v1(user1, dm1, "Hello")['message_id']
@@ -151,8 +170,6 @@ def test_message_senddm_v1_multiple_users_multiple_messages():
     send_x_messages(user1, user2, dm1, 10)
 
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     assert data['dms'][dm1]['messages'][0]['message'] == "1"
     assert data['dms'][dm1]['messages'][5]['message'] == "6"
@@ -169,8 +186,6 @@ def test_message_senddm_v1_multiple_users_multiple_messages_message_id():
     dm_invite_v1(user1, dm1, u_id2)
 
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     message_count = 0
     while message_count < 100:
@@ -195,8 +210,6 @@ def test_message_senddm_v1_identical_message_to_2_dms():
     send_x_messages_two_dms(user1, dm1, dm2, 10)
 
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     m_id0_ch1 = data['dms'][dm1]['messages'][0]['message_id']
     m_id0_ch2 = data['dms'][dm2]['messages'][0]['message_id']
@@ -209,6 +222,7 @@ def test_message_senddm_v1_identical_message_to_2_dms():
     assert m_id5_ch1 != m_id5_ch2
     assert m_id9_ch1 != m_id9_ch2
 
+
 # Test if message_send also appends message to the data['messages'] list
 def test_message_senddm_v1_appends_to_data_messages():
     setup = set_up_data()
@@ -220,8 +234,6 @@ def test_message_senddm_v1_appends_to_data_messages():
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     assert len(data['messages']) == 20
 
@@ -237,8 +249,6 @@ def test_message_senddm_v1_data_messages_in_order():
     send_x_messages_two_dms(user1, dm1, dm2, 10)
     
     data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
 
     m_id0_ch1 = data['dms'][dm1]['messages'][0]
     m_id0_ch2 = data['dms'][dm2]['messages'][0]

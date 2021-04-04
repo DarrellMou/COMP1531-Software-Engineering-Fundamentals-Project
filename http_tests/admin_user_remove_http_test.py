@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from http_tests import * # import fixtures for pytest
 
 import json
@@ -5,7 +8,13 @@ import requests
 import pytest
 from src import config
 
-###      HELPER FUNCTIONS      ###
+#################### Tests admin_user_remove route #######################
+                                                         
+#   * uses pytest fixtures from http_tests.__init__.py                                   
+                                                                                                                                                
+##########################################################################
+
+###                         HELPER FUNCTIONS                           ###
 
 def dm_create_body(user, u_ids): 
     u_ids_list = [u_id['auth_user_id'] for u_id in u_ids]
@@ -14,7 +23,8 @@ def dm_create_body(user, u_ids):
         'u_ids': u_ids_list
     }
 
-###     END HELPER FUNCTIONS   ###
+###                       END HELPER FUNCTIONS                         ###
+
 
 # Checks invalid token
 def test_admin_user_remove_invalid_token(setup_user_data):
@@ -32,6 +42,7 @@ def test_admin_user_remove_invalid_token(setup_user_data):
         'u_id': users['user2']['auth_user_id'],
     }).status_code == 403
 
+
 # Checks invalid auth_user_id
 def test_admin_user_remove_invalid_uid(setup_user_data):
     users = setup_user_data
@@ -41,6 +52,7 @@ def test_admin_user_remove_invalid_uid(setup_user_data):
         'token': users['user1']['token'],
         'u_id': 1234,
     }).status_code == 400
+
 
 # Checks invalid owner access
 def test_admin_user_remove_invalid_owner(setup_user_data):
@@ -52,6 +64,7 @@ def test_admin_user_remove_invalid_owner(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
     }).status_code == 403
 
+
 # Checks invalid removal as user is the only owner
 def test_admin_user_remove_only_owner(setup_user_data):
     users = setup_user_data
@@ -61,6 +74,7 @@ def test_admin_user_remove_only_owner(setup_user_data):
         'token': users['user1']['token'],
         'u_id': users['user1']['auth_user_id'],
     }).status_code == 400
+
 
 # Asserts that channel_messages 'Removed user'
 def test_admin_user_remove_channel_messages(setup_user_data):
@@ -132,6 +146,7 @@ def test_admin_user_remove_channel_messages(setup_user_data):
     }).json()
 
     assert messages_channel_id1a['messages'][0]['message'] == "Removed user"
+
 
 # Asserts that user_profile, channel_messages, dm_messages are changed to 'Removed user'
 def test_admin_user_remove(setup_user_data):

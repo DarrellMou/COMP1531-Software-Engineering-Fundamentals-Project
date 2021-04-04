@@ -1,6 +1,8 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 
-from src.auth import auth_register_v1
 from src.channel import channel_join_v2, channel_messages_v2, channel_addowner_v1, channel_details_v2, channel_invite_v2
 from src.channels import channels_create_v2
 from src.error import InputError, AccessError
@@ -9,12 +11,20 @@ from src.message import message_send_v2, message_senddm_v1
 from src.other import admin_user_remove_v1, admin_userpermission_change_v1
 from src.user import user_profile_v2
 
+######################### Tests admin_user_remove ########################
+                                                         
+#   * uses pytest fixtures from src.conftest                                    
+                                                                                                                                                
+##########################################################################
+
+
 # Checks invalid token
 def test_admin_user_remove_invalid_token(setup_user):
     users = setup_user
 
     with pytest.raises(AccessError):
         admin_user_remove_v1("Invalid owner", users['user1']['auth_user_id'])
+
 
 # Checks invalid auth_user_id
 def test_admin_user_remove_invalid_uid(setup_user):
@@ -23,6 +33,7 @@ def test_admin_user_remove_invalid_uid(setup_user):
     with pytest.raises(InputError):
         admin_user_remove_v1(users['user1']['token'], "Invalid user")
 
+
 # Checks invalid owner access
 def test_admin_user_remove_invalid_owner(setup_user):
     users = setup_user
@@ -30,12 +41,14 @@ def test_admin_user_remove_invalid_owner(setup_user):
     with pytest.raises(AccessError):
         admin_user_remove_v1(users['user2']['token'], users['user1']['auth_user_id'])
 
+
 # Checks invalid removal as user is the only owner
 def test_admin_user_remove_only_owner(setup_user):
     users = setup_user
 
     with pytest.raises(InputError):
         admin_user_remove_v1(users['user1']['token'], users['user1']['auth_user_id'])
+
 
 # Asserts that user_profile, channel_messages, dm_messages are changed to 'Removed user'
 def test_admin_user_remove_only_channel_owner(setup_user):
@@ -82,9 +95,6 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     admin_user_remove_v1(users['user2']['token'], users['user1']['auth_user_id'])
     user_profile_id1a = user_profile_v2(users['user2']['token'],users['user1']['auth_user_id'])
     
-    #print(channel_details_v2(users['user3']['token'],channel_id1['channel_id']))
-    #print(dm_details_v1(users['user2']['token'],dm_id1['dm_id']))
-    
     # Ensure the correct output after calling admin_user_remove
     assert user_profile_id1a['user']['name_first'] == "Removed"
     assert messages_channel_id1['messages'][0]['message'] == "Removed user"
@@ -93,6 +103,7 @@ def test_admin_user_remove_only_channel_owner(setup_user):
 
     admin_user_remove_v1(users['user3']['token'], users['user2']['auth_user_id'])
     admin_user_remove_v1(users['user3']['token'], users['user4']['auth_user_id'])
+
 
 def test_admin_user_remove_testing_functions_errors(setup_user):
     users = setup_user
@@ -115,6 +126,7 @@ def test_admin_user_remove_testing_functions_errors(setup_user):
     with pytest.raises(InputError):
         channel_invite_v2(users['user3']['token'], channel_id1['channel_id'], users['user1']['auth_user_id'])
 
+
 def test_admin_user_remove_testing_dm_input_error(setup_user):
     users = setup_user 
 
@@ -128,6 +140,7 @@ def test_admin_user_remove_testing_dm_input_error(setup_user):
 
     with pytest.raises(InputError):
         dm_invite_v1(users['user1']['token'], dm_id1['dm_id'], users['user2']['auth_user_id'])
+
 
 def test_admin_user_remove_testing_admin_input_error(setup_user):
     users = setup_user 

@@ -22,7 +22,7 @@ def dm_create_v1(token, u_ids):
 
     # Checks if users in u_ids exists
     for u_id in u_ids:
-        if u_id not in data['users']: raise InputError
+        if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
 
     # Create temporary list for dm members
     users_list = []
@@ -145,7 +145,7 @@ def dm_invite_v1(token, dm_id, u_id):
     if dm_id not in data['dms']: raise InputError
 
     # Checks if user exists
-    if u_id not in data['users']: raise InputError
+    if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
 
     # Checks if user belongs in dm
     if auth_user_id not in data['dms'][dm_id]['members']: raise AccessError

@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from http_tests import * # import fixtures for pytest
 
 import json
@@ -5,7 +8,13 @@ import requests
 import pytest
 from src import config
 
-###      HELPER FUNCTIONS      ###
+######################### Tests search route    ##########################
+                                                         
+#   * uses pytest fixtures from http_tests.__init__.py                                   
+                                                                                                                                                
+##########################################################################
+
+###                         HELPER FUNCTIONS                           ###
 
 def dm_create_body(user, u_ids): 
     u_ids_list = [u_id['auth_user_id'] for u_id in u_ids]
@@ -14,7 +23,8 @@ def dm_create_body(user, u_ids):
         'u_ids': u_ids_list
     }
 
-###     END HELPER FUNCTIONS   ###
+###                       END HELPER FUNCTIONS                         ###
+
 
 # Testing for query when a user is not in the channel
 def test_search_no_channel(setup_user_data):
@@ -40,6 +50,7 @@ def test_search_no_channel(setup_user_data):
     }).json()
 
     assert len(search_none) == 0
+
 
 # Testing the standard case in returning queries for a user in both a channel and a dm
 def test_search_standard(setup_user_data):
@@ -90,6 +101,7 @@ def test_search_standard(setup_user_data):
 
     assert len(search_message) == 3
 
+
 # Assumption: search_v2 is case sensitive
 # Testing the function returns nothing evne when its the same letters
 def test_search_case_sensitive(setup_user_data):
@@ -130,6 +142,7 @@ def test_search_case_sensitive(setup_user_data):
 
     assert len(search_message) == 0
 
+
 # Testing a query of more than 1000 characters
 def test_search_too_long(setup_user_data):
     users = setup_user_data
@@ -168,6 +181,7 @@ def test_search_too_long(setup_user_data):
                     21T1), who will build the backend python server and possibly assist in the \
                     GUI later in the project"
     }).status_code == 400
+
 
 # Testing that search_v2 no longer returns the query in the channel the user left
 def test_search_leave_channel(setup_user_data):
@@ -243,6 +257,7 @@ def test_search_leave_channel(setup_user_data):
     }).json()
 
     assert len(search_again) == 1
+
 
 # Testing that search_v2 no longer returns the query in the dm the user left
 def test_search_leave_dm(setup_user_data):

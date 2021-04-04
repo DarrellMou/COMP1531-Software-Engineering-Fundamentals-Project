@@ -1,9 +1,19 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from http_tests import * # import fixtures for pytest
 
 import json
 import requests
 import pytest
 from src import config
+
+###################### Tests channels_listall route ######################
+                                                         
+#   * uses pytest fixtures from http_tests.__init__.py                                   
+                                                                                                                                                
+##########################################################################
+
 
 # error when listing channels with an invalid token
 def test_channels_listall_access_error(setup_user_data):
@@ -20,6 +30,7 @@ def test_channels_listall_access_error(setup_user_data):
         'token': invalid_token,
     }).status_code == 403
 
+
 # listing channels with none created
 def test_channels_listall_empty(setup_user_data):
     users = setup_user_data
@@ -27,6 +38,7 @@ def test_channels_listall_empty(setup_user_data):
     assert requests.get(config.url + 'channels/listall/v2', params={
         'token': users['user1']['token'],
     }).json() == {'channels': []}
+
 
 # listing a single channel
 def test_channels_listall_single(setup_user_data):
@@ -46,6 +58,7 @@ def test_channels_listall_single(setup_user_data):
 
     assert channel_list['channels'][0]['channel_id'] == channel_id['channel_id']
     assert channel_list['channels'][0]['name'] == 'Basic Stuff'
+
 
 # listing multiple channels
 def test_channels_listall_multiple(setup_user_data):

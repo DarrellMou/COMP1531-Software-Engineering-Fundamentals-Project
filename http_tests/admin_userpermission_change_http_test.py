@@ -1,9 +1,18 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from http_tests import * # import fixtures for pytest
 
 import json
 import requests
 import pytest
 from src import config
+
+################ Tests admin_userpermission_change route #################
+                                                        
+#   * uses pytest fixtures from http_tests.__init__.py                                   
+                                                                                                                                                
+##########################################################################
 
 # Checks invalid token
 def test_admin_userpermission_change_invalid_token(setup_user_data):
@@ -22,6 +31,7 @@ def test_admin_userpermission_change_invalid_token(setup_user_data):
         'permission_id': 2,
     }).status_code == 403
 
+
 # Checks invalid u_id
 def test_admin_userpermission_change_invalid_uid(setup_user_data):
     users = setup_user_data
@@ -32,6 +42,7 @@ def test_admin_userpermission_change_invalid_uid(setup_user_data):
         'u_id': "Invalid u_id",
         'permission_id': 2,
     }).status_code == 400
+
 
 # Checks invalid owner access
 def test_admin_userpermission_change_invalid_owner(setup_user_data):
@@ -44,6 +55,7 @@ def test_admin_userpermission_change_invalid_owner(setup_user_data):
         'permission_id': 2,
     }).status_code == 403
 
+
 # Checks invalid removal as user is the only owner
 def test_admin_userpermission_change_only_owner(setup_user_data):
     users = setup_user_data
@@ -54,6 +66,7 @@ def test_admin_userpermission_change_only_owner(setup_user_data):
         'u_id': users['user1']['auth_user_id'],
         'permission_id': 2,
     }).status_code == 400
+
 
 # Checks basic test of changing a member into owner
 def test_admin_userpermission_change_basic(setup_user_data):
@@ -86,6 +99,7 @@ def test_admin_userpermission_change_basic(setup_user_data):
         'token': users['user2']['token'],
         'channel_id': channel_id2['channel_id'],
     }).json()
+
 
 # Asserts that member turned owner can join private channels and add other owners
 def test_admin_userpermission_change_join_private_channels(setup_user_data):
@@ -130,6 +144,7 @@ def test_admin_userpermission_change_join_private_channels(setup_user_data):
         'channel_id': channel_id1['channel_id'],
         'u_id': users['user3']['auth_user_id']
     }).json()
+
 
 # Asserts that member turned owner can change the user permission of the original global owner
 def test_admin_userpermission_change_ogowner(setup_user_data):

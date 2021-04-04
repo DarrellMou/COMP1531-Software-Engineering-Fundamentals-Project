@@ -1,9 +1,18 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 from http_tests import * # import fixtures for pytest
 
 import json
 import requests
 import pytest
 from src import config
+
+###################### Tests channels_create route #######################
+                                                         
+#   * uses pytest fixtures from http_tests.__init__.py                                   
+                                                                                                                                                
+##########################################################################
 
 
 def test_channels_create_access_error(setup_user_data):
@@ -22,6 +31,7 @@ def test_channels_create_access_error(setup_user_data):
         'name': 'Name',
         'is_public': True,
     }).status_code == 403
+ 
 
 # error when creating a channel name longer than 20 characters
 def test_channels_create_input_error(setup_user_data):
@@ -46,6 +56,7 @@ def test_channels_create_input_error(setup_user_data):
         'name': 'wayyyytoolongggggoffffffaaaaaanameeeeeeee',
         'is_public': False,
     }).status_code == 400
+
 
 # create channels of the same name
 def test_channels_create_same_name(setup_user_data):
@@ -74,6 +85,7 @@ def test_channels_create_same_name(setup_user_data):
 
     assert channel_list['channels'][1]['channel_id'] == channel_id2['channel_id']
     assert channel_list['channels'][1]['name'] == 'Public Channel'
+
 
 # create channel with valid data
 def test_channels_create_valid_basic(setup_user_data):
