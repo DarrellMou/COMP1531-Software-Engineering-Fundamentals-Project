@@ -110,7 +110,7 @@ def test_channel_messages_v2_AccessError():
 
     # user2 is not part of channel_1 - should raise an access error
     # Ensure AccessError
-    assert requests.get(url + 'channel/messages/v2', json={
+    assert requests.get(url + 'channel/messages/v2', params={
         "token": user2["token"],
         "channel_id": channel1,
         "start": 0,
@@ -126,7 +126,7 @@ def test_channel_messages_v2_InputError_invalid_channel():
     add_1_message(user1, channel1)
 
     # 2 is an invalid channel_id in this case
-    assert requests.get(url + 'channel/messages/v2', json={
+    assert requests.get(url + 'channel/messages/v2', params={
         "token": user2["token"],
         "channel_id": 2,
         "start": 0,
@@ -140,7 +140,7 @@ def test_channel_messages_v2_InputError_invalid_start():
     # Add 1 message to channel1
     add_1_message(user1, channel1) # Only has 1 message
 
-    assert requests.get(url + 'channel/messages/v2', json={
+    assert requests.get(url + 'channel/messages/v2', params={
         "token": user2["token"],
         "channel_id": channel1,
         "start": 2,
@@ -159,7 +159,7 @@ def test_channel_messages_v2_no_messages():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -175,7 +175,7 @@ def test_channel_messages_v2_1_message():
 
     add_1_message(user1, channel1)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -201,7 +201,7 @@ def test_channel_messages_v2_50_messages():
     # Add 50 messages
     add_x_messages(user1, user2, channel1, 50)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -228,7 +228,7 @@ def test_channel_messages_v2_100_messages_start_50():
     # Add 100 messages
     add_x_messages(user1, user2, channel1, 100)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 50
@@ -258,7 +258,7 @@ def test_channel_messages_start_is_last_message():
     # Add 10 messages
     add_x_messages(user1, user2, channel1, 10)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 9
@@ -285,7 +285,7 @@ def test_start_equals_num_messages():
     # Add 10 messages
     add_x_messages(user1, user2, channel1, 10)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 10
@@ -310,7 +310,7 @@ def test_channel_messages_v2_48_messages():
     # Add members 1 and 2 into channel 1 and add 48 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 48)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -336,7 +336,7 @@ def test_channel_messages_v2_51_messages_start_0():
 
     add_x_messages(user1, user2, channel1, 51)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -361,7 +361,7 @@ def test_channel_messages_v2_51_messages_start_50():
 
     add_x_messages(user1, user2, channel1, 51)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 50
@@ -386,7 +386,7 @@ def test_channel_messages_v2_111_messages_start_0():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 0
@@ -419,7 +419,7 @@ def test_channel_messages_v2_111_messages_start_50():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 50
@@ -451,7 +451,7 @@ def test_channel_messages_v2_111_messages_start_100():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params= {
         "token": user1["token"],
         "channel_id": channel1,
         "start": 100
@@ -483,7 +483,7 @@ def test_channel_messages_v2_start_21():
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
     add_x_messages(user1, user2, channel1, 111)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 21
@@ -513,7 +513,7 @@ def test_channel_messages_v2_start_21_end_neg1():
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id 
     add_x_messages(user1, user2, channel1, 50)
 
-    messages_list = requests.get(url + 'channel/messages/v2', json={
+    messages_list = requests.get(url + 'channel/messages/v2', params={
         "token": user1["token"],
         "channel_id": channel1,
         "start": 21
