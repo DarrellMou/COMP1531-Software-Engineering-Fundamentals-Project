@@ -4,8 +4,9 @@ from src.error import InputError, AccessError
 from src.channel import channel_messages_v2, channel_invite_v2
 from src.auth import auth_register_v1
 from src.channels import channels_create_v2
-from src.message import message_send_v2, message_remove_v2, message_edit_v2
+from src.message import message_send_v2, message_remove_v2, message_edit_v2, message_senddm_v1
 from src.other import clear_v1
+from src.dm import dm_create_v1, dm_messages_v1
 
 
 ###############################################################################
@@ -30,11 +31,13 @@ def set_up_data():
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
     channel_invite_v2(user1['token'], channel1['channel_id'], user2['auth_user_id'])
+    dm1 = dm_create_v1(user1["token"], [user2["auth_user_id"]])
 
     setup = {
         'user1': user1,
         'user2': user2,
-        'channel1': channel1['channel_id']
+        'channel1': channel1['channel_id'],
+        "dm1": dm1["dm_id"]
     }
 
     return setup
@@ -414,3 +417,48 @@ def test_message_edit_v2_edit_removes_multiple_msg():
     }
 
     assert channel_messages_v2(user2["token"], channel1, 0) == answer
+
+
+# Edit messages within a dm
+def test_message_edit_v2_edit_msg_in_dm():
+    setup = set_up_data()
+    user1, dm1 = setup['user1'], setup['dm1']
+
+    message_count = 0
+    while message_count < 5:
+        message_num = message_count + 1
+        message_senddm_v1(user1["token"], dm1, str(message_num))
+        message_count += 1
+
+    dm_msgs = dm_messages_v1(user1["token"], dm1, 0)
+
+    msg0 = dm_msgs['messages'][4]
+    msg2 = dm_msgs['messages'][2]
+    msg3 = dm_msgs['messages'][1]
+    message_edit_v2(user1["token"], msg0['message_id'], "Hey")
+    message_edit_v2(user1["token"], msg2['message_id'], "")
+    message_edit_v2(user1["token"], msg3['message_id'], "Hello")
+
+    m_dict1 = dm_msgs['messages'][3]
+    m_dict4 = dm_msgs['messages'][0]
+
+    m_dict0 = {
+        'message_id': msg0['message_id'],
+        'u_id': msg0['u_id'],
+        'message': 'Hey',
+        'time_created': msg0['time_created'],
+    }
+    m_dict3 = {
+        'message_id': msg3['message_id'],
+        'u_id': msg3['u_id'],
+        'message': 'Hello',
+        'time_created': msg3['time_created'],
+    }
+
+    answer = {
+        'messages': [m_dict4, m_dict3, m_dict1, m_dict0],
+        'start': 0,
+        'end': -1
+    }
+
+    assert dm_messages_v1(user1["token"], dm1, 0) == answer
