@@ -1,7 +1,6 @@
 import json
 import requests
 import pytest
-from src.data import retrieve_data
 from src.config import url
 
 
