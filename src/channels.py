@@ -7,6 +7,7 @@ from src.auth import auth_token_ok, auth_decode_token
 
 from flask import jsonify, request, Blueprint, make_response
 from json import dumps
+import json
 # bp stands for blueprint, they are components of the DREAMS communication tool
 bp = Blueprint('channels', __name__, url_prefix='/')
 
