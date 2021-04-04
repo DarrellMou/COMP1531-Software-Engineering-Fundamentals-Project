@@ -6,17 +6,6 @@ from uuid import uuid4
 from datetime import datetime
 import json
 
-'''
-from data import data, retrieve_data, reset_data
-from error import AccessError, InputError
-from auth import auth_token_ok, auth_decode_token, auth_register_v1
-from uuid import uuid4
-from datetime import datetime
-
-from channel import channel_invite_v1
-from channels import channels_create_v1
-'''
-
 
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
@@ -29,6 +18,15 @@ def get_channel_id(message_id):
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             return msg['channel_id']
+
+# Given a message_id return the channel in which it was sent
+def get_dm_id(message_id):
+    data = retrieve_data()
+    
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            return msg['dm_id']
+
 
 # Given a message_id return the message within that message_id
 def get_message(message_id):
@@ -137,23 +135,29 @@ def message_remove_v2(token, message_id):
     
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dreams_owner, is_owner = True, False, False, False
+    did_user_send, is_ch_owner, is_dm_member, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
                 did_user_send = False
     # Now, check to see if the user is an owner of the channel
     ch_id = get_channel_id(message_id)
-    for member in data['channels'][ch_id]['owner_members']:
-        if given_id == member:
-            is_ch_owner = True
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        for member in data['dms'][dm_id]['members']:
+            if given_id == member:
+                is_dm_member = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner:
+    if is_ch_owner or is_dreams_owner or is_dm_member:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
-    #return AccessErrorConditions
+
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -187,23 +191,29 @@ def message_edit_v2(token, message_id, message):
 
     # Check to see if the user trying to remove the message sent the message
     given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dreams_owner, is_owner = True, False, False, False
+    did_user_send, is_ch_owner, is_dm_member, is_dreams_owner, is_owner = True, False, False, False, False
     for msg_dict in data['messages']:
         if msg_dict['message_id'] == message_id:
             if msg_dict['u_id'] != given_id:
                 did_user_send = False
     # Now, check to see if the user is an owner of the channel
     ch_id = get_channel_id(message_id)
-    for member in data['channels'][ch_id]['owner_members']:
-        if given_id == member:
-            is_ch_owner = True
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        for member in data['dms'][dm_id]['members']:
+            if given_id == member:
+                is_dm_member = True
     # Now, check to see if the user is an owner of dreams server
     if data['users'][given_id]['permission_id'] == 1:
         is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner:
+    if is_ch_owner or is_dreams_owner or is_dm_member:
         is_owner = True
     AccessErrorConditions = [is_owner, did_user_send]
-    #return AccessErrorConditions
+
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -318,28 +328,3 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
-
-
-'''
-data = reset_data()
-
-user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-channel1 = channels_create_v1(user1['auth_user_id'], 'Channel1', True)
-channel_invite_v1(user1['auth_user_id'], channel1['channel_id'], user2['auth_user_id'])
-
-m_id = message_send_v2(user1['token'], channel1['channel_id'], "Hey")['message_id']
-
-
-print(data)
-
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-print("\n")
-
-blah = message_remove_v2(user2['token'], m_id)
-print(blah)
-'''
