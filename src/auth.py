@@ -15,7 +15,13 @@ import re
 import itertools
 import uuid
 
-blacklist = set()
+sessionID = 0
+
+# generates a unique session ID for every login
+def getNewSessionID():
+    global sessionID 
+    sessionID += 1
+    return sessionID
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -38,9 +44,10 @@ def auth_login_v1(email, password):
         data_password = data['users'][key_it]['password']
         # Checks for matching email and password
         if email == data_email and auth_password_hash(password) == data_password:
-            if key_it in blacklist:
-                blacklist.remove(key_it)
-            return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it)}        
+            new_sessionID = getNewSessionID()
+
+            data['users'][key_it]['sessions'].append(new_sessionID)
+            return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it, new_sessionID)}        
     raise InputError
 
 
@@ -79,6 +86,8 @@ def auth_register_v1(email, password, name_first, name_last):
     else:
         permission_id = 2
 
+    new_sessionID = getNewSessionID()
+
     data['users'][new_auth_user_id] = {
         'name_first' : name_first, 
         'name_last' : name_last, 
@@ -86,6 +95,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'password' : auth_password_hash(password),
         'handle_str' : '',
         'permission_id': permission_id,
+        'sessions' : [new_sessionID],
         'is_removed': False,
         'dms': [],
     }
@@ -96,20 +106,22 @@ def auth_register_v1(email, password, name_first, name_last):
         for epilogue in itertools.count(0, 1):
             if(not any((new_handle + str(epilogue)) == data['users'][user]['handle_str'] for user in data['users'])):
                 data['users'][new_auth_user_id]['handle_str'] = new_handle + str(epilogue)
-                return {'auth_user_id' : new_auth_user_id}
+                return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id, new_sessionID)}
     else:   # unique handle, add straght away 
         data['users'][new_auth_user_id]['handle_str'] = new_handle
-        return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id)}
+        return {'auth_user_id' : new_auth_user_id, 'token' : auth_encode_token(new_auth_user_id, new_sessionID)}
 
 """
 Generate and return an expirable token based on auth_user_id
+This function does not work on itself, it is used only in auth_register_v1 and auth_login_v1
 """
-def auth_encode_token(auth_user_id):
+def auth_encode_token(auth_user_id, sessionID):
     # try:
     payload = {
         'exp' : (datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=TOKEN_DURATION)),
         'iat' : datetime.datetime.utcnow(),
-        'sub' : auth_user_id
+        'auth_user_id' : auth_user_id,
+        'sessionID' : sessionID
     }
 
     return jwt.encode(
@@ -124,13 +136,19 @@ def auth_encode_token(auth_user_id):
 returns auth_user_id for others to use 
 """
 def auth_decode_token(token):
+
+    data = retrieve_data()
+
     try:
         payload = jwt.decode(token, SECRET, algorithms=['HS256'])
-        auth_user_id = payload['sub']
-        if auth_user_id in blacklist:
-            return 'User has logged out'
+        auth_user_id = payload['auth_user_id']
+        sessionID = payload['sessionID'] 
 
-        return payload['sub']
+        if sessionID not in data['users'][auth_user_id]['sessions']:
+            return 'This session is over'
+
+        return auth_user_id
+
     except jwt.ExpiredSignatureError:
         return 'Session expired, log in again'
     except jwt.InvalidTokenError:
@@ -144,19 +162,30 @@ def auth_token_ok(token):
     else:
         return True
 
+
+# retrieves the sessionID embedded in the token, only used in auth_logout_v1, other modules don't need to use this
+def auth_get_token_session(token):
+    if auth_token_ok(token):
+        return jwt.decode(token, SECRET, algorithms=['HS256'])['sessionID']
+    else:
+        return False
+
 # wrapper
 def auth_password_hash(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
+# logs out the user session that owns the token
 def auth_logout_v1(token):
+    data = retrieve_data()
+
     if auth_token_ok(token) == True:
         auth_user_id = auth_decode_token(token)
-        blacklist.add(auth_user_id)
+        sessionID = auth_get_token_session(token)
+        data['users'][auth_user_id]['sessions'].remove(sessionID)
 
         responseObj = {'is_success':True}
         return responseObj
     else:
         responseObj = {'is_success':False}
         return responseObj
-

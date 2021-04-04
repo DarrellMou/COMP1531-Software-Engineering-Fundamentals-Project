@@ -15,19 +15,8 @@ def user_profile_v2(token, u_id):
     if not auth_token_ok(token):
         raise AccessError('invalid token')
 
-    #if not auth_user_id in data['users']:
-    #    raise InputError 
-    # print(data['users'])
-    # print(type(u_id))
-    # print(data['users'].keys())
-
-    try:
-        u_id = int(u_id)
-    except ValueError:
-        print ("Not convertable to integer")
-
     if not any(x == u_id for x in data['users'].keys()):
-        raise InputError('User doesn\'t exist')
+        raise InputError('User does not exist')
 
     userDict = data['users'][u_id]
 
