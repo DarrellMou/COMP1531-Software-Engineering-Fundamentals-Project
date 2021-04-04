@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Darrell Mounarath
+
 import json
 import requests
 import urllib
