@@ -53,9 +53,9 @@ def add_x_messages(user1, user2, channel1, num_messages):
     while message_count < num_messages:
         message_num = message_count + 1
         if message_num % 2 == 1:
-            message = message_send_v2(user1["token"], channel1, str(message_num))
+            message_send_v2(user1["token"], channel1, str(message_num))
         else:
-            message = message_send_v2(user2["token"], channel1, str(message_num))
+            message_send_v2(user2["token"], channel1, str(message_num))
         message_count += 1
 
     return {}
