@@ -63,7 +63,7 @@ def set_up_data():
 # actually in that channel/dm
 def test_message_share_v1_AccessError():
     setup = set_up_data()
-    user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
     channel3 = channels_create_v2(user1["token"], "ch3", True)['channel_id']
@@ -122,7 +122,7 @@ def test_message_share_v1_share_one_multiple_times():
 # Sharing to the same channel
 def test_message_share_v1_share_one_multiple_times_same_channel():
     setup = set_up_data()
-    user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
     shared_m_id1 = message_share_v1(user2["token"], m_id, "Shared Message 1", channel1, -1)['shared_message_id']

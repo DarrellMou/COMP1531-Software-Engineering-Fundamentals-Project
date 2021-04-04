@@ -70,7 +70,7 @@ def send_x_messages_two_channels(user, channel1, channel2, num_messages):
 # Testing for when the user is not part of the channel (testing Access Error)
 def test_message_send_v2_AccessError():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
     
     # user2 who is not a part of channel_1 tries to send message 
     # - should raise an access error
@@ -81,7 +81,7 @@ def test_message_send_v2_AccessError():
 # Testing to see if message is of valid length
 def test_message_send_v2_InputError():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     
     # Create a message that is 1001 characters long (which exceeds character limit)
     long_message = ""
@@ -101,7 +101,7 @@ def test_message_send_v2_InputError():
 # Testing for 1 message being sent by user1
 def test_message_send_v2_send_one():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
 
     message_send_ans = message_send_v2(user1["token"], channel1, "Hello")
 
@@ -114,7 +114,7 @@ def test_message_send_v2_send_one():
 # Testing for 2 identical messages being sent by user1
 def test_message_send_v2_user_sends_identical_messages():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
 
 
     first_message_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']

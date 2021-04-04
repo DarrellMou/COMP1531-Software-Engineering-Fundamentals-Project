@@ -88,7 +88,7 @@ def set_up_data():
 # actually in that channel/dm
 def test_http_message_share_v1_AccessError():
     setup = set_up_data()
-    user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     msg = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
@@ -226,7 +226,7 @@ def test_http_message_share_v1_share_one_multiple_times():
 # Sharing to the same channel
 def test_http_message_share_v1_share_one_multiple_times_same_channel():
     setup = set_up_data()
-    user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     msg = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
         "channel_id": channel1,
@@ -260,18 +260,6 @@ def test_http_message_share_v1_share_one_multiple_times_same_channel():
         "dm_id": -1
     }).json()
     shared_m_id3 = shared_msg3["shared_message_id"]
-
-    channel1_messages = requests.get(f"{url}channel/messages/v2", params= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "start": 0
-    }).json()
-
-    channel2_messages = requests.get(f"{url}channel/messages/v2", params= {
-        "token": user1["token"],
-        "channel_id": channel2,
-        "start": 0
-    }).json()
     
     channel_messages = requests.get(f"{url}channel/messages/v2", params= {
         "token": user1["token"],
@@ -461,7 +449,7 @@ def test_http_message_share_v1_share_dm_multiple_times():
 # sent from dm
 def test_http_message_share_v1_share_dm_with_no_added_msg():
     setup = set_up_data()
-    user1, user2, dm1, dm2 = setup['user1'], setup['user2'], setup['dm1'], setup['dm2']
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
     msg = requests.post(f"{url}message/senddm/v1", json= {
         "token": user1["token"],
         "dm_id": dm1,

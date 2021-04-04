@@ -110,19 +110,9 @@ def test_http_message_remove_v2_AccessError():
 # Input error when the message_id has already been removed
 def test_http_message_remove_v2_InputError():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     
-    msg = requests.post(f"{url}message/send/v2", json= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "message": "Hello"
-    }).json()
     msg1 = requests.post(f"{url}message/send/v2", json= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "message": "Hello"
-    }).json()
-    msg2 = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
         "channel_id": channel1,
         "message": "Hello"
@@ -130,12 +120,12 @@ def test_http_message_remove_v2_InputError():
 
     requests.delete(f"{url}message/remove/v1", json={
         "token": user1["token"],
-        "message_id": msg2["message_id"],
+        "message_id": msg1["message_id"],
     }).json()
 
     assert requests.delete(f"{url}message/remove/v1", json={
         "token": user1["token"],
-        "message_id": msg2["message_id"],
+        "message_id": msg1["message_id"],
     }).status_code == 400
 
 ############################ END EXCEPTION TESTING ############################
@@ -146,7 +136,7 @@ def test_http_message_remove_v2_InputError():
 # Testing the removal of 1 message by user2
 def test_http_message_remove_v2_remove_one():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 3 messages and remove the very first message sent
     send_x_messages(user2, channel1, 3)
@@ -196,7 +186,7 @@ def test_http_message_remove_v2_remove_one():
 # Testing the removal of multiple messages
 def test_http_message_remove_v2_remove_multiple():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and remove messages with index 0, 2, 3 (in the channel
     # messages list, not the list created by channel_messages function)
@@ -248,7 +238,7 @@ def test_http_message_remove_v2_remove_multiple():
 # Testing the removal of all messages in the channel
 def test_http_message_remove_v2_remove_all():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     send_x_messages(user2, channel1, 25)
 
@@ -302,7 +292,7 @@ def test_http_message_remove_v2_owner_removes_message():
         "name_last": "Tankengine"
     }).json()
 
-    # User2 makes channel1 and invites user3
+    # User2 makes channel1 and invites user3 and user 1
     channel1 = requests.post(f"{url}channels/create/v2", json = {
         "token": user2["token"],
         "name": "Channel1",
@@ -313,6 +303,12 @@ def test_http_message_remove_v2_owner_removes_message():
         "token": user2["token"],
         "channel_id": channel1["channel_id"],
         "u_id": user3["auth_user_id"]
+    }).json()
+
+    requests.post(f"{url}channel/invite/v2", json = {
+        "token": user2["token"],
+        "channel_id": channel1["channel_id"],
+        "u_id": user1["auth_user_id"]
     }).json()
 
     # user3 sends 3 messages and user2 removes the very first message sent
@@ -509,7 +505,7 @@ def test_http_message_remove_v2_dream_owner_removes_message_in_channel():
 # message_ids though)
 def test_http_message_remove_v2_remove_same_msg_diff_channels():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     channel2 = requests.post(f"{url}channels/create/v2", json = {
         "token": user2["token"],

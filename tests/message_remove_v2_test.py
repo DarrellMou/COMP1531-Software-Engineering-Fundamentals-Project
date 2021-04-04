@@ -89,10 +89,8 @@ def test_message_remove_v2_AccessError():
 # Input error when the message_id has already been removed
 def test_message_remove_v2_InputError():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     
-    m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
-    m_id1 = message_send_v2(user1["token"], channel1, "Hello")['message_id']
     m_id2 = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
     message_remove_v2(user1["token"], m_id2)
@@ -165,7 +163,7 @@ def test_message_remove_v2_remove_all():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
-    msgs_list = send_x_messages(user2, channel1, 25)
+    send_x_messages(user2, channel1, 25)
     channel_msgs = channel_messages_v2(user1["token"], channel1, 0)
     reversed_channel_msgs = channel_msgs["messages"][::-1]
     m_ids = [reversed_channel_msgs[i]["message_id"] for i in range(25)]
@@ -190,9 +188,10 @@ def test_message_remove_v2_owner_removes_message():
     user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
     channel1 = channels_create_v2(user2['token'], 'Channel1', True)['channel_id']
     channel_invite_v2(user2['token'], channel1, user3['auth_user_id'])
+    channel_invite_v2(user2['token'], channel1, user1['auth_user_id'])
 
     # user3 sends 3 messages and user2 removes the very first message sent
-    msgs_list = send_x_messages(user3, channel1, 3)
+    send_x_messages(user3, channel1, 3)
     channel_msgs = channel_messages_v2(user2["token"], channel1, 0)    
 
     m_id = channel_msgs["messages"][1]["message_id"]
@@ -274,7 +273,7 @@ def test_message_remove_v2_dream_owner_removes_message_in_channel():
 # message_ids though)
 def test_message_remove_v2_remove_same_msg_diff_channels():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user2, channel1 = setup['user2'], setup['channel1']
 
     channel2 = channels_create_v2(user2["token"], 'Channel2', True)['channel_id']
 
