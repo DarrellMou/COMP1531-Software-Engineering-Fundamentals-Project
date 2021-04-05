@@ -22,25 +22,25 @@ def is_message_removed(msg_id):
 
 ###############################################################################
 
-
-# Invites a user (with user id u_id) to join a channel with ID channel_id
-# Once invited the user is added to the channel immediately
-
-# Arguments:
-#   token (string) - 
-#   channel_id (int) - 
-#   u_id (int) - 
-
-# Exceptions:
-#   InputError - channel_id does not refer to a valid channel
-#   InputError - u_id does not refer to a valid user
-#   AccessError - the authorised user is not already a member of the channel
-#   AccessError - invalid token
-
-# Return Value:
-#   Returns {}
-
 def channel_invite_v2(token, channel_id, u_id):
+    '''
+    Invites a user to a channel, invited user immediately joins channel
+    
+    Arguments:
+        token (string)   - token belonging to inviter
+        channel_id (int) - id belonging to channel
+        u_id (int)       - the auth_user_id of the invitee
+    
+    Exceptions:
+        InputError  - channel_id does not refer to a valid channel
+        InputError  - u_id does not refer to a valid user
+        AccessError - the authorised user is not already a member of the channel
+        AccessError - invalid token
+    
+    Return value:
+        Returns nothing
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -79,9 +79,22 @@ def channel_invite_v2(token, channel_id, u_id):
 
     return {}
 
-# Given a Channel with ID channel_id that the authorised user is part of
-# Provides basic details about the channel
 def channel_details_v2(token, channel_id):
+    '''
+    Provides basic details about the given channel
+    
+    Arguments:
+        token (string)   - token belonging to caller
+        channel_id (int) - id belonging to channel
+    
+    Exceptions:
+        InputError  - channel_id does not refer to a valid channel
+        AccessError - Authorised user is not a member of channel with channel_id
+        AccessError - invalid token
+    
+    Return value:
+        Returns channel details 
+    '''
     data = retrieve_data()
     
     # Checks if given channel_id is valid
