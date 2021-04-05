@@ -34,13 +34,41 @@ def channels_list_v1(auth_user_id):
         'channels': channel_list
     }
 
-# 2nd version of channels list that requires authenticated token
+
 def channels_list_v2(token):
+    '''
+    BRIEF DESCRIPTION
+    2nd version of channels list that requires authenticated token
+    
+    Arguments:
+        token (int) - The login session of the person accessing their channel_list
+    
+    Exceptions:
+        InputError  - N/A
+        AccessError - N/A
+    
+    Return value:
+        channels (list of ints) - A list of channel ids belonging to channels the user is a part of
+    '''
+
     user_id = auth_decode_token(token)
     return channels_list_v1(user_id)
 
 # Provide a list of all channels (and their associated details)
 def channels_listall_v2(token):
+    '''
+    BRIEF DESCRIPTION
+    Provide a list of all channels (and their associated details)
+
+    Arguments:
+        token (string) - authenticated token to view channels
+
+    Exceptions:
+        AccessError - occurs when token is not a valid token
+
+    Returns:
+        Returns a list of all channels on the platform
+    '''
 
     data = retrieve_data()
     
@@ -63,6 +91,22 @@ def channels_listall_v2(token):
 
 # Creates a new channel with a name that is either a public or private channel
 def channels_create_v2(token, name, is_public):
+    '''
+    BRIEF DESCRIPTION
+    Creates a new channel with that name that is either a public or private channel
+
+    Arguments:
+        token (string)      - authenticated token to create channel
+        name (string)       - name of the channel
+        is_public (boolean) - the type of channel: public or private
+
+    Exceptions:
+        AccessError - occurs when token is not a valid token
+        InputError  - occurs when the channel name is more than 20 characters long
+
+    Returns:
+        Returns an id of the channel created
+    '''
 
     data = retrieve_data()
 

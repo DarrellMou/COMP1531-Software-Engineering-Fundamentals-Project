@@ -7,8 +7,22 @@ from src.auth import auth_token_ok, auth_decode_token
 
 import uuid
 
-# Creates dm given list of users
 def dm_create_v1(token, u_ids):
+    '''
+    Creates a DM with a name containing users handle strings
+
+    Arguments:
+        token (string) - token belonging to caller
+        u_ids (list)   - auth_user_ids belonging to users joining DM
+
+    Exceptions:
+        AccessError - u_id in u_ids does not refer to a valid user
+        AccessError - invalid token
+
+    Returns:
+        Returns dm_id and dm_name
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -59,6 +73,22 @@ def dm_create_v1(token, u_ids):
     
 # Returns details of given dm
 def dm_details_v1(token, dm_id):
+    '''
+    Provides basic details about the given DM
+    
+    Arguments:
+        token (string) - token belonging to caller
+        dm_id (int)    - id belonging to DM
+    
+    Exceptions:
+        InputError  - dm_id is not a valid DM
+        AccessError - Authorised user is not a member of this DM with dm_id
+        AccessError - invalid token
+    
+    Return value:
+        Returns DM details 
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -91,8 +121,20 @@ def dm_details_v1(token, dm_id):
 
     return details_dict
 
-# Returns list of dms that user is a member of
 def dm_list_v1(token):
+    '''
+    Returns the list of DMs that the user is a member of
+    
+    Arguments:
+        token (string) - token belonging to caller
+    
+    Exceptions:
+        AccessError - invalid token
+    
+    Return value:
+        Returns list of DMs
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -113,8 +155,20 @@ def dm_list_v1(token):
 
     return {'dms': dm_list}
 
-# Returns nothing, removes dm from data
 def dm_remove_v1(token, dm_id):
+    '''
+    Removes given DM from data
+    
+    Arguments:
+        token (string) - token belonging to caller
+    
+    Exceptions:
+        AccessError - invalid token
+    
+    Return value:
+        Returns nothing
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -132,8 +186,25 @@ def dm_remove_v1(token, dm_id):
 
     return {}
 
-# Inviting a user to an existing dm
 def dm_invite_v1(token, dm_id, u_id):
+    '''
+    Invites a user to a DM, invited user immediately joins DM
+    
+    Arguments:
+        token (string) - token belonging to inviter
+        dm_id (int)    - id belonging to DM
+        u_id (int)     - the auth_user_id of the invitee
+    
+    Exceptions:
+        InputError  - dm_id does not refer to an existing DM
+        InputError  - u_id does not refer to a valid user
+        AccessError - the authorised user is not already a member of the DM
+        AccessError - invalid token
+    
+    Return value:
+        Returns nothing
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -165,8 +236,23 @@ def dm_invite_v1(token, dm_id, u_id):
 
     return {}
 
-# Given a DM ID, the user is removed as a member of this DM
 def dm_leave_v1(token, dm_id):
+    '''
+    Given a dm_id, the user is removed as a member of this DM
+    
+    Arguments:
+        token (string) - token belonging to caller
+        dm_id (int)    - id belonging to DM
+    
+    Exceptions:
+        InputError  - dm_id is not a valid DM
+        AccessError - Authorised user is not a member of DM with dm_id
+        AccessError - invalid token
+    
+    Return value:
+        Returns nothing
+    '''
+
     data = retrieve_data()
 
     # Checks if token exists
@@ -185,6 +271,31 @@ def dm_leave_v1(token, dm_id):
 
 
 def dm_messages_v1(token, dm_id, start):
+    '''
+    BRIEF DESCRIPTION
+    Given a DM with ID dm_id that the authorised user is part of, return up to 
+    50 messages between index "start" and "start + 50". Message with index 0 is the most 
+    recent message in the DM. This function returns a new index "end" which is the 
+    value of "start + 50", or, if this function has returned the least recent messages in 
+    the DM, returns -1 in "end" to indicate there are no more messages to load after 
+    this return.
+
+    Arguments:
+        token (string)  - authenticated user view messages of a DM they are in
+        dm_id (integer) - DM that the user wants to view messages in   
+        start (integer) - the position to start the load of messages
+
+    Exceptions:
+        InputError  - dm_id is not a valid DM
+        InputError  - start is greater than the total number of messages in the DM
+        AccessError - Authorised user is not a member of DM with dm_id
+
+    Returns:
+        Returns messages in the DM
+        Returns the start index of messages returned from DM
+        Returns the end index of messages returned from DM
+    '''
+
     data = retrieve_data()
 
     # Check to see if token is valid

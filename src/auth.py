@@ -32,6 +32,24 @@ def auth_email_format(email):
 # Given a registered users' email and password
 # Returns their `auth_user_id` value
 def auth_login_v1(email, password):  
+    '''
+    BRIEF DESCRIPTION
+    Given a registered users' email and password and returns a new `token` for that session
+
+    Arguments:
+        email (string)	  - existing email in the system
+	    password (string) - existing password to the email
+
+    Exceptions:
+    InputError - Occurs when the email entered is not a valid email
+    InputError - Occurs when the email entered does not belong to a user
+    InputError – Occurs when the password is not correct
+    
+    Return Value:
+        Returns a token to authenticate the user
+	    Returns an auth_user_id of the user
+    '''
+
     data = retrieve_data()
 
     # Checks for invalid email format
@@ -54,6 +72,27 @@ def auth_login_v1(email, password):
 # Given a user's first and last name, email address, and password
 # create a new account for them and return a new `auth_user_id`.
 def auth_register_v1(email, password, name_first, name_last):
+    '''
+    BRIEF DESCRIPTION
+    Given a user's first and last name, email address, and password, create a new account for them and return a new `token` for that session.
+
+    Arguments:
+        email (string)	    - new email
+        password (string)   - new password
+        name_first (string) - first name of the user
+        name_last (string)  - last name of the user
+
+    Exceptions:
+    InputError - Occurs when the email entered is not a valid email
+    InputError - Occurs when the email entered is already being used by another user
+    InputError – Occurs when the password entered is less than 6 characters long
+    InputError – Occurs when the name_first is not between 1 and 50 characters inclusively in length
+    InputError – Occurs when the name_last is not between 1 and 50 characters inclusively in length
+    
+    Return Value:
+        Returns a token to authenticate the user
+	    Returns an auth_user_id of the user
+    '''
 
     data = retrieve_data()
     # Checks for invalid email format
@@ -178,6 +217,21 @@ def auth_password_hash(password):
 
 # logs out the user session that owns the token
 def auth_logout_v1(token):
+    '''
+    BRIEF DESCRIPTION
+    Given an active token, invalidates the token to log the user out. If a valid token is given, 
+    and the user is successfully logged out, it returns true, otherwise false.
+
+    Arguments:
+        token (string) - token of an authenticated user
+
+    Exceptions:
+        n/a
+    
+    Return Value:
+        Returns is_success : True if user is successfully logged out, otherwise False
+    '''
+
     data = retrieve_data()
 
     if auth_token_ok(token) == True:
