@@ -40,7 +40,7 @@ def channel_details_body(user, channel):
 ###                       END HELPER FUNCTIONS                         ###
 
 def test_function():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -80,7 +80,7 @@ def test_function():
     }
 
 def test_multiple():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(10):
@@ -160,7 +160,7 @@ def test_multiple():
     }
 
 def test_multiple_channels():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     users = []
     for i in range(10):
@@ -262,7 +262,7 @@ def test_multiple_channels():
     }
 
 def test_invalid_channel_id():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -275,7 +275,7 @@ def test_invalid_channel_id():
     assert channel_details["message"] == "<p></p>"
 
 def test_unauthorized_user():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
@@ -294,7 +294,7 @@ def test_unauthorized_user():
     assert channel_details["message"] == "<p>The user corresponding to the given token is not in the channel</p>"
 
 def test_invalid_token():
-    requests.delete(f"{url}/clear/v1")
+    requests.delete(f"{url}clear/v1")
 
     a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
     user0 = a_u_id0.json()
