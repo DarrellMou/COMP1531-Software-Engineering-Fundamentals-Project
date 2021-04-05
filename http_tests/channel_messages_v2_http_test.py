@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye
+
 import json
 import requests
 import pytest
@@ -99,6 +102,7 @@ def add_x_messages(user1, user2, channel1, num_messages):
 ###############################################################################
 
 ############################# EXCEPTION TESTING ##############################
+
 
 # Testing for when the user is not part of the channel (testing Access Error)
 def test_channel_messages_v2_AccessError():

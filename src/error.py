@@ -1,3 +1,5 @@
+# PROJECT-BACKEND: Team Echo
+
 from werkzeug.exceptions import HTTPException
 
 class AccessError(HTTPException):

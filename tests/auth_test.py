@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 import pytest
 
 from src.error import InputError

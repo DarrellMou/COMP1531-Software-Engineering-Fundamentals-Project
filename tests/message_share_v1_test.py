@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye
+
 import pytest
 
 from src.error import InputError, AccessError

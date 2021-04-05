@@ -98,6 +98,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'sessions' : [new_sessionID],
         'is_removed': False,
         'dms': [],
+        'notifications': [],
     }
 
     # Check to see if the handle is unique

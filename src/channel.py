@@ -1,5 +1,5 @@
 # PROJECT-BACKEND: Team Echo
-# Written by Kellen (channel_join), Brendan Ye (channel_messages), Darrell (channel_invite, channel_details)
+# Written by Kellen (everything else), Brendan Ye (channel_messages), Darrell (channel_invite, channel_details, channel_leave)
 
 from src.data import retrieve_data
 from src.error import AccessError, InputError
@@ -52,7 +52,6 @@ def channel_invite_v2(token, channel_id, u_id):
     if data['users'][u_id]['permission_id'] == 1:
         data['channels'][channel_id]['owner_members'].append(u_id)
     data['channels'][channel_id]['all_members'].append(u_id)
-    '''
     # Create notification for added user
     data['users'][u_id]['notifications'].append({
         'channel_id' : channel_id,
@@ -62,7 +61,7 @@ def channel_invite_v2(token, channel_id, u_id):
     # Make sure notification list is len 20
     if len(data['users'][u_id]['notifications']) > 20:
         data['users'][u_id]['notifications'].pop(0)
-    '''
+
     return {}
 
 # Given a Channel with ID channel_id that the authorised user is part of
@@ -212,7 +211,7 @@ def channel_leave_v1(token, channel_id):
         # Remove user ID from all_members
         data['channels'][channel_id]['all_members'].remove(user_id)
         # Remove in owner_members if applicable as well
-        if user_id in data['channels'][channel_id]['all_members']:
+        if user_id in data['channels'][channel_id]['owner_members']:
             data['channels'][channel_id]['owner_members'].remove(user_id)
     
     return {
@@ -261,6 +260,9 @@ def channel_addowner_v1(token, channel_id, u_id):
 
     # All error checks passed, continue on to add owner
     data['channels'][channel_id]['owner_members'].append(u_id)
+    # If not already in server, add on to all members
+    if (u_id not in data['channels'][channel_id]['all_members']):
+        data['channels'][channel_id]['all_members'].append(u_id)
 
     return {
     }
