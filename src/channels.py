@@ -96,7 +96,7 @@ def channels_create_v2(token, name, is_public):
     Creates a new channel with that name that is either a public or private channel
 
     Arguments:
-        token (string)      - authenticated token to view channels
+        token (string)      - authenticated token to create channel
         name (string)       - name of the channel
         is_public (boolean) - the type of channel: public or private
 
