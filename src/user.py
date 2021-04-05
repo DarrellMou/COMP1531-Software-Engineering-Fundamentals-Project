@@ -10,6 +10,22 @@ from src.auth import auth_token_ok, auth_decode_token, auth_email_format
 ###############################################################################
 
 def user_profile_v2(token, u_id):
+    '''
+    BRIEF DESCRIPTION
+    For a valid user, returns information about their user_id, email, first name, last name, and handle
+
+    Arguments:
+        token(string)   - authenticated user calling function
+        u_id(int)       - the user whose profile will be retrieved
+
+    Exceptions:
+        InputError      - Occurs when the user with u_id is not a valid user
+        AccessError     - Occurs when the token is invalid
+
+    Returns:
+        Returns a dictionary about their user_id, email, first name, last name, and handle
+    '''
+
     data = retrieve_data()
 
     if not auth_token_ok(token):
@@ -37,6 +53,23 @@ def user_profile_v2(token, u_id):
            }
 
 def user_profile_setname_v2(token, name_first, name_last):
+    '''
+    BRIEF DESCRIPTION
+    Update the authorised user's first and last name
+
+    Arguments:
+        token(string)           - authenticated user setting their name
+        name_first(string)      - user's first name
+        name_last(string)       - user's last name
+
+    Exceptions:
+        InputError      - Occurs when the name_first is not between 1 and 50 characters inclusively in length
+        InputError      - Occurs when the name_last is not between 1 and 50 characters inclusively in length
+        AccessError     - Occurs when the token is invalid
+
+    Returns:
+        n/a
+    '''
 
     data = retrieve_data()
 
@@ -55,6 +88,22 @@ def user_profile_setname_v2(token, name_first, name_last):
 
 
 def user_profile_setemail_v2(token, new_email):
+    '''
+    BRIEF DESCRIPTION
+    Update the authorised user's email address
+
+    Arguments:
+        token(string)           - authenticated user setting their email
+        new_email(string)       - user's new email
+
+    Exceptions:
+        InputError      - Occurs when the email entered is not a valid email
+        InputError      - Occurs when the email address is already being used by another user
+        AccessError     - Occurs when the token is invalid
+
+    Returns:
+        n/a
+    '''
 
     data = retrieve_data()
 
@@ -77,6 +126,22 @@ def user_profile_setemail_v2(token, new_email):
 
 
 def user_profile_sethandle_v2(token, new_handle):
+    '''
+    BRIEF DESCRIPTION
+    Update the authorised user's handle (i.e. display name)
+
+    Arguments:
+        token(string)           - authenticated user setting their handle
+        handle_str(string)      - user's new handle
+
+    Exceptions:
+        InputError      - Occurs when the handle_str is not between 3 and 20 characters inclusive
+        InputError      - Occurs when the handle is already being used by another user
+        AccessError     - Occurs when the token is invalid
+
+    Returns:
+        n/a
+    '''
 
     data = retrieve_data()
 
@@ -99,6 +164,20 @@ def user_profile_sethandle_v2(token, new_handle):
 
 
 def users_all_v1(token):
+    '''
+    BRIEF DESCRIPTION
+    Returns a list of all users and their associated details
+
+    Arguments:
+        token(string)           - authenticated user setting their name
+
+    Exceptions:
+        AccessError     - Occurs when the token is invalid
+
+    Returns:
+        Returns a list of all users and their associated details
+    '''
+
     data = retrieve_data()
 
     if not auth_token_ok(token):
