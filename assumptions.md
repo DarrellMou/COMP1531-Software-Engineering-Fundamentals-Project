@@ -47,15 +47,20 @@
 ## channel_join_v2 (kellen)
 * Users who are already members of a channel will not attempt to join again.
 * There will be no duplicate entries.
-* Global owners do not become an owner member, but has owner permissions (implemented later).
+* Global owners do not become an owner member, but has owner permissions.
 
-## channel/addowner/v1 (kellen)
+## channel_addowner_v1 (kellen)
+* Users outside of the channel can be added into the owner member pool, and will also be added into the all members pool
 
-## channel/removeowner/v1 (kellen)
+## channel_removeowner_v1 (kellen)
+* Users will be removed from the owner member pool, but will remain in all members. Thus they stay in the server
 
-## channel/leave/v1 (kellen)
+## channel_leave_v1 (darrel?)
 
 ## notifications/get/v1 (kellen)
+* DM add notifications are triggered by both dm/create and dm/invite functions
+* If there are no notifications, the function will return an empty list
+* Doesn't cover reacts, react functions are not implemented in this iteration
 
 ## channels_list_v2 (kellen)
 * The channels will appear in the order they were created.
@@ -170,7 +175,7 @@
 ## channel_join_v1 (kellen)
 * Users who are already members of a channel will not attempt to join again.
 * There will be no duplicate entries.
-* Global owners do not become an owner member, but has owner permissions (implemented later).
+* Global owners do not become an owner member, but has owner permissions.
 
 ## channels_list_v1 (kellen)
 * The channels will appear in the order they were created.
