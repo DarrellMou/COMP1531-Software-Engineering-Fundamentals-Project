@@ -6,13 +6,14 @@ from src.auth import auth_decode_token
 
 def notifications_get_v1(token):
     '''
+    BRIEF DESCRIPTION
     Accesses the 20 most recent notifications of a user
     
     Arguments:
-        token (int) The login session of the person accessing their notifications that were triggered by other functions
+        token (int) - The login session of the person accessing their notifications that were triggered by other functions
 
     Exceptions:
-        Input Error - N/A
+        InputError  - N/A
         AccessError - N/A
         
     Return value:

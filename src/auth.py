@@ -37,8 +37,8 @@ def auth_login_v1(email, password):
     Given a registered users' email and password and returns a new `token` for that session
 
     Arguments:
-        email(string)	- existing email in the system
-	    password(string)	- existing password to the email
+        email (string)	  - existing email in the system
+	    password (string) - existing password to the email
 
     Exceptions:
     InputError - Occurs when the email entered is not a valid email
@@ -77,10 +77,10 @@ def auth_register_v1(email, password, name_first, name_last):
     Given a user's first and last name, email address, and password, create a new account for them and return a new `token` for that session.
 
     Arguments:
-        email(string)	- new email
-        password(string)	- new password
-        name_first(string) – first name of the user
-        name_last(string)  - last name of the user
+        email (string)	    - new email
+        password (string)   - new password
+        name_first (string) - first name of the user
+        name_last (string)  - last name of the user
 
     Exceptions:
     InputError - Occurs when the email entered is not a valid email
@@ -223,13 +223,13 @@ def auth_logout_v1(token):
     and the user is successfully logged out, it returns true, otherwise false.
 
     Arguments:
-        token(string)	- token of an authenticated user
+        token (string) - token of an authenticated user
 
     Exceptions:
-    n/a
+        n/a
     
     Return Value:
-        Returns is_success : True if user is successfully logged out,otherwise False
+        Returns is_success : True if user is successfully logged out, otherwise False
     '''
 
     data = retrieve_data()

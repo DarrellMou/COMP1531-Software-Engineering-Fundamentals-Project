@@ -93,14 +93,14 @@ def message_send_v2(token, channel_id, message):
     different channel.
 
     Arguments:
-        token(string)           - User that sends the messages
-        channel_id(int)         - Channel to send message
-        message(string)         - Message content
+        token (string)          - User that sends the messages
+        channel_id (int)        - Channel to send message
+        message (string)        - Message content
 
     Exceptions:
         AccessError - Occurs when the token passed in is not valid
         AccessError - Occurs when the authorised user has not joined the channel they are trying to post to
-        InputError - Occurs when the message is more than 1000 characters
+        InputError  - Occurs when the message is more than 1000 characters
     
     Return Value:
         Returns an id of the message sent
@@ -193,14 +193,14 @@ def message_remove_v1(token, message_id):
     Given a message_id for a message, this message is removed from the channel/DM
 
     Arguments:
-        token(string)           - User that sends the messages
-        message_id(integer)     - The id of the message
+        token(string)          - User that sends the messages
+        message_id(integer)    - The id of the message
 
     Exceptions:
         AccessError - Occurs when the token passed in is not valid
         AccessError - Occurs when the message with message_id was not sent by the authorised user making this request
         AccessError - Occurs when the authorised user is not an owner of this channel (if it was sent to a channel) or the **Dreams**
-        InputError - Occurs when the message (based on ID) no longer exists
+        InputError  - Occurs when the message (based on ID) no longer exists
     
     Return Value:
         n/a
@@ -268,8 +268,8 @@ def message_edit_v2(token, message_id, message):
         AccessError - Occurs when the token passed in is not valid
         AccessError - Occurs when the message with message_id was not sent by the authorised user making this request
         AccessError - Occurs when the authorised user is not an owner of this channel (if it was sent to a channel) or the **Dreams**
-        InputError - Occurs when the length of message is over 1000 characters
-        InputError - Occurs when message_id refers to a deleted message
+        InputError  - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when message_id refers to a deleted message
     
     Return Value:
         n/a
@@ -350,18 +350,18 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     Share an existing message to a channel or dm.
 
     Arguments:
-        token(string)           - User that sends the messages
-        og_message_id(integer)  - The original message
-        message(string)         - The optional message in addition to the shared message, and will be an empty string '' if no message is given
-        channel_id(integer)     - The channel that the message is being shared to, and is -1 if it is being sent to a DM.
-        dm_id(integer)          - The dm that the message is being shared to, and is -1 if it is being sent to a channel.
+        token (string)             - User that sends the messages
+        og_message_id (integer)    - The original message
+        message (string)           - The optional message in addition to the shared message, and will be an empty string '' if no message is given
+        channel_id (integer)       - The channel that the message is being shared to, and is -1 if it is being sent to a DM.
+        dm_id (integer)            - The dm that the message is being shared to, and is -1 if it is being sent to a channel.
 
     Exceptions:
         AccessError - Occurs when the token passed in is not valid
         AccessError - Occurs when the message with message_id was sent by the authorised user making this request
         AccessError - Occurs when the authorised user is an owner of this channel (if it was sent to a channel) or the **Dreams**
-        InputError - Occurs when the length of message is over 1000 characters
-        InputError - Occurs when the message_id refers to a deleted message
+        InputError  - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when the message_id refers to a deleted message
     
     Return Value:
         Returns an id of the shared message
@@ -409,14 +409,14 @@ def message_senddm_v1(token, dm_id, message):
     ID with another message, even if that other message is in a different channel or DM.
 
     Arguments:
-        token(string)           - User that sends the messages
-        dm_id(integer)          - The dm that the message is being sent to
-        message(string)         - Message content
+        token (string)          - User that sends the messages
+        dm_id (integer)         - The dm that the message is being sent to
+        message (string)        - Message content
 
     Exceptions:
         AccessError - Occurs when the token passed in is not valid
         AccessError - Occurs when the authorised user is not a member of the DM they are trying to post to
-        InputError - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when the length of message is over 1000 characters
     
     Return Value:
         Returns a message id of the message sent

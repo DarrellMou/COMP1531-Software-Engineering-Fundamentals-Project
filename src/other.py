@@ -39,12 +39,12 @@ def search_v2(token, query_str):
     that the user has joined that match the query
     
     Arguments:
-        token(string)           - user calling function
-        query_str(string)       - phrase/phrases to search in channels/dms the user is part of
+        token (string)          - user calling function
+        query_str (string)      - phrase/phrases to search in channels/dms the user is part of
 
     Exceptions:
-        AccessError  - Occurs when the token is invalid
-        InputError   - Occurs when the query_str is above 1000 characters
+        AccessError - Occurs when the token is invalid
+        InputError  - Occurs when the query_str is above 1000 characters
 
     Returns:
         Returns a collection of messages in which the query_str is found
@@ -91,14 +91,14 @@ def admin_user_remove_v1(token, u_id):
     with their name replaced by 'Removed user'.
 
     Arguments:
-        token(string)           - user calling function
-        u_id(int)               - user to be removed
+        token (string)      - user calling function
+        u_id (int)          - user to be removed
 
     Exceptions:
-        AccessError  - Occurs when the token is invalid
-        AccessError  - Occurs when the authorised user is not an owner
-        InputError   - Occurs when the u_id does not refer to a valid user
-        InputError   - Occurs when the user is currently the only owner
+        AccessError - Occurs when the token is invalid
+        AccessError - Occurs when the authorised user is not an owner
+        InputError  - Occurs when the u_id does not refer to a valid user
+        InputError  - Occurs when the user is currently the only owner
 
     Returns:
         n/a
@@ -174,16 +174,16 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     Given a User by their user ID, set their permissions to new permissions described by permission_id
 
     Arguments:
-        token(string)           - user calling function
-        u_id(int)               - user to be removed
-        permission_id(int)      - DREAMS global user status: either owner(== 1) or member(== 2)
+        token (string)          - user calling function
+        u_id (int)              - user to be removed
+        permission_id (int)     - DREAMS global user status: either owner(== 1) or member(== 2)
 
     Exceptions:
-        AccessError  - Occurs when the token is invalid
-        AccessError  - Occurs when the authorised user is not an owner
-        InputError   - Occurs when the u_id does not refer to a valid user
-        InputError   - Occurs when the permission_id does not refer to a value permission
-        InputError   - Occurs when the user is currently the only owner and wants to change to member status
+        AccessError - Occurs when the token is invalid
+        AccessError - Occurs when the authorised user is not an owner
+        InputError  - Occurs when the u_id does not refer to a valid user
+        InputError  - Occurs when the permission_id does not refer to a value permission
+        InputError  - Occurs when the user is currently the only owner and wants to change to member status
 
     Returns:
         n/a
