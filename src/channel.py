@@ -240,10 +240,28 @@ def channel_join_v1(auth_user_id, channel_id):
     return {}
 
 # Second version of channel_join that requires authentic token
+# Arguments
+#   token (int) The login session of the person joining the channel
+#   channel_id (int) References the channel the user is joining
+# Exceptions
+#   Input Error - Occurs when channel ID is not a valid channel
+#   AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+# Return value
+#   Nothing returned
 def channel_join_v2(token, channel_id):
     user_id = auth_decode_token(token)
     return channel_join_v1(user_id, channel_id)
 
+# A function that adds users as owners of a channel
+# Arguments
+#   token (int) The login session of the person adding owner to channel
+#   channel_id (int) References the channel the user adding to
+#   u_id (int) The auth_user_id of the person being added as owner
+# Exceptions
+#   Input Error - Occurs when channel ID is not a valid channel or when u_id owner is already an owner of channel
+#   AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+# Return value
+#   Nothing returned
 def channel_addowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
@@ -267,6 +285,16 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {
     }
 
+# A function that removes users as owners of a channel
+# Arguments
+#   token (int) The login session of the person removing owner from channel
+#   channel_id (int) References the channel the user removing from
+#   u_id (int) The auth_user_id of the person being removed as owner
+# Exceptions
+#   Input Error - Occurs when channel ID is not a valid channel or when u_id owner is not an owner of channel
+#   AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+# Return value
+#   Nothing returned
 def channel_removeowner_v1(token, channel_id, u_id):
     data = retrieve_data()
     user_id = auth_decode_token(token)
