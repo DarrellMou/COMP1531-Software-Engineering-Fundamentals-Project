@@ -1,5 +1,5 @@
 import pytest
-from src.data import reset_data, retrieve_data
+from src.data import retrieve_data
 from src.error import InputError, AccessError
 
 from src.auth import auth_register_v1

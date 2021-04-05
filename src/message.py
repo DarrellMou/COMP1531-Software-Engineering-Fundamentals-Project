@@ -7,6 +7,7 @@ from src.auth import auth_token_ok, auth_decode_token
 from uuid import uuid4
 from datetime import datetime
 import json
+import re
 
 ###############################################################################
 #                                 ASSUMPTIONS                                 #
