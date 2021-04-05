@@ -39,6 +39,7 @@ def test_multiple_channels_joined():
     chid2 = channels_create_v2(a_u_id1['token'], 'channel2', True) #Public channel2 created
     chid3 = channels_create_v2(a_u_id1['token'], 'channel3', True) #Public channel3 created
     chid4 = channels_create_v2(a_u_id1['token'], 'channel4', True) #Public channel4 created
+    channel_join_v2(a_u_id1['token'], chid2['channel_id']) #User 1 joins channel 1 - testing skip
     channel_join_v2(a_u_id2['token'], chid2['channel_id']) #User 2 joins channel 2 as regular member
     channel_join_v2(a_u_id2['token'], chid3['channel_id']) #User 2 joins channel 3 as regular member
     channel_join_v2(a_u_id2['token'], chid4['channel_id']) #User 2 joins channel 4 as regular member
