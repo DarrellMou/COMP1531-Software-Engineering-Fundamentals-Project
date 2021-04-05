@@ -52,7 +52,6 @@ def channel_invite_v2(token, channel_id, u_id):
     if data['users'][u_id]['permission_id'] == 1:
         data['channels'][channel_id]['owner_members'].append(u_id)
     data['channels'][channel_id]['all_members'].append(u_id)
-    '''
     # Create notification for added user
     data['users'][u_id]['notifications'].append({
         'channel_id' : channel_id,
@@ -62,7 +61,7 @@ def channel_invite_v2(token, channel_id, u_id):
     # Make sure notification list is len 20
     if len(data['users'][u_id]['notifications']) > 20:
         data['users'][u_id]['notifications'].pop(0)
-    '''
+
     return {}
 
 # Given a Channel with ID channel_id that the authorised user is part of
@@ -261,6 +260,9 @@ def channel_addowner_v1(token, channel_id, u_id):
 
     # All error checks passed, continue on to add owner
     data['channels'][channel_id]['owner_members'].append(u_id)
+    # If not already in server, add on to all members
+    if (u_id not in data['channels'][channel_id]['all_members']):
+        data['channels'][channel_id]['all_members'].append(u_id)
 
     return {
     }

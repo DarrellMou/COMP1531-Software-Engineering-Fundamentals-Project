@@ -132,7 +132,32 @@ def message_send_v2(token, channel_id, message):
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
+    #f = open("demofile3.txt", "w")
+    #f.write(data)
+    
+    # Create notification if someone is tagged
+    tag = re.search("@[a-zA-Z1-9]*", message).group()
+    if tag != None:
+        tag = tag[1:]
+        tagged = 0
+        
+        # Search for the tagged user within all_members and get their auth_id
+        for member in data['channels'][channel_id]['all_members']:
+            if (tag == data['users'][member]['handle_str']):
+                tagged = member
 
+        if tagged == 0: return {'message_id': unique_message_id}
+        
+        data['users'][tagged]['notifications'].append({
+            'channel_id' : channel_id,
+            'dm_id' : -1,
+            'notification_message' : (str(data['users'][user_id]['handle_str'])
+            + " tagged you in " + str(data['channels'][channel_id]['name'])
+            + ": " + message[0:20])
+        })
+        # Make sure notification list is len 20
+        if len(data['users'][tagged]['notifications']) > 20:
+            data['users'][tagged]['notifications'].pop(0)
 
     return {
         'message_id': unique_message_id
@@ -340,6 +365,31 @@ def message_senddm_v1(token, dm_id, message):
     # Append our dictionaries to their appropriate lists
     data['dms'][dm_id]['messages'].append(dm_message_dictionary)
     data['messages'].append(message_dictionary)
+
+    # Create notification if someone is tagged
+    tag = re.search("@[a-zA-Z1-9]*", message).group()
+    if tag != None:
+        tag = tag[1:]
+        tagged = 0
+
+        # Search for the tagged user within all_members and get their auth_id
+        for member in data['dms'][dm_id]['members']:
+            if (tag == data['users'][member]['handle_str']):
+                tagged = member
+        
+        notification = {
+            'channel_id' : -1,
+            'dm_id' : dm_id,
+            'notification_message' : (str(data['users'][user_id]['handle_str'])
+            + " tagged you in " + str(data['dms'][dm_id]['name'])
+            + ": " + str(message[0:20]))
+        }
+        # Make sure notification list is len 20
+        if len(data['users'][tagged]['notifications']) == 20:
+            data['users'][tagged]['notifications'].pop(0)
+        # Append new notification to end of list
+        data['users'][tagged]['notifications'].append(notification)
+
 
     return {
         'message_id': unique_message_id
