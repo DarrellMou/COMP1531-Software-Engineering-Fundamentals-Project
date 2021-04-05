@@ -43,6 +43,20 @@ def channels_list_v1(auth_user_id):
 # Return value
 #   channels (list of ints) - A list of channel ids belonging to channels the user is a part of
 def channels_list_v2(token):
+    '''
+    2nd version of channels list that requires authenticated token
+    
+    Arguments:
+    token (int) The login session of the person accessing their channel_list
+    
+    Exceptions:
+    Input Error - N/A
+    AccessError - N/A
+    
+    Return value:
+    channels (list of ints) - A list of channel ids belonging to channels the user is a part of
+    '''
+
     user_id = auth_decode_token(token)
     return channels_list_v1(user_id)
 
