@@ -165,17 +165,16 @@ def test_notif_max():
     user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
     user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
 
+    channelid1 = channels_create_v2(user1['token'], "lesgobro", True)
+
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
     for x in range(22):
         message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me' + str(x))
 
+    channel_invite_v2(user1['token'], channelid1['channel_id'], user2['auth_user_id'])
+
     assert notifications_get_v1(user2['token']) == {
         'notifications': [
-            {
-                'channel_id' : -1,
-                'dm_id' : dmid1['dm_id'],
-                'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me2',
-            },
             {
                 'channel_id' : -1,
                 'dm_id' : dmid1['dm_id'],
@@ -271,5 +270,11 @@ def test_notif_max():
                 'dm_id' : dmid1['dm_id'],
                 'notification_message' : 'first1last1 tagged you in first1last1, first2last2: @first2last2 1v1me21',
             },
+            {
+                'channel_id' : channelid1['channel_id'],
+                'dm_id' : -1,
+                'notification_message' : 'first1last1 added you to lesgobro',
+            },
         ]
     }
+
