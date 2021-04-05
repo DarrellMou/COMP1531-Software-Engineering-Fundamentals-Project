@@ -99,6 +99,7 @@ def message_remove_v1_flask():
 def channels_list_v2_flask():
     token = request.args.get('token')
 
+    write_data()
     return dumps(channels_list_v2(token))
 
 @APP.route("/channels/listall/v2", methods=['GET'])
@@ -257,6 +258,7 @@ def message_send_v2_flask():
 def notification_get_v1_flask():
     token = request.args.get('token')
 
+    write_data()
     return dumps(notifications_get_v1(token))
 
 @APP.route('/user/profile/v2', methods=['GET'])
