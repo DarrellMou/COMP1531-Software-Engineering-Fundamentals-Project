@@ -129,6 +129,30 @@ def channel_details_v2(token, channel_id):
 # the ones listed in the spec, so its tests were removed altogether and was
 # replaced by an assumption)
 def channel_messages_v2(token, channel_id, start):
+    '''
+    BRIEF DESCRIPTION
+    Given a Channel with ID channel_id that the authorised user is part of, return up to 
+    50 messages between index "start" and "start + 50". Message with index 0 is the most 
+    recent message in the channel. This function returns a new index "end" which is the 
+    value of "start + 50", or, if this function has returned the least recent messages in 
+    the channel, returns -1 in "end" to indicate there are no more messages to load after 
+    this return.
+
+    Arguments:
+        token(string)           - authenticated user view messages of a channel they are in
+        channel_id(integer)     - channel that the user wants to view messages in   
+        start(integer)          - the position to start the load of messages
+
+    Exceptions:
+        InputError      - Occurs when the channel id is not valid
+        InputError      - Occurs when the start is greater than the total number of messages in the channel
+        AccessError     - Occurs when the authorised user is not a member of channel with channel_id
+
+    Returns:
+        Returns messages in the channel
+        Returns the start index of messages returned from channel
+        Returns the end index of messages returned from channel
+    '''
     data = retrieve_data()
 
     # Check to see if token is valid
@@ -197,6 +221,22 @@ def channel_messages_v2(token, channel_id, start):
     return messages_dict
 
 def channel_leave_v1(token, channel_id):
+    '''
+    BRIEF DESCRIPTION
+    Given a channel ID, the user removed as a member of this channel. Their messages should remain in the channel
+
+    Arguments:
+        token(string)           - authenticated user to leave a channel
+        channel_id(integer)     - channel that the user wants to leave
+
+    Exceptions:
+        InputError      - Occurs when the channel ID is not a valid channel 
+        AccessError     - Occurs when the authorised user is not a member of channel with channel_id    
+
+    Returns:
+        n/a
+    '''
+
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
@@ -239,16 +279,22 @@ def channel_join_v1(auth_user_id, channel_id):
 
     return {}
 
-# Second version of channel_join that requires authentic token
-# Arguments
-#   token (int) The login session of the person joining the channel
-#   channel_id (int) References the channel the user is joining
-# Exceptions
-#   Input Error - Occurs when channel ID is not a valid channel
-#   AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
-# Return value
-#   Nothing returned
+
 def channel_join_v2(token, channel_id):
+    '''
+    Second version of channel_join that requires authentic token
+    
+    Arguments:
+        token (int) The login session of the person joining the channel
+        channel_id (int) References the channel the user is joining
+ 
+    Exceptions:
+        Input Error - Occurs when channel ID is not a valid channel
+        AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+
+    Return value:
+        n/a
+    '''
     user_id = auth_decode_token(token)
     return channel_join_v1(user_id, channel_id)
 
@@ -263,6 +309,22 @@ def channel_join_v2(token, channel_id):
 # Return value
 #   Nothing returned
 def channel_addowner_v1(token, channel_id, u_id):
+    '''
+    A function that adds users as owners of a channel
+    
+    Arguments:
+        token (int) The login session of the person adding owner to channel
+        channel_id (int) References the channel the user adding to
+        u_id (int) The auth_user_id of the person being added as owner
+    
+    Exceptions:
+        Input Error - Occurs when channel ID is not a valid channel or when u_id owner is already an owner of channel
+        AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+    
+    Returns:
+        n/a
+    '''
+
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
@@ -285,17 +347,24 @@ def channel_addowner_v1(token, channel_id, u_id):
     return {
     }
 
-# A function that removes users as owners of a channel
-# Arguments
-#   token (int) The login session of the person removing owner from channel
-#   channel_id (int) References the channel the user removing from
-#   u_id (int) The auth_user_id of the person being removed as owner
-# Exceptions
-#   Input Error - Occurs when channel ID is not a valid channel or when u_id owner is not an owner of channel
-#   AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
-# Return value
-#   Nothing returned
+
 def channel_removeowner_v1(token, channel_id, u_id):
+    '''
+    A function that removes users as owners of a channel
+    
+    Arguments:
+        token (int) The login session of the person removing owner from channel
+        channel_id (int) References the channel the user removing from
+        u_id (int) The auth_user_id of the person being removed as owner
+    
+    Exceptions:
+    Input Error - Occurs when channel ID is not a valid channel or when u_id owner is not an owner of channel
+    AccessError - Occurs when channel_id refers to a private channel and user is not dreams owner
+    
+    Returns:
+        n/a
+    '''
+
     data = retrieve_data()
     user_id = auth_decode_token(token)
 
