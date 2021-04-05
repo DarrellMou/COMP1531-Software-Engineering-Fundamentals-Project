@@ -132,8 +132,8 @@ def test_dmtag_notif():
     user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
 
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
-    messid1 = message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me')
-    messid2 = message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me but longer')
+    message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me')
+    message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me but longer')
 
     assert notifications_get_v1(user2['token']) == {
         'notifications': [

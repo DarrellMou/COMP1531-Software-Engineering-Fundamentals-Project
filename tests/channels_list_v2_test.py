@@ -16,7 +16,7 @@ def test_standard_owner():
     clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    chid1 = channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
+    channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
     chid2 = channels_create_v2(a_u_id2['token'], 'channel2', True) #Public channel created
     
     # Expect a list containing channel 2
@@ -34,7 +34,7 @@ def test_standard_regmember():
     clear_v1()
     a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
     a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    chid1 = channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
+    channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
     chid2 = channels_create_v2(a_u_id1['token'], 'channel2', True) #Public channel created
     channel_join_v1(a_u_id2['auth_user_id'], chid2['channel_id']) #User 2 joins channel 2 as regular member
     
