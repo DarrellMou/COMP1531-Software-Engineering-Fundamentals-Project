@@ -7,7 +7,7 @@ from src.other import clear_v1
 import time
 
 #from error import InputError
-#from auth import auth_login_v2, auth_email_format, auth_register_v1
+#from auth import auth_login_v1, auth_email_format, auth_register_v1
 #from data import clear_v1, retrieve_data
 
 @pytest.fixture
@@ -40,9 +40,9 @@ def test_auth_login_v1(test_users):
     assert loginResponse['auth_user_id'] == test_users['login1']['auth_user_id']
 
     with pytest.raises(InputError):
-        auth_login_v2('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
+        auth_login_v1('nonexistentKey@gmail.com', 'notimportantpasswd') # can't find a match
     with pytest.raises(InputError):
-        auth_login_v2('jsfdsfdsds123.con', '123456') # invalid email format 
+        auth_login_v1('jsfdsfdsds123.con', '123456') # invalid email format 
 
 
 def test_auth_register_v1():

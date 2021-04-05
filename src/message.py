@@ -137,8 +137,9 @@ def message_send_v2(token, channel_id, message):
     #f.write(data)
     
     # Create notification if someone is tagged
-    tag = re.search("@[a-zA-Z1-9]*", message).group()
+    tag = re.search("@[a-zA-Z1-9]*", message)
     if tag != None:
+        tag = tag.group()
         tag = tag[1:]
         tagged = 0
         
@@ -368,8 +369,9 @@ def message_senddm_v1(token, dm_id, message):
     data['messages'].append(message_dictionary)
 
     # Create notification if someone is tagged
-    tag = re.search("@[a-zA-Z1-9]*", message).group()
+    tag = re.search("@[a-zA-Z1-9]*", message)
     if tag != None:
+        tag = tag.group()
         tag = tag[1:]
         tagged = 0
 
