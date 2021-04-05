@@ -22,10 +22,25 @@ def is_message_removed(msg_id):
 
 ###############################################################################
 
+
 # Invites a user (with user id u_id) to join a channel with ID channel_id
 # Once invited the user is added to the channel immediately
-def channel_invite_v2(token, channel_id, u_id):
 
+# Arguments:
+#   token (string) - 
+#   channel_id (int) - 
+#   u_id (int) - 
+
+# Exceptions:
+#   InputError - channel_id does not refer to a valid channel
+#   InputError - u_id does not refer to a valid user
+#   AccessError - the authorised user is not already a member of the channel
+#   AccessError - invalid token
+
+# Return Value:
+#   Returns {}
+
+def channel_invite_v2(token, channel_id, u_id):
     data = retrieve_data()
 
     # Checks if token exists
@@ -67,7 +82,6 @@ def channel_invite_v2(token, channel_id, u_id):
 # Given a Channel with ID channel_id that the authorised user is part of
 # Provides basic details about the channel
 def channel_details_v2(token, channel_id):
-
     data = retrieve_data()
     
     # Checks if given channel_id is valid
