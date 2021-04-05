@@ -10,7 +10,7 @@ from src import config
 
 ######################### Tests search route    ##########################
                                                          
-#   * uses pytest fixtures from http_tests.__init__.py                                   
+#   * uses pytest fixtures from http_tests/conftest.py                                  
                                                                                                                                                 
 ##########################################################################
 
