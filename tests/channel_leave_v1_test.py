@@ -9,7 +9,7 @@ from src.channels import channels_create_v2, channels_listall_v2, channels_list_
 from src.other import clear_v1
 
 # error when leaving a channel with an invalid token
-def test_channel_leave_access_error(setup_user):
+def test_channel_leave_token_access_error(setup_user):
     users = setup_user
 
     channel_id1 = channels_create_v2(users['user1']['token'], "Channel", True)
@@ -37,7 +37,7 @@ def test_channel_leave_input_error(setup_user):
 
 
 # assert channel still exists if there are no members left
-def test_channel_leave_basic(setup_user):
+def test_channel_leave_basic_channel(setup_user):
     users = setup_user
 
     channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
@@ -52,7 +52,7 @@ def test_channel_leave_basic(setup_user):
 
 
 # assert channel is no longer in user's channel list
-def test_channel_leave_basic(setup_user):
+def test_channel_leave_basic_user(setup_user):
     users = setup_user
 
     channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
