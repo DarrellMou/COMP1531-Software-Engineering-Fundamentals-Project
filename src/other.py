@@ -113,7 +113,6 @@ def admin_user_remove_v1(token, u_id):
     for user in data['users']:
         if user == u_id:
             data['users'][user]['is_removed'] = True
-            break
     
     return {}
 

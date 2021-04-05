@@ -48,7 +48,7 @@ def dm_create_v1(token, u_ids):
     }
     for u_id in u_ids:
         # Make sure notification list is len 20
-        if len(data['users'][u_id]['notifications']) > 20:
+        if len(data['users'][u_id]['notifications']) > 19:
             data['users'][u_id]['notifications'].pop(0)
         
         # Append new notification to end of list
@@ -158,7 +158,7 @@ def dm_invite_v1(token, dm_id, u_id):
         'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + str(data['dms'][dm_id]['name']))
     }
     # Make sure notification list is len 20
-    if len(data['users'][u_id]['notifications']) > 20:
+    if len(data['users'][u_id]['notifications']) > 19:
         data['users'][u_id]['notifications'].pop(0)
     # Append new notification to end of list
     data['users'][u_id]['notifications'].append(notification)
