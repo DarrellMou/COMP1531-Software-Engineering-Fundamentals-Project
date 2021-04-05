@@ -1,1 +1,1 @@
-{"users": {"41912337459852813518417908666004005014": {"name_first": "FIRSTNAME", "name_last": "LASTNAME", "email": "exampleUserEmail@email.com", "password": "a1cdf9b86be063bced6916eb4bb31d600f23424270bd6dd9d780195d93449d52", "handle_str": "firstnamelastname", "permission_id": 1, "sessions": [573], "is_removed": false, "dms": [], "notifications": []}}, "channels": {}, "dms": {}, "messages": []}
+{"users": {}, "channels": {}, "dms": {}, "messages": []}

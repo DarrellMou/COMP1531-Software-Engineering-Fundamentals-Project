@@ -1,7 +1,26 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 import requests
 import json
 from src import config
+
+'''
+The following fixtures are used in:
+- channels/create
+- channels/listall
+- message/senddm
+- admin/userpermission/change
+- admin/user/remove
+- search
+- channel/join/v2
+- channels/list/v2,
+- channel/addowner/v1
+- channel/removeowner/v1
+- channel/leave/v1
+- notifications/get/v1
+'''
 
 @pytest.fixture
 def reset():

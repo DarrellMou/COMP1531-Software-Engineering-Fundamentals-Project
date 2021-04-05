@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Brendan Ye
+
 import pytest
 
 from src.error import InputError, AccessError
@@ -72,6 +75,14 @@ def add_x_messages(user1, user2, channel1, num_messages):
 ###############################################################################
 
 ############################# EXCEPTION TESTING ##############################
+
+# Testing for when the user token is invalid (testing Access Error)
+def test_channel_messages_v2_token_AccessError():
+    setup = set_up_data()
+    channel1 = setup["channel1"]
+
+    with pytest.raises(AccessError):
+        assert channel_messages_v2("Invalid token", channel1, 0)
 
 # Testing for when the user is not part of the channel (testing Access Error)
 def test_channel_messages_v2_AccessError():

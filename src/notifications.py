@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Kellen Liew
+
 from src.data import data, retrieve_data
 from src.auth import auth_decode_token
 

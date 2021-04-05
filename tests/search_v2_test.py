@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Nikki Yao
+
 import pytest
 from src.data import retrieve_data
 from src.error import InputError, AccessError

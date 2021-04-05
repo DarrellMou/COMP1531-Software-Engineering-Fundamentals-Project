@@ -1,3 +1,6 @@
+# PROJECT-BACKEND: Team Echo
+# Written by Winston Lin
+
 import pytest
 
 from src.error import InputError, AccessError
@@ -7,9 +10,6 @@ from src.data import retrieve_data
 from src.other import clear_v1
 import time
 
-#from error import InputError
-#from auth import auth_login_v1, auth_email_format, auth_register_v1
-#from data import reset_data, retrieve_data
 
 @pytest.fixture
 def test_users():
@@ -29,7 +29,6 @@ def test_users():
         'login5' : dict5
     }
 
-# todo: turn all these into normal pytest
 
 def test_user_profile(test_users):
     profile = user_profile_v2(test_users['login1']['token'], test_users['login1']['auth_user_id'])

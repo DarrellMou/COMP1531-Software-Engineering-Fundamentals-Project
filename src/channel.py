@@ -1,5 +1,5 @@
 # PROJECT-BACKEND: Team Echo
-# Written by Kellen (channel_join), Brendan Ye (channel_messages), Darrell (channel_invite, channel_details)
+# Written by Kellen (everything else), Brendan Ye (channel_messages), Darrell (channel_invite, channel_details, channel_leave)
 
 from src.data import retrieve_data
 from src.error import AccessError, InputError
@@ -211,7 +211,7 @@ def channel_leave_v1(token, channel_id):
         # Remove user ID from all_members
         data['channels'][channel_id]['all_members'].remove(user_id)
         # Remove in owner_members if applicable as well
-        if user_id in data['channels'][channel_id]['all_members']:
+        if user_id in data['channels'][channel_id]['owner_members']:
             data['channels'][channel_id]['owner_members'].remove(user_id)
     
     return {
