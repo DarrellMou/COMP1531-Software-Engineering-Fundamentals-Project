@@ -282,11 +282,13 @@ def test_message_unreact_v1_loop_react_unreact():
     assert data['messages'][0]["reactions"][0]["react_id"] == 1
     assert data['messages'][0]["reactions"][0]["is_removed"] == False
     
-    for range(10):
+    x = 0
+    while x < 10:
         message_unreact_v1(user1["token"], message_id, like)
         assert data['messages'][0]["reactions"][0]["is_removed"] == True
 
         message_react_v1(user1["token"], message_id, like)
         assert data['messages'][0]["reactions"][0]["is_removed"] == False
+        x += 1
 
     assert len(data['messages'][0]["reactions"]) == 1
