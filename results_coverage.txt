@@ -1,0 +1,21 @@
+Name                     Stmts   Miss Branch BrPart  Cover
+----------------------------------------------------------
+http_tests/__init__.py       0      0      0      0   100%
+http_tests/conftest.py      25      0      0      0   100%
+src/__init__.py              0      0      0      0   100%
+src/auth.py                 91      0     37      1    99%
+src/channel.py             118      0     78      0   100%
+src/channels.py             34      0     16      0   100%
+src/config.py                4      0      0      0   100%
+src/data.py                 12      6      0      0    50%
+src/dm.py                  115      0     74      0   100%
+src/echo.py                  5      0      2      0   100%
+src/error.py                 7      0      0      0   100%
+src/message.py             204      0    142      1    99%
+src/notifications.py         6      0      0      0   100%
+src/other.py                83      0     86      1    99%
+src/user.py                 50      0     27      0   100%
+tests/__init__.py            0      0      0      0   100%
+tests/conftest.py           12      0      0      0   100%
+----------------------------------------------------------
+TOTAL                      766      6    462      3    99%

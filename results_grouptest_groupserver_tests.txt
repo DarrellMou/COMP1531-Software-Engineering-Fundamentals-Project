@@ -1,0 +1,119 @@
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-6.2.3, py-1.10.0, pluggy-0.13.1
+rootdir: /tmp_amd/kamen/export/kamen/3/cs1531/automark/tempstore, configfile: pytest.ini
+plugins: forked-1.3.0, xdist-2.2.1, hypothesis-6.1.1, timeout-1.4.2
+collected 425 items
+
+http_tests/admin_user_remove_http_test.py ......                         [  1%]
+http_tests/admin_userpermission_change_http_test.py .......              [  3%]
+http_tests/auth_http_test.py .....                                       [  4%]
+http_tests/channel_addowner_v1_http_test.py .....                        [  5%]
+http_tests/channel_details_v2_http_test.py ......                        [  6%]
+http_tests/channel_invite_v2_http_test.py .......                        [  8%]
+http_tests/channel_join_v2_http_test.py ....                             [  9%]
+http_tests/channel_leave_http_test.py .....                              [ 10%]
+http_tests/channel_messages_v2_http_test.py ..............F..            [ 14%]
+http_tests/channel_removeowner_v1_http_test.py ......                    [ 16%]
+http_tests/channels_create_http_test.py ....                             [ 16%]
+http_tests/channels_list_v2_http_test.py ....                            [ 17%]
+http_tests/channels_listall_http_test.py ....                            [ 18%]
+http_tests/dm_create_v1_http_test.py ....                                [ 19%]
+http_tests/dm_details_v1_http_test.py ...                                [ 20%]
+http_tests/dm_invite_v1_http_test.py ......                              [ 21%]
+http_tests/dm_leave_v1_http_test.py .....                                [ 23%]
+http_tests/dm_list_v1_http_test.py ...                                   [ 23%]
+http_tests/dm_messages_v1_http_test.py ..............F..                 [ 27%]
+http_tests/dm_remove_v1_http_test.py .....                               [ 28%]
+http_tests/message_edit_v2_http_test.py ..............                   [ 32%]
+http_tests/message_remove_v2_http_test.py ............                   [ 35%]
+http_tests/message_send_v2_http_test.py .........                        [ 37%]
+http_tests/message_senddm_http_test.py ......                            [ 38%]
+http_tests/message_share_v1_http_test.py ..........                      [ 40%]
+http_tests/notifications_get_v1_http_test.py .....                       [ 42%]
+http_tests/search_http_test.py ......                                    [ 43%]
+http_tests/user_profile_http_test.py ........                            [ 45%]
+tests/admin_user_remove_v1_test.py ........                              [ 47%]
+tests/admin_userpermission_change_v1_test.py ........                    [ 49%]
+tests/auth_test.py ..........                                            [ 51%]
+tests/channel_addowner_v1_test.py ......                                 [ 52%]
+tests/channel_details_v2_test.py ......                                  [ 54%]
+tests/channel_invite_v2_test.py .......                                  [ 56%]
+tests/channel_join_v2_test.py .....                                      [ 57%]
+tests/channel_leave_v1_test.py .....                                     [ 58%]
+tests/channel_messages_v2_test.py ..................                     [ 62%]
+tests/channel_removeowner_v1_test.py ......                              [ 64%]
+tests/channels_create_v2_test.py .....                                   [ 65%]
+tests/channels_list_v2_test.py .......                                   [ 66%]
+tests/channels_listall_v2_test.py ....                                   [ 67%]
+tests/dm_create_v1_test.py ....                                          [ 68%]
+tests/dm_details_v1_test.py .....                                        [ 69%]
+tests/dm_invite_v1_test.py ......                                        [ 71%]
+tests/dm_leave_v1_test.py .....                                          [ 72%]
+tests/dm_list_v1_test.py ...                                             [ 73%]
+tests/dm_messages_v1_test.py ..................                          [ 77%]
+tests/dm_remove_v1_test.py .....                                         [ 78%]
+tests/echo_test.py ..                                                    [ 79%]
+tests/message_edit_v2_test.py ..............                             [ 82%]
+tests/message_remove_v2_test.py ............                             [ 85%]
+tests/message_send_v2_test.py .........                                  [ 87%]
+tests/message_senddm_v1_test.py ...........                              [ 89%]
+tests/message_share_v1_test.py ...........                               [ 92%]
+tests/notifications_get_v1_test.py .......                               [ 94%]
+tests/search_v2_test.py ........                                         [ 96%]
+tests/user_profile_test.py .................                             [100%]
+
+=================================== FAILURES ===================================
+_______________ test_channel_messages_v2_111_messages_start_100 ________________
+
+    def test_channel_messages_v2_111_messages_start_100():
+        setup = set_up_data()
+        user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    
+        # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
+        add_x_messages(user1, user2, channel1, 111)
+    
+        messages_list = requests.get(url + 'channel/messages/v2', params= {
+            "token": user1["token"],
+            "channel_id": channel1,
+            "start": 100
+        }).json()
+    
+>       assert messages_list['start'] == 100, "Start should not change"
+E       KeyError: 'start'
+
+http_tests/channel_messages_v2_http_test.py:464: KeyError
+__________________ test_dm_messages_v1_111_messages_start_100 __________________
+
+    def test_dm_messages_v1_111_messages_start_100():
+        setup = set_up_data()
+        user0, user1, dm0 = setup['user0'], setup['user1'], setup['dm0']
+    
+        # Add members 1 and 2 into dm 1 and add 111 messages with the message just being the message id
+>       message_id_list= send_x_messages_two_users(user0, user1, dm0, 111)
+
+http_tests/dm_messages_v1_http_test.py:433: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+user1 = {'auth_user_id': 41335049422293323571765540652919482188, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MT...0MTMzNTA0OTQyMjI5MzMyMzU3MTc2NTU0MDY1MjkxOTQ4MjE4OCwic2Vzc2lvbklEIjozOTZ9.DCOUhems6yZWwjCnLQ6Akdqet3yJnpJKwXQIxTa3spo'}
+user2 = {'auth_user_id': 44773571399087943509919424352529373919, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MT...0NDc3MzU3MTM5OTA4Nzk0MzUwOTkxOTQyNDM1MjUyOTM3MzkxOSwic2Vzc2lvbklEIjozOTd9.oMP0B-eNqM78EpeksVBM9Ai7-Z6WmW30grU1HW3lk-c'}
+dm = {'dm_id': 43637915360214094492557549441370140932, 'dm_name': 'first_name0last_name, first_name1last_name'}
+num_messages = 111
+
+    def send_x_messages_two_users(user1, user2, dm, num_messages):
+        message_count = 0
+        message_id_list = []
+        while message_count < num_messages:
+            message_num = message_count + 1
+            if message_count % 2 == 0:
+                r = requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user1, dm, str(message_num)))
+            else:
+                r = requests.post(f"{url}message/senddm/v1", json=message_senddm_body(user2, dm, str(message_num)))
+            message_id = r.json()
+>           message_id_list.append(message_id["message_id"])
+E           KeyError: 'message_id'
+
+http_tests/dm_messages_v1_http_test.py:94: KeyError
+=========================== short test summary info ============================
+FAILED http_tests/channel_messages_v2_http_test.py::test_channel_messages_v2_111_messages_start_100
+FAILED http_tests/dm_messages_v1_http_test.py::test_dm_messages_v1_111_messages_start_100
+======================== 2 failed, 423 passed in 53.69s ========================
