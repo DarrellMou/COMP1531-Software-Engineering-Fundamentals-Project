@@ -81,7 +81,7 @@ def unreact_v1_invalid_react_id_InputError():
 
     # User 1 sends and reacts a message in a channel, of which they are the only user
     message_id = message_send_v2(user1["token"], channel1, "Hello world!")
-    message_react_v1(user1["token"], message_id1, like)
+    message_react_v1(user1["token"], message_id, like)
 
     # user1 tries to unreact to his own message (legal) with a react that doesn't exist (illegal)
     with pytest.raises(InputError):
@@ -134,7 +134,7 @@ def unreact_v1_invalid_message_id_inaccessible_dm_InputError():
 # Default access error when token is invalid
 def test_message_unreact_v1_default_Access_Error():
     setup = set_up_data()
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    user1, channel1 = setup['user1'], setup['channel1']
     message_id = message_send_v2(user1["token"], channel1, "Hello world!")
     message_react_v1(user1["token"], message_id, like)
 
@@ -282,7 +282,7 @@ def test_message_unreact_v1_loop_react_unreact():
     assert data['messages'][0]["reactions"][0]["react_id"] == 1
     assert data['messages'][0]["reactions"][0]["is_removed"] == False
     
-    for x in range(10):
+    for range(10):
         message_unreact_v1(user1["token"], message_id, like)
         assert data['messages'][0]["reactions"][0]["is_removed"] == True
 
