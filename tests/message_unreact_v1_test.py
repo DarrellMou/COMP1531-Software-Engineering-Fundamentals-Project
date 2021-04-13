@@ -9,6 +9,7 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v2
 from src.dm import dm_create_v1, dm_messages_v1
 from src.message import message_send_v2, message_react_v1, message_unreact_v1
+from src.data import retrieve_data
 from src.other import clear_v1
 
 
@@ -53,6 +54,7 @@ like = 1
 
 # The user attempts to unreact to a message id that doesn't exist in any of his channels
 def unreact_v1_invalid_message_id_nonexistent_InputError():
+    setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
@@ -62,9 +64,14 @@ def unreact_v1_invalid_message_id_nonexistent_InputError():
     message_react_v1(user1["token"], message_id1, like)
     message_react_v1(user1["token"], message_id2, like)
 
+    # dict jank
+    bad_id = {
+        'message_id': -9999
+    }
+    
     # user1 tries to unreact to a message that doesn't exist in either of his channels
     with pytest.raises(InputError):
-        assert message_unreact_v1(user1["token"], -9999, like)
+        assert message_unreact_v1(user1["token"], bad_id, like)
 
 
 # The react id the user unreacts is not valid (currently only id 1 is valid)
@@ -166,7 +173,7 @@ def test_message_unreact_v1_dm():
     user1, user2 = setup['user1'], setup['user2']
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
-    message_id = message_send_v2(user2["token"], dmid1, "Hello")
+    message_id = message_senddm_v2(user2["token"], dmid1["dm_id"], "Hello")
     message_react_v1(user1["token"], message_id, like)
 
     messages_list = dm_messages_v1(user1["token"], dmid1, 0)

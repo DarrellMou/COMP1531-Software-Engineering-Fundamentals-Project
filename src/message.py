@@ -512,9 +512,9 @@ def message_react_v1(token, message_id, react_id):
 
     # Check to see if message_id exists in an existing channel
     found = 0
-    for message_search in data['messages']:
+    for message in data['messages']:
         # If the message_id exists and is valid, copy important information
-        if message['message_id'] == message_id:
+        if message['message_id'] == message_id['message_id']:
             channel_id = message['channel_id']
             dm_id = message['dm_id']
             reactions = message['reactions']
@@ -539,23 +539,26 @@ def message_react_v1(token, message_id, react_id):
     if react_id != 1:
         raise InputError(description="The react_id is not valid")
 
-    # Check to see if there is an identical active reaction from the user
+    # Check to see if there has been an identical reaction from the user
     for reaction in reactions:
         if user_id == reaction['u_id']:
-            # If found, then reaction is active and the user must be denied as they
-            # cannot react again with the identical reaction
-            raise InputError(description="User already has identical active reaction on message")
+            # If found, check if reaction is active
+            if reaction['is_removed'] == False:
+                raise InputError(description="User already has identical active reaction on message")
+            # If inactive (is_removed == True), then make it active again
+            else:
+                reaction['is_removed'] == False
+                return
 
-    # None of the input/access errors raised, post the reaction
+    # If not found append a new reaction to the message and send a notification
 
     # Create the reaction
     reaction_dict = {
-        'u_id' = user_id
-        'react_id' = react_id
+        'u_id': user_id,
+        'react_id': react_id,
+        'is_removed': False,
     }
-
     reactions.append(reaction_dict)
 
-    # No past history of reacting to the message with the specific react_id
-    # Continue to add the react to message
+    #Notification part goes here
 
