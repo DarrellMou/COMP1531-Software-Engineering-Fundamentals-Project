@@ -500,7 +500,7 @@ def message_senddm_v1(token, dm_id, message):
         'message_id': unique_message_id
     }
 
-# Add a reaction to a message in channel/dm
+# Create or reactivate a reaction to a message in channel/dm
 def message_react_v1(token, message_id, react_id):
     data = retrieve_data()
 
@@ -547,7 +547,7 @@ def message_react_v1(token, message_id, react_id):
                 raise InputError(description="User already has identical active reaction on message")
             # If inactive (is_removed == True), then make it active again
             else:
-                reaction['is_removed'] == False
+                reaction['is_removed'] = False
                 return
 
     # If not found append a new reaction to the message and send a notification
@@ -562,3 +562,57 @@ def message_react_v1(token, message_id, react_id):
 
     #Notification part goes here
 
+
+# Deactivate a reaction in a message
+def message_unreact_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id['message_id']:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            reactions = message['reactions']
+            found = 1
+            break
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # Check to see if there has been an identical reaction from the user
+    for reaction in reactions:
+        if user_id == reaction['u_id']:
+            # If found, check if reaction is active
+            if reaction['is_removed'] == True:
+                raise InputError(description="User already has identical inactive reaction on message")
+            # If active (is_removed == False), then deactivate it
+            else:
+                reaction['is_removed'] = True
+                return
+
+    # If not found, return an error, because we're not creating a new react
+    # we don't need to send a notification
+    raise InputError(description="User already has no reaction of the same type on message")
