@@ -149,6 +149,7 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
+        'reactions': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -462,6 +463,7 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
+        'reactions': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -497,3 +499,63 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
+
+# Add a reaction to a message in channel/dm
+def message_react_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message_search in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            reactions = message['reactions']
+            found = 1
+            break
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # Check to see if there is an identical active reaction from the user
+    for reaction in reactions:
+        if user_id == reaction['u_id']:
+            # If found, then reaction is active and the user must be denied as they
+            # cannot react again with the identical reaction
+            raise InputError(description="User already has identical active reaction on message")
+
+    # None of the input/access errors raised, post the reaction
+
+    # Create the reaction
+    reaction_dict = {
+        'u_id' = user_id
+        'react_id' = react_id
+    }
+
+    reactions.append(reaction_dict)
+
+    # No past history of reacting to the message with the specific react_id
+    # Continue to add the react to message
+

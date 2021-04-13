@@ -65,12 +65,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 },
@@ -84,12 +82,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 },
@@ -111,12 +107,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 },
@@ -130,12 +124,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 }
@@ -156,12 +148,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 },
@@ -174,12 +164,10 @@ data = {
                         {
                             'u_id': 35746842521,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                         {
                             'u_id': 11753764853,
                             'react_id': 1,
-                            'is_removed': False,
                         },
                     ],
                 },
@@ -200,12 +188,10 @@ data = {
                 {
                     'u_id': 35746842521,
                     'react_id': 1,
-                    'is_removed': False,
                 },
                 {
                     'u_id': 11753764853,
                     'react_id': 1,
-                    'is_removed': False,
                 },
             ],
         },
@@ -222,12 +208,10 @@ data = {
                 {
                     'u_id': 35746842521,
                     'react_id': 1,
-                    'is_removed': False,
                 },
                 {
                     'u_id': 11753764853,
                     'react_id': 1,
-                    'is_removed': False,
                 },
             ],
         },

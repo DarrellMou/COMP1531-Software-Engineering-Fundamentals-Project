@@ -157,7 +157,7 @@ def test_message_unreact_v1_channel():
     message_unreact_v1(user1["token"], message_id, like)
     messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
+    assert len(messages_list2['messages'][0]["reactions"]) == 0
 
 
 # Testing for user unreacting to another user's in dm
@@ -177,7 +177,7 @@ def test_message_unreact_v1_dm():
     message_unreact_v1(user1["token"], message_id, like)
     messages_list2 = dm_messages_v1(user1["token"], dmid1, 0)
 
-    assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
+    assert len(messages_list2['messages'][0]["reactions"]) == 0
 
 
 # Testing for user reacting to themselves
@@ -196,7 +196,7 @@ def test_message_unreact_v1_self():
     message_unreact_v1(user1["token"], message_id, like)
     messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
+    assert len(messages_list2['messages'][0]["reactions"]) == 0
 
 
 # Testing for unreacts on different messages
@@ -229,9 +229,12 @@ def test_message_unreact_v1_different_messages():
     message_unreact_v1(user1["token"], message_id2, like)
     messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
-    assert messages_list2['messages'][1]["reactions"][0]["is_removed"] == True
-    assert messages_list2['messages'][2]["reactions"][0]["is_removed"] == False
+    assert messages_list['messages'][0]["reactions"] == []
+    assert messages_list['messages'][1]["reactions"] == []
+    
+    assert messages_list['messages'][2]["reactions"][0]["u_id"] == user1["auth_user_id"]
+    assert messages_list['messages'][2]["reactions"][0]["react_id"] == 1
+
 
 # Testing for multiple unreacts on the same message
 def test_message_unreact_v1_multiple_on_message():
@@ -261,9 +264,9 @@ def test_message_unreact_v1_multiple_on_message():
     message_unreact_v1(user2["token"], message_id, like)
     messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
 
-    assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
-    assert messages_list2['messages'][0]["reactions"][1]["is_removed"] == True
-    assert messages_list2['messages'][0]["reactions"][2]["is_removed"] == False
+    # First two reactions should be popped, making the third the first now
+    assert messages_list['messages'][0]["reactions"][0]["u_id"] == user3["auth_user_id"]
+    assert messages_list['messages'][0]["reactions"][0]["react_id"] == 1
 
 # Testing for user reacting and unreacting to themselves over and over
 def test_message_unreact_v1_loop_react_unreact():
@@ -281,10 +284,11 @@ def test_message_unreact_v1_loop_react_unreact():
     for x in range(10):
         message_unreact_v1(user1["token"], message_id, like)
         messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
-        assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == True
+        assert messages_list2['messages'][0]["reactions"] == []
 
         message_react_v1(user1["token"], message_id, like)
         messages_list2 = channel_messages_v2(user1["token"], channel1, 0)
-        assert messages_list2['messages'][0]["reactions"][0]["is_removed"] == False
+        assert messages_list['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
+        assert messages_list['messages'][0]["reactions"][0]["react_id"] == 1
 
     len(messages_list2['messages'][0]["reactions"]) == 1
