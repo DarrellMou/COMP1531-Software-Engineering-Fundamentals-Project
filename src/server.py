@@ -11,7 +11,7 @@ from src.error import InputError
 from src import config
 
 from src.data import read_data, write_data
-from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1
+from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_passwordreset_request, auth_passwordreset_reset
 from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, channel_addowner_v1, channel_removeowner_v1, channel_messages_v2, channel_leave_v1
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
 from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1, dm_invite_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
@@ -75,6 +75,23 @@ def auth_logout_route():
 
     write_data()
     return dumps(returnDict)
+
+
+@APP.route("/auth/passwordreset/request/v1", methods=['POST'])
+def auth_passwordreset_request_route():
+    payload = request.get_json()
+    auth_passwordreset_request(payload['email'])
+
+    return dumps({})
+
+
+@APP.route("/auth/passwordreset/reset/v1", methods=['POST'])
+def auth_passwordreset_reset_route():
+    payload = request.get_json()
+    auth_passwordreset_reset(payload['reset_code'], payload['new_password'])
+
+    write_data()
+    return dumps({})
 
 
 @APP.route("/channels/create/v2", methods=['POST'])
