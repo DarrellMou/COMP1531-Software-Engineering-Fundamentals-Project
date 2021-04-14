@@ -218,6 +218,7 @@ def test_http_message_edit_v2_edit_one():
         'u_id': messages_info['u_id'],
         'message': 'Hi',
         'time_created': messages_info['time_created'],
+        'is_pinned': False
     }
     m_dict1 = channel_messages["messages"][1]
     m_dict2 = channel_messages["messages"][0]
@@ -278,18 +279,21 @@ def test_http_message_edit_v2_edit_multiple():
         'u_id': m_id0['u_id'],
         'message': 'Hi',
         'time_created': m_id0['time_created'],
+        'is_pinned': False
     }
     m_dict2 = {
         'message_id': m_id2['message_id'],
         'u_id': m_id2['u_id'],
         'message': 'Hello',
         'time_created': m_id2['time_created'],
+        'is_pinned': False
     }
     m_dict3 = {
         'message_id': m_id3['message_id'],
         'u_id': m_id3['u_id'],
         'message': 'Hey',
         'time_created': m_id3['time_created'],
+        'is_pinned': False
     }
 
     m_dict1 = channel_msgs["messages"][3]
@@ -365,6 +369,7 @@ def test_http_message_edit_v2_edit_all_messages():
         'u_id': m_id0['u_id'],
         'message': 'Hi',
         'time_created': m_id0['time_created'],
+        'is_pinned': False
     }
 
     m_dict1 = {
@@ -372,6 +377,7 @@ def test_http_message_edit_v2_edit_all_messages():
         'u_id': m_id1['u_id'],
         'message': 'Hello',
         'time_created': m_id1['time_created'],
+        'is_pinned': False
     }
 
     m_dict2 = {
@@ -379,6 +385,7 @@ def test_http_message_edit_v2_edit_all_messages():
         'u_id': m_id2['u_id'],
         'message': 'Hey',
         'time_created': m_id2['time_created'],
+        'is_pinned': False
     }
 
     m_dict3 = {
@@ -386,6 +393,7 @@ def test_http_message_edit_v2_edit_all_messages():
         'u_id': m_id3['u_id'],
         'message': 'Goodbye',
         'time_created': m_id3['time_created'],
+        'is_pinned': False
     }
 
     m_dict4 = {
@@ -393,6 +401,7 @@ def test_http_message_edit_v2_edit_all_messages():
         'u_id': m_id4['u_id'],
         'message': 'Bye',
         'time_created': m_id4['time_created'],
+        'is_pinned': False
     }
 
     answer = {
@@ -476,6 +485,7 @@ def test_http_message_edit_v2_owner_edits_message():
         'u_id': msg1['u_id'],
         'message': 'Bao',
         'time_created': msg1['time_created'],
+        'is_pinned': False
     }
     m_dict0 = channel_msgs['messages'][2]
     m_dict2 = channel_msgs['messages'][0]
@@ -557,6 +567,7 @@ def test_http_message_edit_v2_dream_owner_edits_message():
         'u_id': msg1['u_id'],
         'message': 'HELLO!',
         'time_created': msg1['time_created'],
+        'is_pinned': False
     }
     m_dict0 = channel_msgs['messages'][2]
     m_dict2 = channel_msgs['messages'][0]
@@ -646,6 +657,7 @@ def test_http_message_edit_v2_dream_owner_edits_message_in_channel():
         'u_id': msg1['u_id'],
         'message': 'Testing?',
         'time_created': msg1['time_created'],
+        'is_pinned': False
     }
     m_dict0 = channel_msgs['messages'][2]
     m_dict2 = channel_msgs['messages'][0]
@@ -813,12 +825,14 @@ def test_message_edit_v2_edit_msg_in_dm():
         'u_id': msg0['u_id'],
         'message': 'Hey',
         'time_created': msg0['time_created'],
+        'is_pinned': False
     }
     m_dict3 = {
         'message_id': msg3['message_id'],
         'u_id': msg3['u_id'],
         'message': 'Hello',
         'time_created': msg3['time_created'],
+        'is_pinned': False
     }
 
     answer = {
