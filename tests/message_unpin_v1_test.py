@@ -163,7 +163,7 @@ def test_message_unpin_v1_pin_one():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
-    # Send a message to a dm and then pin that message and check that everything is correct
+    # Send a message to a channel and then pin that message and check that everything is correct
     m_id = message_send_v2(user1['token'], channel1, "Hello")
     message_pin_v1(user1["token"], m_id["message_id"])
 
@@ -220,7 +220,7 @@ def test_message_pin_v1_unpin_multiple():
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id3['message_id']
 
     # Unpin the second pinned message and check that everything is working as intended
-    message_unpin_v1(user1["token"], m_id1["message_id"])
+    message_unpin_v1(user1["token"], m_id2["message_id"])
 
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 23
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['message'] == "Hello"
