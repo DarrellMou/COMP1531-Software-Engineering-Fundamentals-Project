@@ -9,6 +9,16 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v2
 from src.message import message_send_v2, message_senddm_v1, message_pin_v1
 from src.other import clear_v1
+from src.dm import dm_create_v1, dm_messages_v1
+
+from src.data import retrieve_data
+
+
+###############################################################################
+#                                 ASSUMPTIONS                                 #
+###############################################################################
+
+# A removed message cannot be pinned - they're considered as non-valid messages
 
 
 ###############################################################################
@@ -97,11 +107,11 @@ def test_message_pin_v1_AccessError_non_owner():
 # Testing for when the user is not an owner of the dm but is within it
 def test_message_pin_v1_AccessError_dm_non_owner():
     setup = set_up_data()
-    user1, dm1 = setup['user1'], setup['dm1']
+    user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     m_id = message_senddm_v1(user1['token'], dm1, "HEY EVERYBODY")
 
-    # user2 who is not a part of channel1 tries to pin message 
+    # user2 who is not an owner of dm1 tries to pin the message 
     # - should raise an access error
     with pytest.raises(AccessError):
         assert message_pin_v1(user2["token"], m_id["message_id"])
@@ -113,7 +123,7 @@ def test_message_pin_v1_InputError_non_valid_id():
     user1 = setup['user1']
     
     # user1 (the channel owner) tries to pin a non existent message
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         assert message_pin_v1(user1["token"], 742)
 
 
@@ -126,7 +136,7 @@ def test_message_pin_v1_InputError_already_pinned():
     message_pin_v1(user1["token"], m_id["message_id"])
 
     # user1 (the channel owner) tries to pin an already pinned message
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         assert message_pin_v1(user1["token"], m_id["message_id"])
 
 
@@ -156,13 +166,13 @@ def test_message_pin_v1_pin_one():
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 1
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Hello"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['is_pinned'] == True
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id['message_id']
 
 
 # Testing to see if one message is pinned correctly
 def test_message_pin_v1_pin_multiple():
     setup = set_up_data()
-    user1, channel1 = setup['user1'], setup['channel1']
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
     m_id1 = message_send_v2(user1['token'], channel1, "Hello")
@@ -177,11 +187,11 @@ def test_message_pin_v1_pin_multiple():
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 23
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['message'] == "Hello"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['is_pinned'] == True
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['message_id'] == m_id1
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['message_id'] == m_id1['message_id']
     
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['message'] == "Bao"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['is_pinned'] == True
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['message_id'] == m_id2
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['message_id'] == m_id2['message_id']
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['u_id'] == user2["auth_user_id"]
 
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][2]['message'] == "20"
@@ -189,6 +199,7 @@ def test_message_pin_v1_pin_multiple():
 
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Bye"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['is_pinned'] == False
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id3['message_id']
 
 
 # Testing to see if one message is pinned correctly to a dm
@@ -199,7 +210,7 @@ def test_message_pin_v1_pin_one_dm():
     m_id = message_senddm_v1(user1['token'], dm1, "Hello")
     message_pin_v1(user1["token"], m_id["message_id"])
 
-    assert len(channel_messages_v1(user1['token'], dm1, 0)['messages']) == 1
+    assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 1
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "Hello"
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['is_pinned'] == True
-    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message_id'] == m_id
+    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message_id'] == m_id['message_id']
