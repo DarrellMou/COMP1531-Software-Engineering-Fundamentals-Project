@@ -72,7 +72,7 @@ data = {
             ],
             'standup' : {
                 'is_active' : False,
-                'time_finish' : 0,
+                'time_finish' : None,
             },
         },
         31627643273 : {
@@ -98,7 +98,7 @@ data = {
             ],
             'standup' : {
                 'is_active' : False,
-                'time_finish' : 0,
+                'time_finish' : None,
             },
         },
     },
