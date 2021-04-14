@@ -4,6 +4,7 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token, auth_email_format
+from datetime import datetime
 
 ###############################################################################
 '''       A user's profile is set when he registers, in auth_register       '''
@@ -235,11 +236,63 @@ def user_stats_v1_tests(token):
         involvement = (activity / server_act)
 
     # Create dict for stats
-    stat_dict = {
+    user_stats = {
         'num_channels_joined': channel_num,
         'num_dms_joined': dm_num,
         'num_msgs_sent': msg_num,
         'involvement': involvement,
     }
 
-    return stat_dict
+    return user_stats
+
+# Function to return the statistics of a user
+def users_stats_v1_tests(token):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Token is valid, continue to gather statistics about this user
+
+    # To calculate involvement, get total users and create a list to track
+    # users we encounter involved in channels/dms
+    total_users = len(data['users'])
+    userdex = []
+
+    # Total channels statistic
+    total_ch = 0
+    for channel in data['channels']:
+        for member in channel['all_members']:
+            if member not in userdex:
+                userdex.apend(member)
+        total_ch += 1
+
+    # Total dms statistic
+    total_dm = 0
+    for dm in data['dms']:
+        for member in dm['members']:
+            if member not in userdex:
+                userdex.apend(member)
+        total_dm += 1
+
+    # Messages sent statistic
+    total_msg = 0
+    for msg in data['messages']:
+        total_msg += 1
+
+    # Calculate utilization
+    utilization = (len(userdex) / total_users)
+
+    # Create dict for stats
+    time_stamp = round(datetime.now().timestamp())
+    dreams_stats = {
+        'channels_exist': {total_ch, time_stamp},
+        'dms_exist': {total_dm, time_stamp},
+        'messages_exist': {total_msg, time_stamp},
+        'utilization_rate': utilization,
+    }
+
+    return dreams_stats
