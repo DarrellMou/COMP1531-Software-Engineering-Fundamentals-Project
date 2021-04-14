@@ -70,10 +70,10 @@ def test_user_stats_v1_empty():
     user1 = setup['user1']
 
     assert user_stats_v1(user1['token']) == {
-        'channel_total': 0,
-        'dm_total': 0,
-        'msg_total': 0,
-        'involvement': 0/0,
+        'num_channels_joined': 0,
+        'num_dms_joined': 0,
+        'num_msgs_sent': 0,
+        'involvement': 0,
     }
 
 # Test stats when one user has all of the involvement
@@ -83,10 +83,10 @@ def test_user_stats_v1_full():
     channels_create_v2(user1['token'], 'Channel1', True)
 
     assert user_stats_v1(user1['token']) == {
-        'channel_total': 1,
-        'dm_total': 0,
-        'msg_total': 0,
-        'involvement': 1/1,
+        'num_channels_joined': 1,
+        'num_dms_joined': 0,
+        'num_msgs_sent': 0,
+        'involvement': 1,
     }
 
 # Test stats with user involved in all types of activity
@@ -98,16 +98,16 @@ def test_user_stats_v1_all():
     message_senddm_v1(user1['token'], dmid1['dm_id'], "Hello world!_dm")
 
     assert user_stats_v1(user1['token']) == {
-        'channel_total': 1,
+        'num_channels_joined': 1,
         'dm_total': 1,
-        'msg_total': 2,
-        'involvement': 4/4,
+        'num_msgs_sent': 2,
+        'involvement': 0.25,
     }
     assert user_stats_v1(user2['token']) == {
-        'channel_total': 1,
+        'num_channels_joined': 1,
         'dm_total': 1,
-        'msg_total': 2,
-        'involvement': 1/4,
+        'num_msgs_sent': 2,
+        'involvement': 0.25,
     }
 
 # Test stats to see if invited/joined channels count
@@ -129,22 +129,22 @@ def test_user_stats_v1_invite_join():
     message_senddm_v1(user3['token'], dmid1['dm_id'], "Hi i'm user3 dm")
 
     assert user_stats_v1(user1['token']) == {
-        'channel_total': 1,
+        'num_channels_joined': 1,
         'dm_total': 1,
-        'msg_total': 2,
-        'involvement': 4/8,
+        'num_msgs_sent': 2,
+        'involvement': 0.5,
     }
     assert user_stats_v1(user2['token']) == {
-        'channel_total': 1,
+        'num_channels_joined': 1,
         'dm_total': 1,
-        'msg_total': 2,
-        'involvement': 4/8,
+        'num_msgs_sent': 2,
+        'involvement': 0.5,
     }
     assert user_stats_v1(user2['token']) == {
-        'channel_total': 1,
+        'num_channels_joined': 1,
         'dm_total': 1,
-        'msg_total': 2,
-        'involvement': 4/8,
+        'num_msgs_sent': 2,
+        'involvement': 0.5,
     }
 
 # Test a really active user
@@ -171,8 +171,8 @@ def test_user_stats_v1_active():
     message_send_v2(user1["token"], channel1, "Message 7")
 
     assert user_stats_v1(user1['token']) == {
-        'channel_total': 5,
+        'num_channels_joined': 5,
         'dm_total': 5,
-        'msg_total': 7,
-        'involvement': 17/17,
+        'num_msgs_sent': 7,
+        'involvement': 1,
     }
