@@ -136,7 +136,7 @@ def test_message_share_v1_share_one_multiple_times():
     assert channel2_messages["messages"][1]["message_id"] == shared_m_id1
     assert channel2_messages["messages"][1]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert channel2_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel2_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel2_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
 
     assert len(channel2_messages["messages"]) == 2
     assert len(channel1_messages["messages"]) == 2
@@ -158,7 +158,7 @@ def test_message_share_v1_share_one_multiple_times_same_channel():
     assert channel_messages["messages"][2]["message_id"] == shared_m_id1
     assert channel_messages["messages"][2]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert channel_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(channel_messages["messages"]) == 4
 
 
@@ -182,10 +182,10 @@ def test_message_share_v1_share_with_no_added_msg():
     assert channel1_messages["messages"][1]["message_id"] == shared_m_id1
     assert channel1_messages["messages"][1]["message"] == '\n\n"""\nHello\n"""'
     assert channel1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(channel1_messages["messages"]) == 3
     assert channel2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert channel2_messages["messages"][0]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert channel2_messages["messages"][0]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(channel2_messages["messages"]) == 1
 
 # Testing user1 sharing one message from channel to dm
@@ -226,11 +226,11 @@ def test_http_message_share_v1_share_dm_multiple_times():
     assert dm1_messages["messages"][1]["message_id"] == shared_m_id1
     assert dm1_messages["messages"][1]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert dm1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm1_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm1_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm1_messages["messages"]) == 3
 
     assert dm2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert dm2_messages["messages"][0]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n    \n    """\n    Hello\n    """\n"""'
+    assert dm2_messages["messages"][0]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(dm2_messages["messages"]) == 1
 
 # There is no additional message that is attached to the og message which was
@@ -251,9 +251,9 @@ def test_http_message_share_v1_share_dm_with_no_added_msg():
     assert dm_messages["messages"][2]["message_id"] == shared_m_id1
     assert dm_messages["messages"][2]["message"] == '\n\n"""\nHello\n"""'
     assert dm_messages["messages"][1]["message_id"] == shared_m_id2
-    assert dm_messages["messages"][1]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert dm_messages["messages"][1]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert dm_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm_messages["messages"]) == 4
 
 # There is no additional message that is attached to the og message which was
@@ -275,8 +275,8 @@ def test_http_message_share_v1_share_dm_with_no_added_msg_2_dms():
     assert dm1_messages["messages"][1]["message_id"] == shared_m_id1
     assert dm1_messages["messages"][1]["message"] == '\n\n"""\nHello\n"""'
     assert dm1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm1_messages["messages"]) == 3
     assert dm2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert dm2_messages["messages"][0]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert dm2_messages["messages"][0]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(dm2_messages["messages"]) == 1

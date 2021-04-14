@@ -75,7 +75,7 @@ def tab_given_message(msg):
             flag = 2
     beginning_of_string = msg[0:index]
     to_be_changed_str = msg[index:]
-    changed_string = to_be_changed_str.replace("\n", "\n    ")
+    changed_string = to_be_changed_str.replace("\n", "\n\t")
 
     tabbed_msg = beginning_of_string + changed_string
     return tabbed_msg
