@@ -37,20 +37,22 @@ def user_profile_v2(token, u_id):
     userDict = data['users'][u_id]
 
     if data['users'][u_id]['is_removed']:
-        return {'user' : {
+        return {'user' :
+                    {
                     'name_first': "Removed",
                     'name_last' : "user"
                     }
-                }
+               }
 
-    return {'user' : {
+    return  {'user' :
+                {
                 'u_id'         : u_id,
                 'email'        : userDict['email'],
                 'name_first'   : userDict['name_first'],
                 'name_last'    : userDict['name_last'],
                 'handle_str'   : userDict['handle_str']
                 }
-           }
+            }
 
 def user_profile_setname_v2(token, name_first, name_last):
     '''
@@ -195,4 +197,4 @@ def users_all_v1(token):
         }
         usersList.append(userDict)
 
-    return usersList
+    return {'users' : usersList}
