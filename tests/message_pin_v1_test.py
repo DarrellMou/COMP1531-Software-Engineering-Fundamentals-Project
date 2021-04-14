@@ -141,7 +141,7 @@ def test_message_pin_v1_InputError_already_pinned():
 
 
 # Default access error when token is invalid
-def test_message_sendlater_v1_default_Access_Error():
+def test_message_pin_v1_default_Access_Error():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
@@ -160,6 +160,7 @@ def test_message_pin_v1_pin_one():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
+    # Send a message to a channel and then pin that message and check that everything is correct
     m_id = message_send_v2(user1['token'], channel1, "Hello")
     message_pin_v1(user1["token"], m_id["message_id"])
 
@@ -175,11 +176,15 @@ def test_message_pin_v1_pin_multiple():
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
+    # Send 1 message and then pin it
     m_id1 = message_send_v2(user1['token'], channel1, "Hello")
     message_pin_v1(user1["token"], m_id1["message_id"])
 
+    # Send 20 messages after the pinned message
     send_x_messages(user1, user2, channel1, 20)
 
+    # Now send 2 more messages and pin the first of the two that was sent. Check that
+    # everything is working as intended
     m_id2 = message_send_v2(user2['token'], channel1, "Bao")
     m_id3 = message_send_v2(user1['token'], channel1, "Bye")
     message_pin_v1(user1["token"], m_id2["message_id"])
@@ -207,6 +212,7 @@ def test_message_pin_v1_pin_one_dm():
     setup = set_up_data()
     user1, dm1 = setup['user1'], setup['dm1']
 
+    # Send a message to a dm and then pin that message and check that everything is correct
     m_id = message_senddm_v1(user1['token'], dm1, "Hello")
     message_pin_v1(user1["token"], m_id["message_id"])
 
