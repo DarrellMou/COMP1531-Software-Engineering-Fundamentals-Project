@@ -82,7 +82,7 @@ def standup_active_v1(token, channel_id):
         AccessError - Invalid token
 
     Returns:
-        Returns time_finish and is_active
+        Returns a dict that contains time_finish and is_active
     '''
 
     data = retrieve_data()
@@ -92,6 +92,5 @@ def standup_active_v1(token, channel_id):
 
     # Checks if token exists
     if not auth_token_ok(token): raise AccessError
-    auth_user_id = auth_decode_token(token)
 
     return {"is_active" : data['channels'][channel_id]['standup']['is_active'], "time_finish" : data['channels'][channel_id]['standup']['time_finish']}
