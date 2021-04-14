@@ -246,7 +246,7 @@ def user_stats_v1(token):
     return user_stats
 
 # Function to return the statistics of a user
-def users_stats_v1_tests(token):
+def users_stats_v1(token):
     data = retrieve_data()
 
     # Make sure user is valid
@@ -265,17 +265,17 @@ def users_stats_v1_tests(token):
     # Total channels statistic
     total_ch = 0
     for channel in data['channels']:
-        for member in channel['all_members']:
+        for member in data['channels'][channel]['all_members']:
             if member not in userdex:
-                userdex.apend(member)
+                userdex.append(member)
         total_ch += 1
 
     # Total dms statistic
     total_dm = 0
     for dm in data['dms']:
-        for member in dm['members']:
+        for member in data['dms'][dm]['members']:
             if member not in userdex:
-                userdex.apend(member)
+                userdex.append(member)
         total_dm += 1
 
     # Messages sent statistic
@@ -285,14 +285,14 @@ def users_stats_v1_tests(token):
 
     # Calculate utilization
     utilization = (len(userdex) / total_users)
-
+    
     # Create dict for stats
     time_stamp = round(datetime.now().timestamp())
     dreams_stats = {
         'channels_exist': {total_ch, time_stamp},
-        'dms_exist': {total_dm, time_stamp},
-        'messages_exist': {total_msg, time_stamp},
-        'utilization_rate': utilization,
+        'dms_exist': {total_dm, time_stamp},
+        'messages_exist': {total_msg, time_stamp},
+        'utilization_rate': utilization,
     }
 
     return dreams_stats

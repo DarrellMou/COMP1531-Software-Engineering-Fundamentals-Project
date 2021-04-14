@@ -4,7 +4,7 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.channel import channel_invite_v2
+from src.channel import channel_invite_v2, channel_join_v2
 from src.auth import auth_register_v1
 from src.channels import channels_create_v2
 from src.dm import dm_create_v1, dm_invite_v1
@@ -56,6 +56,7 @@ def set_up_data():
 
 # Default access error when token is invalid
 def test_users_stats_v1_default_Access_Error():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
 
     with pytest.raises(AccessError):
@@ -68,18 +69,20 @@ def test_users_stats_v1_default_Access_Error():
 
 # Test stats when only users exist, but no boards of discussion
 def test_users_stats_v1_empty():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {0, time_stamp}, 
-        'dms_exist': {0, time_stamp}, 
-        'messages_exist': {0, time_stamp},
-        'utilization_rate': 0,
+        'channels_exist': {0, time_stamp},
+        'dms_exist': {0, time_stamp},
+        'messages_exist': {0, time_stamp},
+        'utilization_rate': 0,
     }
 
 # Test stats with users and boards but no messages
-def test_users_stats_v1_empty():
+def test_users_stats_v1_no_msg():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
 
@@ -89,79 +92,82 @@ def test_users_stats_v1_empty():
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
         'channels_exist': {1, time_stamp},
-        'dms_exist': {1, time_stamp},
-        'messages_exist': {0, time_stamp},
-        'utilization_rate': 1,
+        'dms_exist': {1, time_stamp},
+        'messages_exist': {0, time_stamp},
+        'utilization_rate': 1,
     }
 
 # Test stats when there is only one active user contributing to full utilization and sending messages
 def test_users_stats_v1_loner():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     
-    channels_create_v2(user1['token'], 'Channel1', True)
-    message_send_v2(user1["token"], channel1, "Hello world! 1")
-    message_send_v2(user1["token"], channel1, "Hello world! 2")
-    message_send_v2(user1["token"], channel1, "Hello world! 3")
-    message_send_v2(user1["token"], channel1, "Hello world! 4")
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
+    message_send_v2(user1["token"], channel1['channel_id'], "Hello world! 1")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hello world! 2")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hello world! 3")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hello world! 4")
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
         'channels_exist': {1, time_stamp},
-        'dms_exist': {0, time_stamp},
-        'messages_exist': {4, time_stamp},
-        'utilization_rate': 1,
+        'dms_exist': {0, time_stamp},
+        'messages_exist': {4, time_stamp},
+        'utilization_rate': 1,
     }
-
 
 # Test stats to see if invited/joined users count towards utilization
 def test_users_stats_v1_invite_join():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
     user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
     
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
-    message_send_v2(user1["token"], channel1, "Hi i'm user1 ch")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hi i'm user1 ch")
     message_senddm_v1(user1['token'], dmid1['dm_id'], "Hi i'm user1 dm")
     message_senddm_v1(user2['token'], dmid1['dm_id'], "Hi i'm user2 dm")
     
-    channel_invite_v2(user1['token'], chid1['channel_id'], user2['auth_user_id'])
-    message_send_v2(user2["token"], channel1, "Hi i'm user2 ch")
+    channel_invite_v2(user1['token'], channel1['channel_id'], user2['auth_user_id'])
+    message_send_v2(user2["token"], channel1['channel_id'], "Hi i'm user2 ch")
     
     dm_invite_v1(user1['token'], dmid1['dm_id'], user3['auth_user_id'])
     channel_join_v2(user3['token'], channel1['channel_id'])
-    message_send_v2(user3["token"], channel1, "Hi i'm user3 ch")
+    message_send_v2(user3["token"], channel1['channel_id'], "Hi i'm user3 ch")
     message_senddm_v1(user3['token'], dmid1['dm_id'], "Hi i'm user3 dm")
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
         'channels_exist': {1, time_stamp},
-        'dms_exist': {1, time_stamp},
-        'messages_exist': {6, time_stamp},
-        'utilization_rate': 1,
+        'dms_exist': {1, time_stamp},
+        'messages_exist': {6, time_stamp},
+        'utilization_rate': 1,
     }
 
 
 # Test to see partial utilization rates
-def test_users_stats_v1_invite_join():
+def test_users_stats_v1_partial_util():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
     user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
     user4 = auth_register_v1('user4@gmail.com', 'password123', 'first4', 'last4')
 
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    message_send_v2(user1["token"], channel1, "Hi i'm user1 ch")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hi i'm user1 ch")
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
         'channels_exist': {1, time_stamp},
-        'dms_exist': {0, time_stamp},
-        'messages_exist': {1, time_stamp},
-        'utilization_rate': 0.25,
+        'dms_exist': {0, time_stamp},
+        'messages_exist': {1, time_stamp},
+        'utilization_rate': 0.25,
     }
 
 # Test stats to see if multiple users get the same stats
 def test_users_stats_v1_active():
+    clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
     user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
@@ -177,39 +183,38 @@ def test_users_stats_v1_active():
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
-    message_send_v2(user1["token"], channel1, "Message 1")
-    message_send_v2(user1["token"], channel1, "Message 2")
-    message_send_v2(user1["token"], channel1, "Message 3")
-    message_send_v2(user1["token"], channel1, "Message 4")
-    message_send_v2(user1["token"], channel1, "Message 5")
-    message_send_v2(user1["token"], channel1, "Message 6")
-    message_send_v2(user1["token"], channel1, "Message 7")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 1")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 2")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 3")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 4")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 5")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 6")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 7")
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
         'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
-        'utilization_rate': 0.5,
+        'dms_exist': {5, time_stamp},
+        'messages_exist': {7, time_stamp},
+        'utilization_rate': 0.5,
     }
-
     assert users_stats_v1(user2['token']) == {
         'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
-        'utilization_rate': 0.5,
+        'dms_exist': {5, time_stamp},
+        'messages_exist': {7, time_stamp},
+        'utilization_rate': 0.5,
     }
 
     assert users_stats_v1(user3['token']) == {
         'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
-        'utilization_rate': 0.5,
+        'dms_exist': {5, time_stamp},
+        'messages_exist': {7, time_stamp},
+        'utilization_rate': 0.5,
     }
 
     assert users_stats_v1(user4['token']) == {
         'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
-        'utilization_rate': 0.5,
+        'dms_exist': {5, time_stamp},
+        'messages_exist': {7, time_stamp},
+        'utilization_rate': 0.5,
     }
