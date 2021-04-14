@@ -9,8 +9,9 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v2
 from src.message import message_send_v2, message_sendlater_v1
 from src.other import clear_v1
+from datetime import datetime
 
-import time
+import time # Used for time.sleep
 
 ###############################################################################
 #                                 ASSUMPTIONS                                 #
@@ -54,7 +55,6 @@ def send_x_messages(user1, user2, channel1, num_messages):
         message_count += 1
     
     return {}
-
 
 ###############################################################################
 #                                   TESTING                                   #
@@ -127,7 +127,7 @@ def test_message_sendlater_v1_default_Access_Error():
     send_time = current_time + 1
 
     with pytest.raises(AccessError):
-        message_send_v2("invalid token", "channel1", "Wrong", send_time)
+        message_sendlater_v1("invalid token", "channel1", "Wrong", send_time)
 
 ############################ END EXCEPTION TESTING ############################
 
@@ -136,6 +136,7 @@ def test_message_sendlater_v1_default_Access_Error():
 
 # Testing 1 message being sent in the future
 def test_message_send_later_v1_1_message():
+    setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
     # Assert that there are no messages within the channel
@@ -152,6 +153,7 @@ def test_message_send_later_v1_1_message():
     # Put the current test to sleep for 1.2 seconds and then check that the message was
     # correctly sent
     time.sleep(1.2)
+
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 1
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Hello"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['u_id'] == user1['auth_user_id']
@@ -159,8 +161,10 @@ def test_message_send_later_v1_1_message():
 
 # Testing one message being sent later and then sending multiple afterwards
 def test_message_send_later_v1_send_multiple_after():
-    user1, user2 channel1 = setup['user1'], setup['user2'], setup['channel1']
-
+    setup = set_up_data()
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
+    
     # Assert that there are no messages within the channel
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 0
 
@@ -178,9 +182,9 @@ def test_message_send_later_v1_send_multiple_after():
     time.sleep(1.2)
     message_send_v2(user2['token'], channel1, "Bye!")
 
-    assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 21
+    assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 22
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['message'] == "Hello"
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['u_id'] == user1['auth_user_id']
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['u_id'] == user1['auth_user_id']
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Bye!"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['u_id'] == user2['auth_user_id']
 
@@ -188,7 +192,9 @@ def test_message_send_later_v1_send_multiple_after():
 # Testing user2 sending a message later and then leaving the channel before
 # the message is sent
 def test_message_send_later_v1_leave_channel_before_message_sent():
-    user1, user2 channel1 = setup['user1'], setup['user2'], setup['channel1']
+    setup = set_up_data()
+    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
+    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
     current_time = round(datetime.now().timestamp())
     send_time = current_time + 1
@@ -208,5 +214,5 @@ def test_message_send_later_v1_leave_channel_before_message_sent():
     # correctly sent
     time.sleep(1.2)
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 3
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "I'm leaving"
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0][u_id] == user2['auth_user_id']
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "I'm leaving."
+    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['u_id'] == user2['auth_user_id']
