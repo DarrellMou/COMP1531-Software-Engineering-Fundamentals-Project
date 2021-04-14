@@ -138,6 +138,7 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'is_pinned': False
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -150,13 +151,12 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
+        'is_pinned': False,
     }
 
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
     
     # Create notification if someone is tagged
     tag = re.search("@[a-zA-Z1-9]*", message)
@@ -451,6 +451,7 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'is_pinned': False
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -463,6 +464,7 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
+        'is_pinned': False
     }
 
     # Append our dictionaries to their appropriate lists
@@ -570,7 +572,8 @@ def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, mes
         'channel_id': channel_id,
         'dm_id': -1,
         'is_removed': False,
-        'was_shared': False
+        'was_shared': False,
+        'is_pinned': False
     }
 
     data['messages'].append(message_dictionary)
@@ -579,7 +582,8 @@ def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, mes
         'message_id': unique_message_id,
         'u_id': user_id,
         'message': message,
-        'time_created': round(datetime.now().timestamp())
+        'time_created': round(datetime.now().timestamp()),
+        'is_pinned': False
     }
 
     for msg in data['messages']:
