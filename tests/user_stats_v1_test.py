@@ -53,8 +53,6 @@ def set_up_data():
 
 # Default access error when token is invalid
 def test_user_stats_v1_default_Access_Error():
-    setup = set_up_data()
-    user1 = setup['user1']
 
     with pytest.raises(AccessError):
         user_stats_v1("imposter")
@@ -158,7 +156,7 @@ def test_user_stats_v1_active():
     channels_create_v2(user1['token'], 'Channel3', True)
     channels_create_v2(user1['token'], 'Channel4', True)
     channels_create_v2(user1['token'], 'Channel5', True)
-    dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])

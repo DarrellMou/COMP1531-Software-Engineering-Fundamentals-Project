@@ -253,8 +253,6 @@ def users_stats_v1(token):
     if not auth_token_ok(token):
         raise AccessError(description="The given token is not valid")
 
-    user_id = auth_decode_token(token)
-
     # Token is valid, continue to gather statistics about this user
 
     # To calculate involvement, get total users and create a list to track
@@ -279,9 +277,7 @@ def users_stats_v1(token):
         total_dm += 1
 
     # Messages sent statistic
-    total_msg = 0
-    for msg in data['messages']:
-        total_msg += 1
+    total_msg = len(data['messages'])
 
     # Calculate utilization
     utilization = (len(userdex) / total_users)

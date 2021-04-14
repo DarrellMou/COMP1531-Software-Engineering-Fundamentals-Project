@@ -57,7 +57,7 @@ def set_up_data():
 # Default access error when token is invalid
 def test_users_stats_v1_default_Access_Error():
     clear_v1()
-    user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
+    auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
 
     with pytest.raises(AccessError):
         users_stats_v1("imposter")
@@ -86,8 +86,8 @@ def test_users_stats_v1_no_msg():
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
     user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
 
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    channels_create_v2(user1['token'], 'Channel1', True)
+    dm_create_v1(user1['token'], [user2['auth_user_id']])
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
@@ -150,9 +150,9 @@ def test_users_stats_v1_invite_join():
 def test_users_stats_v1_partial_util():
     clear_v1()
     user1 = auth_register_v1('user1@gmail.com', 'password123', 'first1', 'last1')
-    user2 = auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
-    user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
-    user4 = auth_register_v1('user4@gmail.com', 'password123', 'first4', 'last4')
+    auth_register_v1('user2@gmail.com', 'password123', 'first2', 'last2')
+    auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
+    auth_register_v1('user4@gmail.com', 'password123', 'first4', 'last4')
 
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
     message_send_v2(user1["token"], channel1['channel_id'], "Hi i'm user1 ch")
@@ -178,7 +178,7 @@ def test_users_stats_v1_active():
     channels_create_v2(user1['token'], 'Channel3', True)
     channels_create_v2(user1['token'], 'Channel4', True)
     channels_create_v2(user1['token'], 'Channel5', True)
-    dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
