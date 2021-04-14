@@ -13,26 +13,26 @@ def test_function(users):
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     time_finish = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 5)
 
-    assert float("{:.2f}".format(time_finish)) == float("{:.2f}".format(datetime.now().timestamp() + 5))
+    assert time_finish == int(datetime.now().timestamp() + 5)
     time.sleep(6)
 
 def test_multiple_runs(users):
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     time_finish1 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 5)
 
-    assert float("{:.2f}".format(time_finish1)) == float("{:.2f}".format(datetime.now().timestamp() + 5))
+    assert time_finish1 == int(datetime.now().timestamp() + 5)
     
     time.sleep(6)
 
     time_finish2 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 10)
 
-    assert float("{:.2f}".format(time_finish2)) == float("{:.2f}".format(datetime.now().timestamp() + 10))
+    assert time_finish2 == int(datetime.now().timestamp() + 10)
 
     time.sleep(11)
 
     time_finish3 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 20)
 
-    assert float("{:.2f}".format(time_finish3)) == float("{:.2f}".format(datetime.now().timestamp() + 20))
+    assert time_finish3 == int(datetime.now().timestamp() + 20)
 
     time.sleep(21)
 
