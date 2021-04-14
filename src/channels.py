@@ -129,7 +129,7 @@ def channels_create_v2(token, name, is_public):
         'messages' : [],
         'standup' : {
             'is_active' : False,
-            'time_finish' : 0,
+            'time_finish' : None,
         },
     } 
 
