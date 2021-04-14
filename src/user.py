@@ -187,7 +187,7 @@ def users_all_v1(token):
 
 
 # Function to return the statistics of a user
-def user_stats_v1_tests(token):
+def user_stats_v1(token):
     data = retrieve_data()
 
     # Make sure user is valid
@@ -202,7 +202,7 @@ def user_stats_v1_tests(token):
     channel_num = 0
     total_ch = 0
     for channel in data['channels']:
-        for member in channel['all_members']:
+        for member in data['channels'][channel]['all_members']:
             if member == user_id:
                 channel_num += 1
 
@@ -213,7 +213,7 @@ def user_stats_v1_tests(token):
     dm_num = 0
     total_dm = 0
     for dm in data['dms']:
-        for member in dm['members']:
+        for member in data['dms'][dm]['members']:
             if member == user_id:
                 dm_num += 1
         total_dm += 1

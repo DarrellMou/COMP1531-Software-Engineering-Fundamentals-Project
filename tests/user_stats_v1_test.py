@@ -4,7 +4,7 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.channel import channel_invite_v2
+from src.channel import channel_invite_v2, channel_join_v2
 from src.auth import auth_register_v1
 from src.channels import channels_create_v2
 from src.dm import dm_create_v1, dm_invite_v1
@@ -94,19 +94,20 @@ def test_user_stats_v1_all():
     setup = set_up_data()
     user1, user2 = setup['user1'], setup['user2']
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    message_send_v2(user1["token"], channel1, "Hello world!_ch")
+    dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    message_send_v2(user1["token"], channel1["channel_id"], "Hello world!_ch")
     message_senddm_v1(user1['token'], dmid1['dm_id'], "Hello world!_dm")
 
     assert user_stats_v1(user1['token']) == {
         'num_channels_joined': 1,
-        'dm_total': 1,
+        'num_dms_joined': 1,
         'num_msgs_sent': 2,
-        'involvement': 0.25,
+        'involvement': 1,
     }
     assert user_stats_v1(user2['token']) == {
-        'num_channels_joined': 1,
-        'dm_total': 1,
-        'num_msgs_sent': 2,
+        'num_channels_joined': 0,
+        'num_dms_joined': 1,
+        'num_msgs_sent': 0,
         'involvement': 0.25,
     }
 
@@ -116,33 +117,33 @@ def test_user_stats_v1_invite_join():
     user1, user2, user3 = setup['user1'], setup['user2'], setup['user3']
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
-    message_send_v2(user1["token"], channel1, "Hi i'm user1 ch")
+    message_send_v2(user1["token"], channel1['channel_id'], "Hi i'm user1 ch")
     message_senddm_v1(user1['token'], dmid1['dm_id'], "Hi i'm user1 dm")
     message_senddm_v1(user2['token'], dmid1['dm_id'], "Hi i'm user2 dm")
     
-    channel_invite_v2(user1['token'], chid1['channel_id'], user2['auth_user_id'])
-    message_send_v2(user2["token"], channel1, "Hi i'm user2 ch")
+    channel_invite_v2(user1['token'], channel1['channel_id'], user2['auth_user_id'])
+    message_send_v2(user2["token"], channel1['channel_id'], "Hi i'm user2 ch")
     
     dm_invite_v1(user1['token'], dmid1['dm_id'], user3['auth_user_id'])
     channel_join_v2(user3['token'], channel1['channel_id'])
-    message_send_v2(user3["token"], channel1, "Hi i'm user3 ch")
+    message_send_v2(user3["token"], channel1['channel_id'], "Hi i'm user3 ch")
     message_senddm_v1(user3['token'], dmid1['dm_id'], "Hi i'm user3 dm")
 
     assert user_stats_v1(user1['token']) == {
         'num_channels_joined': 1,
-        'dm_total': 1,
+        'num_dms_joined': 1,
         'num_msgs_sent': 2,
         'involvement': 0.5,
     }
     assert user_stats_v1(user2['token']) == {
         'num_channels_joined': 1,
-        'dm_total': 1,
+        'num_dms_joined': 1,
         'num_msgs_sent': 2,
         'involvement': 0.5,
     }
     assert user_stats_v1(user2['token']) == {
         'num_channels_joined': 1,
-        'dm_total': 1,
+        'num_dms_joined': 1,
         'num_msgs_sent': 2,
         'involvement': 0.5,
     }
@@ -162,17 +163,17 @@ def test_user_stats_v1_active():
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_create_v1(user1['token'], [user2['auth_user_id']])
-    message_send_v2(user1["token"], channel1, "Message 1")
-    message_send_v2(user1["token"], channel1, "Message 2")
-    message_send_v2(user1["token"], channel1, "Message 3")
-    message_send_v2(user1["token"], channel1, "Message 4")
-    message_send_v2(user1["token"], channel1, "Message 5")
-    message_send_v2(user1["token"], channel1, "Message 6")
-    message_send_v2(user1["token"], channel1, "Message 7")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 1")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 2")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 3")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 4")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 5")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 6")
+    message_send_v2(user1["token"], channel1['channel_id'], "Message 7")
 
     assert user_stats_v1(user1['token']) == {
         'num_channels_joined': 5,
-        'dm_total': 5,
+        'num_dms_joined': 5,
         'num_msgs_sent': 7,
         'involvement': 1,
     }
