@@ -61,7 +61,7 @@ def standup_start_v1(token, channel_id, length):
     global messages
     messages = []
     
-    time_finish = datetime.now().timestamp() + length
+    time_finish = int(datetime.now().timestamp() + length)
     t = threading.Thread(target=send_message, args=(token, channel_id, length, time_finish))
     t.start()
 
