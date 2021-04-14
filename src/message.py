@@ -8,6 +8,7 @@ from uuid import uuid4
 from datetime import datetime
 import json
 import re
+import threading
 
 ###############################################################################
 #                                 ASSUMPTIONS                                 #
@@ -497,3 +498,92 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
+
+
+
+def message_sendlater_v1(token, channel_id, message, time_sent):
+    '''
+    BRIEF DESCRIPTION
+    Send a message from authorised_user to the channel specified by channel_id at a
+    time specified at time_sent.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        channel_id (integer)    - The channel that the message is being sent to
+        message (string)        - Message content
+        time_sent (integer)     - The time (in the future) that the message is going to be sent at
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user has not joined the channel they are trying to post to
+        InputError  - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when the channel_id is not a valid channel
+        InputError  - Occurs when the time_sent is in the past
+    
+    Return Value:
+        Returns a message id (integer) of the message sent
+    '''
+
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+    
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']:
+        raise InputError(description="The inputted channel is not a valid channel")
+    
+    # Check to see if the message is too long
+    if len(message) > 1000:
+        raise InputError(description="The message exceeds 1000 characters")
+    
+    if time_sent < datetime.now().timestamp():
+        raise InputError(description="You can't send a message to the past")
+    
+    # Check to see if the given user (from token) is actully in the given channel
+    if user_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError(description=\
+            "The user corresponding to the given token is not in the channel")
+
+    unique_message_id = int(uuid4())
+
+    time_until_send = round(time_sent - datetime.now().timestamp())
+
+    # Start a timer which only performs the helper function after time_until_send seconds occur
+    sendlater = threading.Timer(time_until_send, message_sendlater_channel_helper,
+                                args=[user_id, channel_id, unique_message_id, message])
+    sendlater.start()
+
+    return {'message_id': unique_message_id}
+
+
+def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, message):
+    data = retrieve_data()
+    
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp()),
+        'channel_id': channel_id,
+        'dm_id': -1,
+        'is_removed': False,
+        'was_shared': False
+    }
+
+    data['messages'].append(message_dictionary)
+
+    channel_message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp())
+    }
+
+    for msg in data['messages']:
+        if unique_message_id == msg['message_id']:
+            data['channels'][channel_id]['messages'].append(channel_message_dictionary)
+    
+    return {}
