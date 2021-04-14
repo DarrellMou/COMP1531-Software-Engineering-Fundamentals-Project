@@ -4,7 +4,16 @@
 from src.data import retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token
+from src.message import message_send_v2
+import threading
+import time
+from datetime import datetime
 
+def send_message(token, channel_id):
+    time.sleep(length)
+    message_send_v2(token, channel_id, str(messages))
+
+# ASSUMPTION: Length cannot be negative, and can be as large as any amount
 def standup_start_v1(token, channel_id, length):
     '''
     For a given channel, start the standup period whereby for the next "length" seconds 
@@ -28,6 +37,9 @@ def standup_start_v1(token, channel_id, length):
         Returns time_finish
     '''
 
+    # global t
+    t = threading.Thread(target=send_message, args=(token, channel_id, length))
+
     # Checks if channel_id is valid
     if channel_id not in data['channels']: raise InputError
 
@@ -38,7 +50,12 @@ def standup_start_v1(token, channel_id, length):
     # Checks if user belongs in channel
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
-    if standup_exists: raise InputError # Implement standup_exists, have a boolean standup variable in every channel
+    # if standup_exists: raise InputError # Implement standup_exists, have a boolean standup variable in every channel
+    if t.is_alive(): raise InputError
 
-    # ASSUMPTION: Length cannot be negative, and can be as large as any amount
+    global messages
+    messages = []
+    
+    t.start()
 
+    return datetime.now()timestamp() + length
