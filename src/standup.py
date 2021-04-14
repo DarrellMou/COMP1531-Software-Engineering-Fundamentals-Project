@@ -9,9 +9,13 @@ import threading
 import time
 from datetime import datetime
 
-def send_message(token, channel_id):
+def send_message(token, channel_id, length):
+    data = retrieve_data()
+
+    data['channels'][channel_id]['standup'] = True
     time.sleep(length)
     message_send_v2(token, channel_id, str(messages))
+    data['channels'][channel_id]['standup'] = False
 
 # ASSUMPTION: Length cannot be negative, and can be as large as any amount
 def standup_start_v1(token, channel_id, length):
@@ -37,8 +41,7 @@ def standup_start_v1(token, channel_id, length):
         Returns time_finish
     '''
 
-    # global t
-    t = threading.Thread(target=send_message, args=(token, channel_id, length))
+    data = retrieve_data()
 
     # Checks if channel_id is valid
     if channel_id not in data['channels']: raise InputError
@@ -51,11 +54,12 @@ def standup_start_v1(token, channel_id, length):
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
     # if standup_exists: raise InputError # Implement standup_exists, have a boolean standup variable in every channel
-    if t.is_alive(): raise InputError
+    if data['channels'][channel_id]['standup'] == True: raise InputError
 
     global messages
     messages = []
     
+    t = threading.Thread(target=send_message, args=(token, channel_id, length))
     t.start()
 
-    return datetime.now()timestamp() + length
+    return datetime.now().timestamp() + length
