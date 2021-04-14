@@ -16,7 +16,7 @@ def test_function_active(users):
     standup = standup_active_v1(users[0]['token'], ch_id0['channel_id'])
 
     assert standup["is_active"] == True
-    assert float("{:.2f}".format(standup["time_finish"])) == float("{:.2f}".format(datetime.now().timestamp() + 1))
+    assert standup["time_finish"] == int(datetime.now().timestamp() + 1)
     time.sleep(2)
 
 def test_function_inactive(users):
@@ -33,7 +33,7 @@ def test_multiple_runs(users):
     standup = standup_active_v1(users[0]['token'], ch_id0['channel_id'])
 
     assert standup["is_active"] == True
-    assert float("{:.2f}".format(standup["time_finish"])) == float("{:.2f}".format(datetime.now().timestamp() + 1))
+    assert standup["time_finish"] == int(datetime.now().timestamp() + 1)
     time.sleep(2)
 
 
@@ -41,14 +41,14 @@ def test_multiple_runs(users):
     standup = standup_active_v1(users[1]['token'], ch_id0['channel_id'])
 
     assert standup["is_active"] == True
-    assert float("{:.2f}".format(standup["time_finish"])) == float("{:.2f}".format(datetime.now().timestamp() + 3))
+    assert standup["time_finish"] == int(datetime.now().timestamp() + 3)
     time.sleep(4)
 
     standup_start_v1(users[0]['token'], ch_id0['channel_id'], 5)
     standup = standup_active_v1(users[2]['token'], ch_id0['channel_id'])
 
     assert standup["is_active"] == True
-    assert float("{:.2f}".format(standup["time_finish"])) == float("{:.2f}".format(datetime.now().timestamp() + 5))
+    assert standup["time_finish"] == int(datetime.now().timestamp() + 5)
     time.sleep(6)
 
 def test_invalid_channel_id(users):
