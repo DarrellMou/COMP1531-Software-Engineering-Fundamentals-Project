@@ -645,7 +645,6 @@ def message_pin_v1(token, message_id):
         AccessError - Occurs when the authorised user is not an owner of channel/dm
         InputError  - Occurs when the given message_id does not refer to a valid message
         InputError  - Occurs when the given message_id is already pinned
-        InputError  - Occurs when the time_sent is in the past
     
     Return Value:
         N/A
@@ -705,4 +704,83 @@ def message_pin_v1(token, message_id):
                 msg_dm['is_pinned'] = True
     
     return {}
+
+
+
+
+def message_unpin_v1(token, message_id):
+    '''
+    BRIEF DESCRIPTION
+    The owner of a channel/dm pins a message (given by message_id) so that it
+    has special display treatment in the frontend. It is pinned by setting the
+    pinned flag to true.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        message_id (integer)    - The message id of the message to be pinned
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user is not a member of the channel/dm that the message is within
+        AccessError - Occurs when the authorised user is not an owner of channel/dm
+        InputError  - Occurs when the given message_id does not refer to a valid message
+        InputError  - Occurs when the given message_id is already unpinned
     
+    Return Value:
+        N/A
+    '''
+
+    data = retrieve_data()
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Check to see that the message refers to a valid message
+    if not check_message_existence(message_id):
+        raise InputError(description="You can't unpin a message that doesn't exist")
+    
+    # Check to see that the message is not already unpinned
+    if not check_message_pin_status(message_id):
+        raise InputError(description="You can't unpin a message that is already unpinned")
+
+    # Check to see if the given user (from token) is actully in the channel/dm of a given message.
+    # Also, check to see if the given user is actually an owner of the channel/dm of a given msg
+    channel_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if channel_id != -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the channel")
+        elif user_id not in data['channels'][channel_id]['owner_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not an owner of the channel")
+    else:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the dm")
+        elif user_id != data['dms'][dm_id]['members'][0]:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not the owner of the dm")
+
+    # Mark the message as pinned on the messages list of data
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            msg['is_pinned'] = False
+            ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
+    
+    # Mark the message as pinned on the messages list of its corresponding
+    # channel of dm
+    if ch_id != -1:
+        for msg_channel in data['channels'][ch_id]['messages']:
+            if msg_channel['message_id'] == message_id:
+                msg_channel['is_pinned'] = False
+    else:
+        for msg_dm in data['dms'][dm_id]['messages']:
+            if msg_dm['message_id'] == message_id:
+                msg_dm['is_pinned'] = False
+    
+    return {}
