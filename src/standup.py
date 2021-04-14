@@ -9,13 +9,15 @@ import threading
 import time
 from datetime import datetime
 
-def send_message(token, channel_id, length):
+def send_message(token, channel_id, length, time_finish):
     data = retrieve_data()
 
-    data['channels'][channel_id]['standup'] = True
+    data['channels'][channel_id]['standup']['is_active'] = True
+    data['channels'][channel_id]['standup']['time_finish'] = time_finish
     time.sleep(length)
     message_send_v2(token, channel_id, str(messages))
-    data['channels'][channel_id]['standup'] = False
+    data['channels'][channel_id]['standup']['is_active'] = False
+    data['channels'][channel_id]['standup']['time_finish'] = None
 
 # ASSUMPTION: Length cannot be negative, and can be as large as any amount
 def standup_start_v1(token, channel_id, length):
@@ -54,12 +56,42 @@ def standup_start_v1(token, channel_id, length):
     if auth_user_id not in data['channels'][channel_id]['all_members']: raise AccessError
 
     # if standup_exists: raise InputError # Implement standup_exists, have a boolean standup variable in every channel
-    if data['channels'][channel_id]['standup'] == True: raise InputError
+    if data['channels'][channel_id]['standup']['is_active'] == True: raise InputError
 
     global messages
     messages = []
     
-    t = threading.Thread(target=send_message, args=(token, channel_id, length))
+    time_finish = datetime.now().timestamp() + length
+    t = threading.Thread(target=send_message, args=(token, channel_id, length, time_finish))
     t.start()
 
-    return datetime.now().timestamp() + length
+    return time_finish
+
+# ASSUMPTION: standup_active can be called by anyone, no matter whether they are in the channel or not
+def standup_active_v1(token, channel_id):
+    '''
+    For a given channel, return whether a standup is active in it, and what time the standup finishes. 
+    If no standup is active, then time_finish returns None.
+
+    Arguments:
+        token (string)   - Token belonging to caller
+        channel_id (int) - ID belonging to given channel
+
+    Exceptions:
+        InputError  - Channel ID is not a valid channel
+        AccessError - Invalid token
+
+    Returns:
+        Returns time_finish and is_active
+    '''
+
+    data = retrieve_data()
+
+    # Checks if channel_id is valid
+    if channel_id not in data['channels']: raise InputError
+
+    # Checks if token exists
+    if not auth_token_ok(token): raise AccessError
+    auth_user_id = auth_decode_token(token)
+
+    return {"is_active" : data['channels'][channel_id]['standup']['is_active'], "time_finish" : data['channels'][channel_id]['standup']['time_finish']}
