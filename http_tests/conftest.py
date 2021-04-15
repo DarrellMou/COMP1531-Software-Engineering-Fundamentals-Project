@@ -97,3 +97,19 @@ def setup_user_data(setup_user_dict):
         'user4' : user4_details,
         'user5' : user5_details
     }
+
+@pytest.fixture
+def users(reset):
+    user_list = []
+    for i in range(5):
+        user = requests.post(config.url + "auth/register/v2", json={
+            a_u_id0 = {
+                'email': f'user{i}@email.com',
+                'password': f'user{i}_pass!',
+                'name_first': f'user{i}_first',
+                'name_last': f'user{i}_last'
+            }
+        }).json()
+        user_list.append(user)
+    
+    return user_list
