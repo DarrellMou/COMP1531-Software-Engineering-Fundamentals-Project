@@ -26,27 +26,6 @@ import time # Used for time.sleep
 #                               HELPER FUNCTIONS                              #
 ###############################################################################
 
-# Simple data population helper function; registers users 1 and 2,
-# creates dm_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make dm1
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    user3 = auth_register_v1('thomas.tankengine@email.com', 'password12345', 'Thomas', 'Tankengine')
-    dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'user3': user3,
-        'dm1': dm1['dm_id']
-    }
-
-    return setup
-
-
 # Helper function to send x messages from 2 users to a dm
 def send_x_messages(user1, user2, dm1, num_messages):
     message_count = 0
@@ -67,8 +46,8 @@ def send_x_messages(user1, user2, dm1, num_messages):
 ############################# EXCEPTION TESTING ##############################
 
 # Testing for when the user is not part of the dm (testing Access Error)
-def test_message_sendlaterdm_v1_AccessError():
-    setup = set_up_data()
+def test_message_sendlaterdm_v1_AccessError(set_up_data):
+    setup = set_up_data
     user3, dm1 = setup['user3'], setup['dm1']
 
     current_time = round(datetime.now().timestamp())
@@ -81,8 +60,8 @@ def test_message_sendlaterdm_v1_AccessError():
 
 
 # Testing to see if message is of valid length
-def test_message_sendlaterdm_v1_InputError():
-    setup = set_up_data()
+def test_message_sendlaterdm_v1_InputError(set_up_data):
+    setup = set_up_data
     user1, dm1 = setup['user1'], setup['dm1']
     
     current_time = round(datetime.now().timestamp())
@@ -99,8 +78,8 @@ def test_message_sendlaterdm_v1_InputError():
 
 
 # Test input error when dm_id is not a valid dm
-def test_message_sendlaterdm_v1_InputError_invalid_dm():
-    setup = set_up_data()
+def test_message_sendlaterdm_v1_InputError_invalid_dm(set_up_data):
+    setup = set_up_data
     user1 = setup['user1']
     
     current_time = round(datetime.now().timestamp())
@@ -112,8 +91,8 @@ def test_message_sendlaterdm_v1_InputError_invalid_dm():
 
 
 # Test input error when time _sent is in the past
-def test_message_sendlaterdm_v1_InputError_invalid_time():
-    setup = set_up_data()
+def test_message_sendlaterdm_v1_InputError_invalid_time(set_up_data):
+    setup = set_up_data
     user1, dm1 = setup['user1'], setup['dm1']
     
     current_time = round(datetime.now().timestamp())
@@ -139,8 +118,8 @@ def test_message_sendlaterdm_v1_default_Access_Error():
 ######################### TESTING MESSAGE SEND LATER ##########################
 
 # Testing 1 message being sent in the future
-def test_message_send_later_v1_1_message():
-    setup = set_up_data()
+def test_message_send_later_v1_1_message(set_up_data):
+    setup = set_up_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     # Assert that there are no messages within the dm
@@ -164,8 +143,8 @@ def test_message_send_later_v1_1_message():
 
 
 # Testing one message being sent later and then sending multiple afterwards
-def test_message_send_later_v1_send_multiple_after():
-    setup = set_up_data()
+def test_message_send_later_v1_send_multiple_after(set_up_data):
+    setup = set_up_data
     user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
     dm_invite_v1(user1["token"], dm1, user3["auth_user_id"])
     
@@ -195,8 +174,8 @@ def test_message_send_later_v1_send_multiple_after():
 
 # Testing user3 sending a message later and then leaving the dm before
 # the message is sent
-def test_message_send_later_v1_leave_dm_before_message_sent():
-    setup = set_up_data()
+def test_message_send_later_v1_leave_dm_before_message_sent(set_up_data):
+    setup = set_up_data
     user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
     dm_invite_v1(user1["token"], dm1, user3["auth_user_id"])
 

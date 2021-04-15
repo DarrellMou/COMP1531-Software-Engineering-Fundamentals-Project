@@ -46,8 +46,8 @@ def remove_x_messages(user, id_list=[]):
 ############################# EXCEPTION TESTING ##############################
 
 # Testing to see if message is of valid length
-def test_message_edit_v2_InputError_msg_too_long(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_InputError_msg_too_long(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
     
@@ -62,8 +62,8 @@ def test_message_edit_v2_InputError_msg_too_long(set_up_message_edit_data):
 
 
 # Testing to see if message being edited has already been removed
-def test_message_edit_v2_InputError_msg_removed(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_InputError_msg_removed(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
@@ -74,8 +74,8 @@ def test_message_edit_v2_InputError_msg_removed(set_up_message_edit_data):
         assert message_edit_v2(user1["token"], m_id, "Hi")
 
 
-def test_message_edit_v2_AccessError_not_dm_owner(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_AccessError_not_dm_owner(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
@@ -88,8 +88,8 @@ def test_message_edit_v2_AccessError_not_dm_owner(set_up_message_edit_data):
 
 # Access error when the user trying to edit the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_message_edit_v2_AccessError(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_AccessError(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
@@ -113,8 +113,8 @@ def test_message_edit_v2_default_Access_Error():
 ############################ TESTING MESSAGE EDIT #############################
 
 # Testing the edit of 1 message by user2
-def test_message_edit_v2_edit_one(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_one(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 3 messages and edit the very first message sent
@@ -146,8 +146,8 @@ def test_message_edit_v2_edit_one(set_up_message_edit_data):
 
 
 # Testing the edit of multiple messages
-def test_message_edit_v2_edit_multiple(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_multiple(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
@@ -196,8 +196,8 @@ def test_message_edit_v2_edit_multiple(set_up_message_edit_data):
 
 
 # Editing all messages in the channel
-def test_message_edit_v2_edit_all_messages(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_all_messages(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
@@ -373,8 +373,8 @@ def test_message_edit_v2_dream_owner_edits_message_in_channel():
 
 # Editing a message and replacing it with empty string to see if it
 # removes the message
-def test_message_edit_v2_edit_removes_1_msg(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_removes_1_msg(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 3 messages and edit the very first message sent
@@ -397,8 +397,8 @@ def test_message_edit_v2_edit_removes_1_msg(set_up_message_edit_data):
 
 # Editing multiple messages and replacing them with empty string to see if it
 # removes the message
-def test_message_edit_v2_edit_removes_multiple_msg(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_removes_multiple_msg(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3 
@@ -424,8 +424,8 @@ def test_message_edit_v2_edit_removes_multiple_msg(set_up_message_edit_data):
 
 
 # Edit messages within a dm
-def test_message_edit_v2_edit_msg_in_dm(set_up_message_edit_data):
-    setup = set_up_message_edit_data
+def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     message_count = 0

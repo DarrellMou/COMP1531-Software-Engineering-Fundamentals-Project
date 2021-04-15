@@ -58,11 +58,10 @@ def test_message_unpin_v1_AccessError(set_up_data):
 # Testing for when the user is not part of the dm
 def test_message_unpin_v1_AccessError_dm(set_up_data):
     setup = set_up_data
-    user1, dm1 = setup['user1'], setup['dm1']
+    user1, user3, dm1 = setup['user1'], setup['user3'], setup['dm1']
 
     m_id = message_senddm_v1(user1['token'], dm1, "HEY EVERYBODY")
     message_pin_v1(user1['token'], m_id['message_id'])
-    user3 = auth_register_v1('thomas.tankengine@email.com', 'password12345', 'Thomas', 'Tankengine')
 
     # user3 who is not a part of dm1 tries to pin message 
     # - should raise an access error
