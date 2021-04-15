@@ -25,27 +25,6 @@ from src.data import retrieve_data
 #                               HELPER FUNCTIONS                              #
 ###############################################################################
 
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id'],
-        'dm1': dm1['dm_id']
-    }
-
-    return setup
-
-
 def send_x_messages(user1, user2, channel1, num_messages):
     message_count = 0
     while message_count < num_messages:
@@ -64,8 +43,8 @@ def send_x_messages(user1, user2, channel1, num_messages):
 
 ############################# EXCEPTION TESTING ##############################
 # Testing for when the user is not part of the channel
-def test_message_pin_v1_AccessError():
-    setup = set_up_data()
+def test_message_pin_v1_AccessError(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     m_id = message_send_v2(user1['token'], channel1, "HEY EVERYBODY")
@@ -77,8 +56,8 @@ def test_message_pin_v1_AccessError():
 
 
 # Testing for when the user is not part of the dm
-def test_message_pin_v1_AccessError_dm():
-    setup = set_up_data()
+def test_message_pin_v1_AccessError_dm(set_up_data):
+    setup = set_up_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     m_id = message_senddm_v1(user1['token'], dm1, "HEY EVERYBODY")
@@ -91,8 +70,8 @@ def test_message_pin_v1_AccessError_dm():
 
 
 # Testing for when the user is not an owner of the channel but is within it
-def test_message_pin_v1_AccessError_non_owner():
-    setup = set_up_data()
+def test_message_pin_v1_AccessError_non_owner(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
@@ -105,8 +84,8 @@ def test_message_pin_v1_AccessError_non_owner():
 
 
 # Testing for when the user is not an owner of the dm but is within it
-def test_message_pin_v1_AccessError_dm_non_owner():
-    setup = set_up_data()
+def test_message_pin_v1_AccessError_dm_non_owner(set_up_data):
+    setup = set_up_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     m_id = message_senddm_v1(user1['token'], dm1, "HEY EVERYBODY")
@@ -118,8 +97,8 @@ def test_message_pin_v1_AccessError_dm_non_owner():
 
 
 # Message id is not a real message id
-def test_message_pin_v1_InputError_non_valid_id():
-    setup = set_up_data()
+def test_message_pin_v1_InputError_non_valid_id(set_up_data):
+    setup = set_up_data
     user1 = setup['user1']
     
     # user1 (the channel owner) tries to pin a non existent message
@@ -128,8 +107,8 @@ def test_message_pin_v1_InputError_non_valid_id():
 
 
 # Message id is already pinned
-def test_message_pin_v1_InputError_already_pinned():
-    setup = set_up_data()
+def test_message_pin_v1_InputError_already_pinned(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     m_id = message_send_v2(user1['token'], channel1, "HEY EVERYBODY")
@@ -141,8 +120,8 @@ def test_message_pin_v1_InputError_already_pinned():
 
 
 # Default access error when token is invalid
-def test_message_pin_v1_default_Access_Error():
-    setup = set_up_data()
+def test_message_pin_v1_default_Access_Error(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     m_id = message_send_v2(user1['token'], channel1, "Hello")
@@ -156,8 +135,8 @@ def test_message_pin_v1_default_Access_Error():
 ############################# TESTING MESSAGE PIN #############################
 
 # Testing to see if one message is pinned correctly
-def test_message_pin_v1_pin_one():
-    setup = set_up_data()
+def test_message_pin_v1_pin_one(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     # Send a message to a channel and then pin that message and check that everything is correct
@@ -171,8 +150,8 @@ def test_message_pin_v1_pin_one():
 
 
 # Testing to see if one message is pinned correctly
-def test_message_pin_v1_pin_multiple():
-    setup = set_up_data()
+def test_message_pin_v1_pin_multiple(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
 
@@ -208,8 +187,8 @@ def test_message_pin_v1_pin_multiple():
 
 
 # Testing to see if one message is pinned correctly to a dm
-def test_message_pin_v1_pin_one_dm():
-    setup = set_up_data()
+def test_message_pin_v1_pin_one_dm(set_up_data):
+    setup = set_up_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     # Send a message to a dm and then pin that message and check that everything is correct
