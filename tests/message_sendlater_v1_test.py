@@ -151,9 +151,9 @@ def test_message_send_later_v1_1_message():
     # 1 second hasn't passed yet, so the number of messages should still be 0
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 0
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
 
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 1
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Hello"
@@ -178,9 +178,9 @@ def test_message_send_later_v1_send_multiple_after():
     # 1 second hasn't passed yet, so the number of messages should just be 20
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 20
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
     message_send_v2(user2['token'], channel1, "Bye!")
 
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 22
@@ -211,9 +211,9 @@ def test_message_send_later_v1_leave_channel_before_message_sent():
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "Nice to meet you"
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['message'] == "Hi!"
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 3
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message'] == "I'm leaving."
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['u_id'] == user2['auth_user_id']

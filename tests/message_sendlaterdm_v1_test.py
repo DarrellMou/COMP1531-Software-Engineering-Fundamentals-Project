@@ -154,9 +154,9 @@ def test_message_send_later_v1_1_message():
     # 1 second hasn't passed yet, so the number of messages should still be 0
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 0
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
 
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 1
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "Hello"
@@ -181,9 +181,9 @@ def test_message_send_later_v1_send_multiple_after():
     # 1 second hasn't passed yet, so the number of messages should just be 20
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 20
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
     message_senddm_v1(user3['token'], dm1, "Bye!")
 
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 22
@@ -214,9 +214,9 @@ def test_message_send_later_v1_leave_dm_before_message_sent():
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "Nice to meet you"
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][1]['message'] == "Hi!"
 
-    # Put the current test to sleep for 1.2 seconds and then check that the message was
+    # Put the current test to sleep for 1.5 seconds and then check that the message was
     # correctly sent
-    time.sleep(1.2)
+    time.sleep(1.5)
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 3
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "I'm leaving."
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user3['auth_user_id']
