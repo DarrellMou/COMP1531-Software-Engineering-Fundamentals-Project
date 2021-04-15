@@ -62,6 +62,10 @@ def test_admin_userpermission_change_basic(setup_user):
     users = setup_user
     data = retrieve_data()
 
+    admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 2)
+
+    admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
+
     admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
 
     assert data['users'][users['user2']['auth_user_id']]['permission_id'] == 1
