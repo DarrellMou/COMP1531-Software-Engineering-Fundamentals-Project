@@ -206,8 +206,8 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     # Checks if permission_id refers to a value permission
     if not (permission_id == 1 or permission_id == 2): raise InputError("Not a value permission")
 
-    # Checks if the user is the currently the only owner
-    if permission_id == 2:
+    # Checks if the user is the currently the only owner and wants to be changed to a member
+    if permission_id == 2 and auth_user_id == u_id:
         admin_flag = 0
         for user in data['users']:
             if data['users'][user]['permission_id'] == 1:
