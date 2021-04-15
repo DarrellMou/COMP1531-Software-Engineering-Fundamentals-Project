@@ -45,7 +45,8 @@ def user_profile_v2(token, u_id):
         return {'user' :
                     {
                     'name_first': "Removed",
-                    'name_last' : "user"
+                    'name_last' : "user",
+                    'handle_str': "Removed user"
                     }
                }
 
