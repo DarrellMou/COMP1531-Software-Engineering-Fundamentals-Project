@@ -78,7 +78,7 @@ def test_message_unpin_v1_AccessError_non_owner(set_up_data):
     m_id = message_send_v2(user1['token'], channel1, "HEY EVERYBODY")
     message_pin_v1(user1['token'], m_id['message_id'])
     
-    # user2 who is not a part of channel1 tries to pin message 
+    # user2 who is not an owner of channel1 tries to pin message 
     # - should raise an access error
     with pytest.raises(AccessError):
         assert message_unpin_v1(user2["token"], m_id["message_id"])
@@ -159,7 +159,7 @@ def test_message_unpin_v1_pin_one(set_up_data):
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id['message_id']
 
 
-# Testing to see if one message is pinned correctly
+# Testing to see if multiple messages are unpinned correctly
 def test_message_pin_v1_unpin_multiple(set_up_data):
     setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
@@ -202,10 +202,8 @@ def test_message_pin_v1_unpin_multiple(set_up_data):
 
     assert len(channel_messages_v2(user1['token'], channel1, 0)['messages']) == 23
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['message'] == "Hello"
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][22]['is_pinned'] == False
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][1]['is_pinned'] == False
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][2]['is_pinned'] == False
-    assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['is_pinned'] == False
+    for i in range(23):
+        assert channel_messages_v2(user1['token'], channel1, 0)['messages'][i]['is_pinned'] == False
 
 
 # Testing to see if one message is pinned correctly to a dm
