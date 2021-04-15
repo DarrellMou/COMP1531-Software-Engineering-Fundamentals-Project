@@ -28,7 +28,10 @@ def test_search_no_channel(setup_user):
     channel_id1 = channels_create_v2(users['user1']['token'], "Public Channel", True)
     message_send_v2(users['user1']['token'], channel_id1['channel_id'], "A message in no channels")
 
-    assert len(search_v2(users['user2']['token'], "A message in no channels")) == 0
+    msg = search_v2(users['user2']['token'], "A message in no channels")
+    assert msg['messages'] == []
+
+    #assert len(search_v2(users['user2']['token'], "A message in no channels")) == 0
 
 # Testing the standard case in returning queries for a user in both a channel and a dm
 def test_search_standard(setup_user):
@@ -42,7 +45,10 @@ def test_search_standard(setup_user):
     dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], "A message in channels")
 
-    assert len(search_v2(users['user2']['token'], 'message')) == 3
+    msg = search_v2(users['user2']['token'], "message")
+    assert msg['messages'] == ["A message in no channels", "A message in channels", "A message in channels"]
+
+    #assert len(search_v2(users['user2']['token'], 'message')) == 3
 
 # Assumption: search_v2 is case sensitive
 # Testing the function returns nothing evne when its the same letters
@@ -54,7 +60,7 @@ def test_search_case_sensitive(setup_user):
     channel_invite_v2(users['user1']['token'], channel_id1['channel_id'], users['user2']['auth_user_id'])
     message_send_v2(users['user2']['token'], channel_id1['channel_id'], 'A message in channels')
 
-    assert len(search_v2(users['user2']['token'], 'Channels')) == 0
+    assert len(search_v2(users['user2']['token'], 'Channels')['messages']) == 0
 
 # Testing a query of more than 1000 characters
 def test_search_too_long(setup_user):
@@ -96,11 +102,11 @@ def test_search_leave_channel(setup_user):
     dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
 
-    assert len(search_v2(users['user2']['token'], 'channel')) == 4
+    assert len(search_v2(users['user2']['token'], 'channel')['messages']) == 4
 
     channel_leave_v1(users['user2']['token'], channel_id1['channel_id'])
 
-    assert len(search_v2(users['user2']['token'], 'channel')) == 1
+    assert len(search_v2(users['user2']['token'], 'channel')['messages']) == 1
 
 # Testing that search_v2 no longer returns the query in the dm the user left
 def test_search_leave_dm(setup_user):
@@ -117,11 +123,11 @@ def test_search_leave_dm(setup_user):
     dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
 
-    assert len(search_v2(users['user2']['token'], 'channel')) == 4
+    assert len(search_v2(users['user2']['token'], 'channel')['messages']) == 4
 
     dm_leave_v1(users['user2']['token'], dm_id1['dm_id'])
 
-    assert len(search_v2(users['user2']['token'], 'channel')) == 3
+    assert len(search_v2(users['user2']['token'], 'channel')['messages']) == 3
 
 def test_search_empty_query(setup_user):
     users = setup_user
@@ -137,10 +143,10 @@ def test_search_empty_query(setup_user):
     dm_id1 = dm_create_v1(users['user2']['token'], [users['user3']['auth_user_id']])
     message_senddm_v1(users['user2']['token'], dm_id1['dm_id'], 'A message in channels')
 
-    assert len(search_v2(users['user2']['token'], 'hi')) == 0
+    assert len(search_v2(users['user2']['token'], 'hi')['messages']) == 0
 
-    assert len(search_v2(users['user2']['token'], ' ')) == 3
+    assert len(search_v2(users['user2']['token'], ' ')['messages']) == 3
 
     dm_leave_v1(users['user2']['token'], dm_id1['dm_id'])
 
-    assert len(search_v2(users['user2']['token'], '')) == 3
+    assert len(search_v2(users['user2']['token'], '')['messages']) == 3
