@@ -797,9 +797,9 @@ def message_pin_v1(token, message_id):
 def message_unpin_v1(token, message_id):
     '''
     BRIEF DESCRIPTION
-    The owner of a channel/dm pins a message (given by message_id) so that it
-    has special display treatment in the frontend. It is pinned by setting the
-    pinned flag to true.
+    The owner of a channel/dm unpins a message (given by message_id) so that it
+    no longer has special display treatment in the frontend. It is unpinned by
+    setting the pinned flag to false.
 
     Arguments:
         token (string)          - User that sends the messages
