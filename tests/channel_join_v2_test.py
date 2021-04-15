@@ -10,13 +10,29 @@ from src.channel import channel_join_v2, channel_details_v2
 from src.channels import channels_create_v2, channels_list_v2
 from src.other import clear_v1
 
+# Helper function to set up users
+def setup_users():
+    clear_v1()
+    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
+    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
+    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+    user4 = auth_register_v1('example4@hotmail.com', 'password4', 'first4', 'last4')
+
+    return {
+        'user1': user1,
+        'user2': user2,
+        'user3': user3,
+        'user4': user4,
+    }
+
 #Cases start here
 
 #Standard Case, pass expected
 def test_standard():
-    clear_v1()
-    a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    setup = setup_users()
+    a_u_id1 = setup['user1']
+    a_u_id2 = setup['user2']
+
     chid1 = channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
     channel_join_v2(a_u_id2['token'], chid1['channel_id']) #User 2 joins channel 1 as regular member
     
@@ -32,9 +48,10 @@ def test_standard():
 
 #Case where a user joins multiple channels
 def test_multiple_channels_joined():
-    clear_v1()
-    a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    setup = setup_users()
+    a_u_id1 = setup['user1']
+    a_u_id2 = setup['user2']
+
     channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel1 created
     chid2 = channels_create_v2(a_u_id1['token'], 'channel2', True) #Public channel2 created
     chid3 = channels_create_v2(a_u_id1['token'], 'channel3', True) #Public channel3 created
@@ -65,11 +82,12 @@ def test_multiple_channels_joined():
 
 #Case where multiple  join one channel
 def test_multiple_joiners():
-    clear_v1()
-    a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
-    a_u_id3 = auth_register_v1('temp3@gmail.com','password3','first3','last3') #auth_user_id3 created
-    a_u_id4 = auth_register_v1('temp4@gmail.com','password4','first4','last4') #auth_user_id4 created
+    setup = setup_users()
+    a_u_id1 = setup['user1']
+    a_u_id2 = setup['user2']
+    a_u_id3 = setup['user3']
+    a_u_id4 = setup['user4']
+
     chid1 = channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel1 created
     channel_join_v2(a_u_id2['token'], chid1['channel_id']) #User 2 joins channel 1 as regular member
     channel_join_v2(a_u_id3['token'], chid1['channel_id']) #User 3 joins channel 1 as regular member
@@ -111,9 +129,10 @@ def test_multiple_joiners():
 
 #Case where user attempts to join a private channel (Access Error)
 def test_private_channel():
-    clear_v1()
-    a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    setup = setup_users()
+    a_u_id1 = setup['user1']
+    a_u_id2 = setup['user2']
+
     chid1 = channels_create_v2(a_u_id1['token'], 'channel1', False) #Private channel created
 
     with pytest.raises(AccessError):
@@ -121,9 +140,10 @@ def test_private_channel():
 
 #Case where channel_join is given the id of a non-existent channel
 def test_invalid_channel():
-    clear_v1()
-    a_u_id1 = auth_register_v1('temp1@gmail.com','password1','first1','last1') #auth_user_id1 created
-    a_u_id2 = auth_register_v1('temp2@gmail.com','password2','first2','last2') #auth_user_id2 created
+    setup = setup_users()
+    a_u_id1 = setup['user1']
+    a_u_id2 = setup['user2']
+
     channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
 
     with pytest.raises(InputError):
