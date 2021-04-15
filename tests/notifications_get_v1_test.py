@@ -4,7 +4,7 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.channel import channel_messages_v2, channel_invite_v2
+from src.channel import channel_messages_v2, channel_invite_v2, channel_addowner_v1
 from src.dm import dm_create_v1, dm_invite_v1
 from src.data import data
 from src.auth import auth_register_v1, auth_decode_token
@@ -13,23 +13,35 @@ from src.message import message_send_v2, message_senddm_v1
 from src.notifications import notifications_get_v1
 from src.other import clear_v1
 
+def setup_users():
+    clear_v1()
+    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
+    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
+    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+
+    return {
+        'user1': user1,
+        'user2': user2,
+        'user3': user3,
+    }
+
 # Test for added to channel notifications through invite
 def test_channelinvite_notif():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first_name1', 'last_name1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first_name2', 'last_name2')
-    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first_name3', 'last_name3')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
+    user3 = setup['user3']
 
     chid1 = channels_create_v2(user1['token'], 'Channel1', True)
     channel_invite_v2(user1['token'], chid1['channel_id'], user2['auth_user_id'])
-    channel_invite_v2(user2['token'], chid1['channel_id'], user3['auth_user_id'])
+    channel_addowner_v1(user1['token'], chid1['channel_id'], user3['auth_user_id'])
 
     assert notifications_get_v1(user2['token']) == {
         'notifications': [
             {
                 'channel_id' : chid1['channel_id'],
                 'dm_id' : -1,
-                'notification_message' : 'first_name1last_name added you to Channel1',
+                'notification_message' : 'first1last1 added you to Channel1',
             },
         ]
     }
@@ -38,16 +50,16 @@ def test_channelinvite_notif():
             {
                 'channel_id' : chid1['channel_id'],
                 'dm_id' : -1,
-                'notification_message' : 'first_name2last_name added you to Channel1',
+                'notification_message' : 'first1last1 added you to Channel1',
             },
         ]
     }
 
 # Test for tagged in channel notifications
 def test_channeltag_notif():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
 
     chid1 = channels_create_v2(user1['token'], 'Channel1', True)
     channel_invite_v2(user1['token'], chid1['channel_id'], user2['auth_user_id'])
@@ -82,10 +94,10 @@ def test_channeltag_notif():
 
 # Test for added to dm notifications via dm creation
 def test_dmcreate_notif():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
-    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
+    user3 = setup['user3']
 
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id'], user3['auth_user_id']])
     
@@ -110,10 +122,10 @@ def test_dmcreate_notif():
 
 # Test for added to dm notifications via dm invite
 def test_dminvite_notif():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
-    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
+    user3 = setup['user3']
 
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_invite_v1(user2['token'], dmid1['dm_id'], user3['auth_user_id'])
@@ -130,9 +142,9 @@ def test_dminvite_notif():
 
 # Test for tagged in dm notifications
 def test_dmtag_notif():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
 
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
     message_senddm_v1(user1['token'], dmid1['dm_id'], '@first2last2 1v1me')
@@ -161,10 +173,10 @@ def test_dmtag_notif():
 
 # Test for maxing out notifications in dms and popping the queue
 def test_notif_dms_max():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
-    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
+    user3 = setup['user3']
 
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
     dm_invite_v1(user1['token'], dmid1['dm_id'], user3['auth_user_id'])
@@ -284,10 +296,10 @@ def test_notif_dms_max():
 
 # Test for maxing out notifications and popping the queue
 def test_notif_channels_max():
-    clear_v1()
-    user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
-    user2 = auth_register_v1('example2@hotmail.com', 'password2', 'first2', 'last2')
-    user3 = auth_register_v1('example3@hotmail.com', 'password3', 'first3', 'last3')
+    setup = setup_users()
+    user1 = setup['user1']
+    user2 = setup['user2']
+    user3 = setup['user3']
 
     channelid1 = channels_create_v2(user1['token'], "lesgobro", True)
     channel_invite_v2(user1['token'], channelid1['channel_id'], user2['auth_user_id'])
