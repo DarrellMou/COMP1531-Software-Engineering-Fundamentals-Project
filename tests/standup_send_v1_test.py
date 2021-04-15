@@ -24,7 +24,7 @@ def test_function(users):
     messages_list = channel_messages_v2(users[0]["token"], ch_id0['channel_id'], 0)
 
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
-    assert messages_list['messages'][0]["message"] == f"{data['users'][users[0]['auth_user_id']]['handle_str']}: Test message"
+    assert messages_list['messages'][0]["message"] == "user0_firstuser0_las: Test message"
 
 def test_multiple_messages(users):
     data = retrieve_data()
@@ -41,9 +41,9 @@ def test_multiple_messages(users):
     messages_list = channel_messages_v2(users[0]["token"], ch_id0['channel_id'], 0)
 
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
-    assert messages_list['messages'][0]["message"] == f'''{data['users'][users[0]["auth_user_id"]]["handle_str"]}: Test message1
-{data['users'][users[0]["auth_user_id"]]["handle_str"]}: Test message2
-{data['users'][users[0]["auth_user_id"]]["handle_str"]}: Test message3'''
+    assert messages_list['messages'][0]["message"] == '''user0_firstuser0_las: Test message1
+user0_firstuser0_las: Test message2
+user0_firstuser0_las: Test message3'''
 
 def test_multiple_messages_from_multiple_users(users):
     data = retrieve_data()
@@ -67,11 +67,11 @@ def test_multiple_messages_from_multiple_users(users):
     messages_list = channel_messages_v2(users[0]["token"], ch_id0['channel_id'], 0)
 
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
-    assert messages_list['messages'][0]["message"] == f'''{data['users'][users[0]["auth_user_id"]]["handle_str"]}: Test message0
-{data['users'][users[1]["auth_user_id"]]["handle_str"]}: Test message1
-{data['users'][users[2]["auth_user_id"]]["handle_str"]}: Test message2
-{data['users'][users[3]["auth_user_id"]]["handle_str"]}: Test message3
-{data['users'][users[4]["auth_user_id"]]["handle_str"]}: Test message4'''
+    assert messages_list['messages'][0]["message"] == '''user0_firstuser0_las: Test message0
+user1_firstuser1_las: Test message1
+user2_firstuser2_las: Test message2
+user3_firstuser3_las: Test message3
+user4_firstuser4_las: Test message4'''
 
 def test_invalid_channel_id(users):
     with pytest.raises(InputError):
