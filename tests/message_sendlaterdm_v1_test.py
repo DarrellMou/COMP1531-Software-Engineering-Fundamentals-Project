@@ -193,7 +193,7 @@ def test_message_send_later_v1_send_multiple_after():
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user3['auth_user_id']
 
 
-# Testing user2 sending a message later and then leaving the dm before
+# Testing user3 sending a message later and then leaving the dm before
 # the message is sent
 def test_message_send_later_v1_leave_dm_before_message_sent():
     setup = set_up_data()
