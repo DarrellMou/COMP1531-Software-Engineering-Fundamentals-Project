@@ -41,20 +41,29 @@ def setup_user(reset):
         'user5' : a_u_id5
     }
 
+
 @pytest.fixture
 def set_up_data(reset):
     '''
-    Brendan's fixtures used for message pin and unpin functions
+    Brendan's fixtures used in:
+        - channel/messages
+        - message/send
+        - message/pin
+        - message/unpin
+        - message/sendlater
+        - message/sendlaterdm
     '''
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password12345', 'Thomas', 'Tankengine')
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
     dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
     setup = {
         'user1': user1,
         'user2': user2,
+        'user3': user3,
         'channel1': channel1['channel_id'],
         'dm1': dm1['dm_id']
     }
@@ -63,24 +72,33 @@ def set_up_data(reset):
 
 
 @pytest.fixture
-def set_up_message_edit_data(reset):
+def set_up_message_data(reset):
     '''
-    Brendan's fixtures used for the message edit functions
+    Brendan's fixtures used in:
+        - message/edit
+        - message/remove
+        - message/share
     '''
     
     # Populate data - create/register users 1 and 2 and have user 1 make channel1 and
-    # invite user2 to the channel
+    # channel2 and invite user2 to the channels
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
     channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    channel_invite_v2(user1['token'], channel1['channel_id'], user2['auth_user_id'])
+    channel_invite_v2(user1["token"], channel1['channel_id'], user2['auth_user_id'])
+    channel2 = channels_create_v2(user1['token'], 'Channel2', True)
+    channel_invite_v2(user1["token"], channel2['channel_id'], user2['auth_user_id'])
     dm1 = dm_create_v1(user1["token"], [user2["auth_user_id"]])
+    dm2 = dm_create_v1(user2["token"], [user1["auth_user_id"]])
+
 
     setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id'],
-        "dm1": dm1["dm_id"]
+        "user1": user1,
+        "user2": user2,
+        "channel1": channel1['channel_id'],
+        "channel2": channel2['channel_id'],
+        "dm1": dm1["dm_id"],
+        "dm2": dm2["dm_id"]
     }
 
     return setup
