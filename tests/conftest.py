@@ -5,6 +5,7 @@ import pytest
 from src.auth import auth_register_v1
 from src.other import clear_v1
 from src.channels import channels_create_v2
+from src.channel import channel_invite_v2
 from src.dm import dm_create_v1
 
 '''
@@ -43,7 +44,7 @@ def setup_user(reset):
 @pytest.fixture
 def set_up_data(reset):
     '''
-    Brendan's fixtures used for message functions
+    Brendan's fixtures used for message pin and unpin functions
     '''
     # Populate data - create/register users 1 and 2 and have user 1 make channel1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
@@ -56,6 +57,30 @@ def set_up_data(reset):
         'user2': user2,
         'channel1': channel1['channel_id'],
         'dm1': dm1['dm_id']
+    }
+
+    return setup
+
+
+@pytest.fixture
+def set_up_message_edit_data(reset):
+    '''
+    Brendan's fixtures used for the message edit functions
+    '''
+    
+    # Populate data - create/register users 1 and 2 and have user 1 make channel1 and
+    # invite user2 to the channel
+    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
+    channel_invite_v2(user1['token'], channel1['channel_id'], user2['auth_user_id'])
+    dm1 = dm_create_v1(user1["token"], [user2["auth_user_id"]])
+
+    setup = {
+        'user1': user1,
+        'user2': user2,
+        'channel1': channel1['channel_id'],
+        "dm1": dm1["dm_id"]
     }
 
     return setup
