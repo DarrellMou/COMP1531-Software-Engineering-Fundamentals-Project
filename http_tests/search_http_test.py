@@ -49,7 +49,7 @@ def test_search_no_channel(setup_user_data):
         'query_str': "A message in no channels"
     }).json()
 
-    assert len(search_none) == 0
+    assert len(search_none['messages']) == 0
 
 
 # Testing the standard case in returning queries for a user in both a channel and a dm
@@ -99,7 +99,7 @@ def test_search_standard(setup_user_data):
         'query_str': "message"
     }).json()
 
-    assert len(search_message) == 3
+    assert len(search_message['messages']) == 3
 
 
 # Assumption: search_v2 is case sensitive
@@ -140,7 +140,7 @@ def test_search_case_sensitive(setup_user_data):
         'query_str': "Channels"
     }).json()
 
-    assert len(search_message) == 0
+    assert len(search_message['messages']) == 0
 
 
 # Testing a query of more than 1000 characters
@@ -243,7 +243,7 @@ def test_search_leave_channel(setup_user_data):
         'query_str': "channel"
     }).json()
 
-    assert len(search_message) == 4
+    assert len(search_message['messages']) == 4
 
     # User 2 leaves channel 1
     requests.post(config.url + 'channel/leave/v1', json={
@@ -256,7 +256,7 @@ def test_search_leave_channel(setup_user_data):
         'query_str': "channel"
     }).json()
 
-    assert len(search_again) == 1
+    assert len(search_again['messages']) == 1
 
 
 # Testing that search_v2 no longer returns the query in the dm the user left
@@ -319,7 +319,7 @@ def test_search_leave_dm(setup_user_data):
         'query_str': "channel"
     }).json()
 
-    assert len(search_message) == 4
+    assert len(search_message['messages']) == 4
 
     # User 2 leaves dm 1
     requests.post(config.url + 'dm/leave/v1', json={
@@ -332,4 +332,4 @@ def test_search_leave_dm(setup_user_data):
         'query_str': "channel"
     }).json()
 
-    assert len(search_again) == 3
+    assert len(search_again['messages']) == 3
