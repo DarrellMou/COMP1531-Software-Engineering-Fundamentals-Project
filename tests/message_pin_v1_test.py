@@ -148,7 +148,7 @@ def test_message_pin_v1_pin_one(set_up_data):
     assert channel_messages_v2(user1['token'], channel1, 0)['messages'][0]['message_id'] == m_id['message_id']
 
 
-# Testing to see if one message is pinned correctly
+# Testing to see if multiple messages are pinned correctly
 def test_message_pin_v1_pin_multiple(set_up_data):
     setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']

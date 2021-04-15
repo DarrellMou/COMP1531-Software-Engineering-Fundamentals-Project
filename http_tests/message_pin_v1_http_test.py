@@ -120,7 +120,7 @@ def test_http_message_pin_v1_AccessError_non_owner(set_up_data):
 
     m_id = requests.post(f"{url}message/send/v2", json=message_send_body(user1, channel1, "HEY EVERYBODY")).json()
     
-    # user2 who is not a part of channel1 tries to pin message 
+    # user2 who is not an owner of channel1 tries to pin message 
     # - should raise an access error
     response = requests.post(f"{url}message/pin/v1", json=message_pin_body(user2, m_id["message_id"]))
     assert response.status_code == 403
@@ -198,7 +198,7 @@ def test_http_message_pin_v1_pin_one(set_up_data):
     assert channel_messages_ans['messages'][0]['message_id'] == m_id['message_id']
 
 
-# Testing to see if one message is pinned correctly
+# Testing to see if multiple messages are pinned correctly
 def test_http_message_pin_v1_pin_multiple(set_up_data):
     setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
