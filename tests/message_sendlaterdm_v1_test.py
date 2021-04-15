@@ -10,6 +10,8 @@ from src.dm import dm_create_v1, dm_messages_v1, dm_invite_v1, dm_leave_v1
 from src.other import clear_v1
 from datetime import datetime
 
+from src.data import retrieve_data
+
 import time # Used for time.sleep
 
 ###############################################################################
@@ -32,7 +34,7 @@ def set_up_data():
     # Populate data - create/register users 1 and 2 and have user 1 make dm1
     user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
     user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    user2 = auth_register_v1('thomas.tankengine@email.com', 'password12345', 'Thomas', 'Tankengine')
+    user3 = auth_register_v1('thomas.tankengine@email.com', 'password12345', 'Thomas', 'Tankengine')
     dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
     setup = {
@@ -175,20 +177,20 @@ def test_message_send_later_v1_send_multiple_after():
 
     message_sendlaterdm_v1(user1["token"], dm1, "Hello", send_time)
 
-    send_x_messages(user1, user2, dm1, 20)
+    send_x_messages(user1, user3, dm1, 20)
     # 1 second hasn't passed yet, so the number of messages should just be 20
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 20
 
     # Put the current test to sleep for 1.2 seconds and then check that the message was
     # correctly sent
     time.sleep(1.2)
-    message_senddm_v1(user2['token'], dm1, "Bye!")
+    message_senddm_v1(user3['token'], dm1, "Bye!")
 
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 22
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][1]['message'] == "Hello"
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][1]['u_id'] == user1['auth_user_id']
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "Bye!"
-    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user2['auth_user_id']
+    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user3['auth_user_id']
 
 
 # Testing user2 sending a message later and then leaving the dm before
@@ -203,7 +205,7 @@ def test_message_send_later_v1_leave_dm_before_message_sent():
 
     message_senddm_v1(user1['token'], dm1, "Hi!")
 
-    message_sendlaterdm_v1(user2["token"], dm1, "I'm leaving.", send_time)
+    message_sendlaterdm_v1(user3["token"], dm1, "I'm leaving.", send_time)
     dm_leave_v1(user3['token'], dm1)
 
     message_senddm_v1(user1['token'], dm1, "Nice to meet you")
@@ -217,4 +219,4 @@ def test_message_send_later_v1_leave_dm_before_message_sent():
     time.sleep(1.2)
     assert len(dm_messages_v1(user1['token'], dm1, 0)['messages']) == 3
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "I'm leaving."
-    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user2['auth_user_id']
+    assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['u_id'] == user3['auth_user_id']
