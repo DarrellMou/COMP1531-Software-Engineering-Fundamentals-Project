@@ -44,6 +44,7 @@ def set_up_data():
     return setup
 
 
+# Helper function to send x messages from 2 users to a dm
 def send_x_messages(user1, user2, channel1, num_messages):
     message_count = 0
     while message_count < num_messages:
