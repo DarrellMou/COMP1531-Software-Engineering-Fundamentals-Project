@@ -55,7 +55,7 @@ def test_function(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message"))
 
     messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
     assert messages_list['messages'] == []
