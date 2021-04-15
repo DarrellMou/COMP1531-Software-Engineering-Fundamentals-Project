@@ -42,7 +42,7 @@ def channel_messages_body(user, channel, start):
 
 def channel_invite_body(user1, channel, user2):
     return {
-        "token": user["token"],
+        "token": user1["token"],
         "channel_id": channel["channel_id"],
         "u_id": user2["auth_user_id"]
     }
@@ -55,12 +55,14 @@ def test_function(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Testmessage"))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message"))
+
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
+    assert messages_list['messages'] == []
 
     time.sleep(2)
 
-    message_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(user[0], channel0, 0))
-
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
     assert messages_list['messages'][0]["message"] == "user0_firstuser0_las: Test message"
 
@@ -70,14 +72,16 @@ def test_multiple_messages(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Testmessage1"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Testmessage2"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Testmessage3"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message1"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message2"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message3"))
+
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
+    assert messages_list['messages'] == []
 
     time.sleep(2)
 
-    message_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(user[0], channel0, 0))
-
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
     assert messages_list['messages'][0]["message"] == '''user0_firstuser0_las: Test message1
 user0_firstuser0_las: Test message2
@@ -94,16 +98,18 @@ def test_multiple_messages_from_multiple_users(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Testmessage0"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[1], channel0, "Testmessage1"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[2], channel0, "Testmessage2"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[3], channel0, "Testmessage3"))
-    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[4], channel0, "Testmessage4"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message0"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[1], channel0, "Test message1"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[2], channel0, "Test message2"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[3], channel0, "Test message3"))
+    requests.post(f"{url}standup/send/v1", json=standup_send_body(users[4], channel0, "Test message4"))
+
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
+    assert messages_list['messages'] == []
 
     time.sleep(2)
 
-    message_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(user[0], channel0, 0))
-
+    messages_list = requests.get(f"{url}channel/messages/v2", params=channel_messages_body(users[0], channel0, 0)).json()
     assert messages_list['messages'][0]["u_id"] == users[0]["auth_user_id"]
     assert messages_list['messages'][0]["message"] == '''user0_firstuser0_las: Test message0
 user1_firstuser1_las: Test message1
@@ -112,7 +118,7 @@ user3_firstuser3_las: Test message3
 user4_firstuser4_las: Test message4'''
 
 def test_invalid_channel_id(users):
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], {"channel_id" : 12345}, "Testmessage0"))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], {"channel_id" : 12345}, "Test message0")).json()
     assert standup_response == {
         "code" : 400,
         "name" : "System Error",
@@ -129,7 +135,7 @@ def test_too_long_message(users):
     while len(long_message) < 1001:
         long_message += "a" 
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, long_message))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, long_message)).json()
     assert standup_response == {
         "code" : 400,
         "name" : "System Error",
@@ -141,7 +147,7 @@ def test_inactive_standup(users):
     channel_id0 = requests.post(f"{url}channels/create/v2", json=channels_create_body(users[0], "Channel0", True))
     channel0 = channel_id0.json()
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message"))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[0], channel0, "Test message")).json()
     assert standup_response == {
         "code" : 400,
         "name" : "System Error",
@@ -154,7 +160,7 @@ def test_unauthorized_user(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[1], channel0, "Test message"))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body(users[1], channel0, "Test message")).json()
     assert standup_response == {
         "code" : 403,
         "name" : "System Error",
@@ -168,7 +174,7 @@ def test_invalid_token(users):
 
     requests.post(f"{url}standup/start/v1", json=standup_start_body(users[0], channel0, 1))
 
-    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body({"token" : 12345}, channel0, "Test message"))
+    standup_response = requests.post(f"{url}standup/send/v1", json=standup_send_body({"token" : 12345}, channel0, "Test message")).json()
     assert standup_response == {
         "code" : 403,
         "name" : "System Error",
