@@ -20,6 +20,7 @@ from src.data import retrieve_data
 
 # Removed message cannot be unpinned - they're considered as non-valid messages
 
+
 ###############################################################################
 #                               HELPER FUNCTIONS                              #
 ###############################################################################
