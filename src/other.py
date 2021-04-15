@@ -78,7 +78,9 @@ def search_v2(token, query_str):
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
     
-    return collection_messages
+    return {
+        'messages': collection_messages
+    }
 
 
 def admin_user_remove_v1(token, u_id):
