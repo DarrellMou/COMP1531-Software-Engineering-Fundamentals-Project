@@ -70,7 +70,7 @@ def standup_start_v1(token, channel_id, length):
     t = threading.Thread(target=send_message, args=(token, channel_id, length, time_finish))
     t.start()
 
-    return time_finish
+    return {"time_finish" : time_finish}
 
 # ASSUMPTION: standup_active can be called by anyone, no matter whether they are in the channel or not
 def standup_active_v1(token, channel_id):
