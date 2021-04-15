@@ -19,7 +19,7 @@ from src.message import message_send_v2, message_remove_v1, message_edit_v2, mes
 from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 from src.notifications import notifications_get_v1
-from src.standup import standup_start_v1, standup_active_v1
+from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -379,6 +379,15 @@ def standup_active_v1_flask():
     standup_status = standup_active_v1(token, channel_id)
 
     return dumps(standup_status)
+
+
+@APP.route("/standup/send/v1", methods=['POST'])
+def standup_send_v1_flask():
+    data = request.get_json()
+    standup_send_v1(data['token'], data['channel_id'], data['message'])
+
+    write_data()
+    return dumps({})
 
 
 @APP.route("/clear/v1", methods=['DELETE'])
