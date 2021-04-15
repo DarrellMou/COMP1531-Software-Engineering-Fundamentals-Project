@@ -46,22 +46,22 @@ def message_send_body(user, channel_id, message):
 
 def channel_messages_body(user, channel_id, start):
     return {
-    "token": user["token"],
-    "channel_id": channel_id,
-    "start": start
+        "token": user["token"],
+        "channel_id": channel_id,
+        "start": start
 }
 
 def channel_invite_body(user, channel_id, user_id):
     return {
-    "token": user["token"],
-    "channel_id": channel_id,
-    "u_id": user_id["auth_user_id"]
+        "token": user["token"],
+        "channel_id": channel_id,
+        "u_id": user_id["auth_user_id"]
 }
 
 def channel_leave_body(user, channel_id):
     return {
-    "token": user["token"],
-    "channel_id": channel_id
+        "token": user["token"],
+        "channel_id": channel_id
 }
 
 
