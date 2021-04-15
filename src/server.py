@@ -19,7 +19,7 @@ from src.message import message_send_v2, message_remove_v1, message_edit_v2, mes
 from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 from src.notifications import notifications_get_v1
-from src.standup import standup_start_v1
+from src.standup import standup_start_v1, standup_active_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -100,7 +100,6 @@ def message_remove_v1_flask():
 def channels_list_v2_flask():
     token = request.args.get('token')
 
-    write_data()
     return dumps(channels_list_v2(token))
 
 
@@ -108,7 +107,6 @@ def channels_list_v2_flask():
 def channels_listall_v2_flask():
     token = request.args.get('token')
 
-    write_data()
     return dumps(channels_listall_v2(token))
 
 
@@ -117,7 +115,6 @@ def channel_details_v2_flask():
     token = request.args.get('token')
     channel_id = int(request.args.get('channel_id'))
 
-    write_data()
     return dumps(channel_details_v2(token, channel_id))
 
 
@@ -170,7 +167,6 @@ def channel_messages_v2_flask():
     channel_id = int(request.args.get('channel_id'))
     start = int(request.args.get('start'))
 
-    write_data()
     return dumps(channel_messages_v2(token, channel_id, start))
 
 
@@ -199,7 +195,6 @@ def dm_messages_v1_flask():
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
 
-    write_data()
     return dumps(dm_messages_v1(token, dm_id, start))
 
 
@@ -209,7 +204,6 @@ def dm_details_v1_flask():
     dm_id = int(request.args.get("dm_id"))
     dm_details = dm_details_v1(token, dm_id)
 
-    write_data()
     return dumps(dm_details)
     
 
@@ -236,7 +230,6 @@ def dm_list_v1_flask():
     token = request.args.get("token")
     dm_list = dm_list_v1(token)
 
-    write_data()
     return dumps(dm_list)
 
 
@@ -264,7 +257,6 @@ def message_send_v2_flask():
 def notification_get_v1_flask():
     token = request.args.get('token')
 
-    write_data()
     return dumps(notifications_get_v1(token))
 
 
@@ -274,7 +266,6 @@ def user_profile_v2_flask():
     u_id = int(request.args.get('u_id'))
     returnDict = user_profile_v2(token, u_id)
 
-    write_data()
     return dumps(returnDict)
     
 
@@ -309,7 +300,6 @@ def user_profile_sethandle_v2_flask():
 def users_all_v1_flask():
     token = request.args.get('token')
 
-    write_data()
     return dumps(users_all_v1(token))
 
 
@@ -370,7 +360,6 @@ def search_v2_flask():
     token = request.args.get('token')
     query_str = request.args.get('query_str')
 
-    write_data()
     return dumps(search_v2(token, query_str))
 
 
@@ -381,6 +370,16 @@ def standup_start_v1_flask():
 
     write_data()
     return dumps(time_finish)
+
+
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active_v1_flask():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    standup_status = standup_active_v1(token, channel_id)
+
+    return dumps(standup_status)
+
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():
