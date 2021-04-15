@@ -13,6 +13,7 @@ from src.message import message_send_v2, message_senddm_v1
 from src.notifications import notifications_get_v1
 from src.other import clear_v1
 
+# Helper function to set up users
 def setup_users():
     clear_v1()
     user1 = auth_register_v1('example1@hotmail.com', 'password1', 'first1', 'last1')
