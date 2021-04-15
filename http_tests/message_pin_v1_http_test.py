@@ -67,26 +67,6 @@ def channel_invite_body(user, channel_id, user_id):
         "u_id": user_id["auth_user_id"]
     }
 
-
-'''# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    requests.delete(f"{url}clear/v1")
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = requests.post(f"{url}auth/register/v2", json=user_body(1)).json()
-    user2 = requests.post(f"{url}auth/register/v2", json=user_body(2)).json()
-    channel1 = requests.post(f"{url}channels/create/v2", json=channels_create_body(user1, "channel1")).json()
-    dm1 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user1, [user2])).json()
-    
-    setup = {
-        "user1": user1,
-        "user2": user2,
-        "channel1": channel1["channel_id"],
-        "dm1": dm1["dm_id"]
-    }
-
-    return setup'''
-
 # Helper function to send x messages from 2 users to a channel
 def send_x_messages(user1, user2, channel1, num_messages):
     message_count = 0
