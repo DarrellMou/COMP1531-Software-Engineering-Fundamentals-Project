@@ -7,13 +7,10 @@ from src.error import InputError, AccessError
 from src.standup import standup_start_v1, standup_send_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_invite_v2
-from src.data import retrieve_data
 from datetime import datetime
 import time
 
 def test_function(users):
-    data = retrieve_data()
-
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     standup_start_v1(users[0]['token'], ch_id0['channel_id'], 1)
 
@@ -27,8 +24,6 @@ def test_function(users):
     assert messages_list['messages'][0]["message"] == "user0_firstuser0_las: Test message"
 
 def test_multiple_messages(users):
-    data = retrieve_data()
-
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     standup_start_v1(users[0]['token'], ch_id0['channel_id'], 1)
 
@@ -46,8 +41,6 @@ user0_firstuser0_las: Test message2
 user0_firstuser0_las: Test message3'''
 
 def test_multiple_messages_from_multiple_users(users):
-    data = retrieve_data()
-
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     channel_invite_v2(users[0]['token'], ch_id0['channel_id'], users[1]['auth_user_id'])
     channel_invite_v2(users[0]['token'], ch_id0['channel_id'], users[2]['auth_user_id'])
