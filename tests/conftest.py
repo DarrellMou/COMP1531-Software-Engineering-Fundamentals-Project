@@ -4,14 +4,11 @@
 import pytest
 from src.auth import auth_register_v1
 from src.other import clear_v1
+from src.channels import channels_create_v2
+from src.dm import dm_create_v1
 
 '''
-The following fixtures are used in:
-- channels/create
-- channels/listall
-- admin/userpermission/change
-- admin/user/remove
-- search
+The following fixtures are used 
 '''
 
 @pytest.fixture
@@ -20,7 +17,14 @@ def reset():
 
 @pytest.fixture
 def setup_user(reset):
-
+    '''
+    Nikki's fixtures used in:
+        - channels/create
+        - channels/listall
+        - admin/userpermission/change
+        - admin/user/remove
+        - search
+    '''
     # a_u_id* has two fields: token and auth_user_id
     a_u_id1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
     a_u_id2 = auth_register_v1('user2@email.com', 'User2_pass!', 'user2_first', 'user2_last')
@@ -35,3 +39,23 @@ def setup_user(reset):
         'user4' : a_u_id4,
         'user5' : a_u_id5
     }
+
+@pytest.fixture
+def set_up_data(reset):
+    '''
+    Brendan's fixtures used for message functions
+    '''
+    # Populate data - create/register users 1 and 2 and have user 1 make channel1
+    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
+    dm1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
+
+    setup = {
+        'user1': user1,
+        'user2': user2,
+        'channel1': channel1['channel_id'],
+        'dm1': dm1['dm_id']
+    }
+
+    return setup
