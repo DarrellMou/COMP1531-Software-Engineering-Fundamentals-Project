@@ -13,26 +13,26 @@ def test_function(users):
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     time_finish = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 1)
 
-    assert time_finish == int(datetime.now().timestamp() + 1)
+    assert time_finish['time_finish'] == int(datetime.now().timestamp() + 1)
     time.sleep(2)
 
 def test_multiple_runs(users):
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
     time_finish1 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 1)
 
-    assert time_finish1 == int(datetime.now().timestamp() + 1)
+    assert time_finish1['time_finish'] == int(datetime.now().timestamp() + 1)
     
     time.sleep(2)
 
     time_finish2 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 3)
 
-    assert time_finish2 == int(datetime.now().timestamp() + 3)
+    assert time_finish2['time_finish'] == int(datetime.now().timestamp() + 3)
 
     time.sleep(4)
 
     time_finish3 = standup_start_v1(users[0]['token'], ch_id0['channel_id'], 5)
 
-    assert time_finish3 == int(datetime.now().timestamp() + 5)
+    assert time_finish3['time_finish'] == int(datetime.now().timestamp() + 5)
 
     time.sleep(6)
 
@@ -46,7 +46,7 @@ def test_active_standup(users):
 
     with pytest.raises(InputError):
         standup_start_v1(users[0]['token'], ch_id0['channel_id'], 1)
-    time.sleep(1)
+    time.sleep(2)
 
 def test_unauthorized_user(users):
     ch_id0 = channels_create_v2(users[0]['token'], "Channel0", True)
