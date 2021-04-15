@@ -9,6 +9,7 @@ import threading
 import time
 from datetime import datetime
 
+# THREAD FUNCTION
 def send_message(token, channel_id, length, time_finish):
     data = retrieve_data()
 
@@ -17,10 +18,7 @@ def send_message(token, channel_id, length, time_finish):
     time.sleep(length)
     message_str = ""
     for message in messages:
-        if message == messages[-1]:
-            message_str += f"{message}"
-        else:
-            message_str += f"{message}\n"
+        message_str += f"{message}" if message == messages[-1] else f"{message}\n"
     message_send_v2(token, channel_id, message_str)
     data['channels'][channel_id]['standup']['is_active'] = False
     data['channels'][channel_id]['standup']['time_finish'] = None
