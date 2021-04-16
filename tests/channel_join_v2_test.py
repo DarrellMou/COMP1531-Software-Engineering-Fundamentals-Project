@@ -78,33 +78,44 @@ def test_multiple_joiners():
     # Expecting a owner members including 1, and all members including 1-4
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             }
         ],
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
+                'email': 'temp3@gmail.com',
                 'name_first': 'first3',
                 'name_last': 'last3',
+                'handle_str': 'first3last3'
             },
             {
                 'u_id': a_u_id4['auth_user_id'],
+                'email': 'temp4@gmail.com',
                 'name_first': 'first4',
                 'name_last': 'last4',
+                'handle_str': 'first4last4'
             },
         ],
     }
