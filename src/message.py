@@ -169,6 +169,11 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -182,6 +187,11 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False,
     }
 
@@ -531,6 +541,26 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
