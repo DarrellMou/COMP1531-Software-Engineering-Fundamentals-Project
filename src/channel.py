@@ -112,12 +112,14 @@ def channel_details_v2(token, channel_id):
 
     # Creates list with necessary data
     name = data['channels'][channel_id]['name']
+    is_public = data['channels'][channel_id]['is_public']
     owners = data['channels'][channel_id]['owner_members']
     members = data['channels'][channel_id]['all_members']
 
     # Create list to return
     details_dict = {
         'name' : name,
+        'is_public' : is_public,
         'owner_members' : [],
         'all_members' : []
     }
