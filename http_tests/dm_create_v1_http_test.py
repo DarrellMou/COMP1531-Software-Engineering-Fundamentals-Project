@@ -108,6 +108,29 @@ def test_multiple():
         ]
     }
 
+def test_empty_u_ids_list():
+    requests.delete(f"{url}clear/v1")
+    
+    a_u_id0 = requests.post(f"{url}auth/register/v2", json=user_body(0))
+    user0 = a_u_id0.json()
+
+    dm_id0 = requests.post(f"{url}dm/create/v1", json=dm_create_body(user0, []))
+    dm0 = dm_id0.json()
+
+    payload = requests.get(f"{url}dm/details/v1", params=dm_details_body(user0, dm0))
+    dm_details = payload.json()
+
+    assert dm_details == {
+        'name': 'first_name0last_name',
+        'members': [
+            {
+                'u_id': user0['auth_user_id'],
+                'name_first': 'first_name0',
+                'name_last': 'last_name0',
+            },
+        ],
+    }
+
 def test_invalid_token():
     requests.delete(f"{url}clear/v1")
     
