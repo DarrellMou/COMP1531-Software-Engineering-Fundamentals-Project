@@ -138,7 +138,7 @@ def test_empty_u_ids_list():
         'name': 'first_name0last_name',
         'members': [
             {
-                'u_id': users[0]['auth_user_id'],
+                'u_id': user0['auth_user_id'],
                 'email': "example0@hotmail.com",
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
