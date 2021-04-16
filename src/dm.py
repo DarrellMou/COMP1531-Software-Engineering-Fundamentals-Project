@@ -104,8 +104,10 @@ def dm_details_v1(token, dm_id):
     for member in members:
         tmp_dict = {
             'u_id' : member,
+            'email' : data['users'][member]['email'],
             'name_first' : data['users'][member]['name_first'],
-            'name_last' : data['users'][member]['name_last']
+            'name_last' : data['users'][member]['name_last'],
+            'handle_str' : data['users'][member]['handle_str']
         }
         tmp_list.append(tmp_dict)
 
