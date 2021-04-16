@@ -492,6 +492,11 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -505,6 +510,11 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -633,6 +643,11 @@ def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, mes
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -643,6 +658,11 @@ def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, mes
         'u_id': user_id,
         'message': message,
         'time_created': round(datetime.now().timestamp()),
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -723,6 +743,11 @@ def message_sendlater_dm_helper(user_id, dm_id, unique_message_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
@@ -733,6 +758,11 @@ def message_sendlater_dm_helper(user_id, dm_id, unique_message_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': round(datetime.now().timestamp()),
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
         'is_pinned': False
     }
 
