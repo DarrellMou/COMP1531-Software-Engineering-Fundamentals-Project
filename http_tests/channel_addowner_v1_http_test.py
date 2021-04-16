@@ -108,6 +108,7 @@ def test_channel_join_owner_input_error(setup_user_data):
 
     assert channel_details == {
         'name': 'Public',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': users['user1']['auth_user_id'],
@@ -167,6 +168,7 @@ def test_addowner_dreams(setup_user_data):
 
     assert channel_details == {
         'name': 'Public',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': users['user2']['auth_user_id'],

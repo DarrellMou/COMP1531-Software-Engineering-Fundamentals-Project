@@ -96,6 +96,7 @@ def test_multiple_joiners():
     # Expecting a owner members including 1, and all members including 1-4
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],

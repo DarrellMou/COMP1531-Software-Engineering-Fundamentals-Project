@@ -58,6 +58,7 @@ def test_function():
 
     assert channel_details == {
         'name': 'channel0',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': user0['auth_user_id'],
@@ -98,6 +99,7 @@ def test_multiple():
 
     assert channel_details == {
         'name': 'channel0',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': users[0]['auth_user_id'],
@@ -153,6 +155,7 @@ def test_multiple_users_invite():
 
     assert channel_details == {
         'name': 'channel0',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': users[0]['auth_user_id'],

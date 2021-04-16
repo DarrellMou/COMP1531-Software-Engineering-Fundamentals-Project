@@ -23,6 +23,7 @@ def test_owner_to_member():
 
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -51,6 +52,7 @@ def test_owner_to_member():
     channel_removeowner_v1(a_u_id1['token'], chid1['channel_id'], a_u_id2['auth_user_id'])
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -83,6 +85,7 @@ def test_remove_self():
 
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -111,6 +114,7 @@ def test_remove_self():
     channel_removeowner_v1(a_u_id1['token'], chid1['channel_id'], a_u_id1['auth_user_id'])
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id2['auth_user_id'],

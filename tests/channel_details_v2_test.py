@@ -23,6 +23,7 @@ def test_function():
     channel_invite_v2(a_u_id1["token"], ch_id['channel_id'], a_u_id2['auth_user_id'])
     assert channel_details_v2(a_u_id1["token"], ch_id['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -60,6 +61,7 @@ def test_many_channel_members():
         channel_invite_v2(token_list[0], ch_id['channel_id'], a_u_id_list[i])
     assert channel_details_v2(token_list[0], ch_id['channel_id']) == {
         'name': 'channel0',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id_list[0],
@@ -142,6 +144,7 @@ def test_multiple_channels():
 
     assert channel_details_v2(token_list[2], ch_id1['channel_id']) == {
         'name': 'channel0',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id_list[0],
@@ -179,6 +182,7 @@ def test_multiple_channels():
     }
     assert channel_details_v2(token_list[8], ch_id2['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id_list[5],

@@ -38,6 +38,7 @@ def test_member_to_owner():
     # Expect a list containing channel 1
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -75,6 +76,7 @@ def test_outsider_to_owner():
 
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
@@ -112,6 +114,7 @@ def test_dream_owner():
 
     assert channel_details_v2(a_u_id2['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public' : True,
         'owner_members': [
             {
                 'u_id': a_u_id2['auth_user_id'],
@@ -143,7 +146,6 @@ def test_invalid_channel():
     setup = setup_users()
     a_u_id1 = setup['user1']
     a_u_id2 = setup['user2']
-    a_u_id3 = setup['user3']
     channels_create_v2(a_u_id1['token'], 'channel1', True) #Public channel created
     with pytest.raises(InputError):
         channel_addowner_v1(a_u_id1['token'], -1111, a_u_id2['auth_user_id'])
