@@ -17,79 +17,6 @@ from src.config import url
 # It is impossible for a user to "remove" a message when there are no messages
 # in the channel/dm (meaning nothing at all, not as in all messages are removed)
 
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-def set_up_data():
-    requests.delete(f"{url}clear/v1")
-    user1 = requests.post(f"{url}auth/register/v2", json = {
-        "email": "bob.builder@email.com",
-        "password": "badpassword1",
-        "name_first": "Bob",
-        "name_last": "Builder"
-    }).json()
-
-    user2 = requests.post(f"{url}auth/register/v2", json = {
-        "email": "shaun.sheep@email.com",
-        "password": "password123",
-        "name_first": "Shaun",
-        "name_last": "Sheep"
-    }).json()
-
-    channel1 = requests.post(f"{url}channels/create/v2", json = {
-        "token": user1["token"],
-        "name": "Channel1",
-        "is_public": True
-    }).json()
-
-    requests.post(f"{url}channel/invite/v2", json = {
-        "token": user1["token"],
-        "channel_id": channel1["channel_id"],
-        "u_id": user2["auth_user_id"]
-    }).json()
-
-    dm1 = requests.post(f"{url}dm/create/v1", json = {
-        "token": user1["token"],
-        "u_ids": [user2["auth_user_id"]]
-    }).json()
-
-    setup = {
-        "user1": user1,
-        "user2": user2,
-        "channel1": channel1["channel_id"],
-        "dm1": dm1["dm_id"]
-    }
-
-
-    return setup
-
-# User sends x messages
-def send_x_messages(user1, channel1, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        requests.post(f"{url}message/send/v2", json= {
-            "token": user1["token"],
-            "channel_id": channel1,
-            "message": str(message_num)
-        }).json()
-        message_count += 1
-
-    return {}
-
-
-# User removes x messages
-def remove_x_messages(user, id_list=[]):
-    message_count = 0
-    while message_count < len(id_list):
-        requests.delete(f"{url}message/remove/v1", json= {
-            "token": user["token"],
-            "message_id": id_list[message_count]
-        }).json()
-        message_count += 1
-    
-    return {}
-
 
 ###############################################################################
 #                                   TESTING                                   #
@@ -99,8 +26,8 @@ def remove_x_messages(user, id_list=[]):
 
 # Access error when the user trying to remove the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_http_message_remove_v1_AccessError():
-    setup = set_up_data()
+def test_http_message_remove_v1_AccessError(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     print(str(channel1) + "\n\n\n")
     m_id = requests.post(f"{url}message/send/v2", json= {
@@ -118,8 +45,8 @@ def test_http_message_remove_v1_AccessError():
 
 
 # Input error when the message_id has already been removed
-def test_http_message_remove_v1_InputError():
-    setup = set_up_data()
+def test_http_message_remove_v1_InputError(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     
     msg1 = requests.post(f"{url}message/send/v2", json= {
@@ -139,8 +66,8 @@ def test_http_message_remove_v1_InputError():
     }).status_code == 400
 
 
-def test_message_remove_v1_AccessError_not_dm_owner():
-    setup = set_up_data()
+def test_message_remove_v1_AccessError_not_dm_owner(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     msg1 = requests.post(f"{url}message/senddm/v1", json= {
@@ -171,8 +98,8 @@ def test_http_message_remove_v1_default_Access_Error():
 ########################### TESTING MESSAGE REMOVE ############################
 
 # Testing the removal of 1 message by user2
-def test_http_message_remove_v1_remove_one():
-    setup = set_up_data()
+def test_http_message_remove_v1_remove_one(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 3 messages and remove the very first message sent
@@ -221,8 +148,8 @@ def test_http_message_remove_v1_remove_one():
 
 
 # Testing the removal of multiple messages
-def test_http_message_remove_v1_remove_multiple():
-    setup = set_up_data()
+def test_http_message_remove_v1_remove_multiple(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and remove messages with index 0, 2, 3 (in the channel
@@ -273,8 +200,8 @@ def test_http_message_remove_v1_remove_multiple():
 
 
 # Testing the removal of all messages in the channel
-def test_http_message_remove_v1_remove_all():
-    setup = set_up_data()
+def test_http_message_remove_v1_remove_all(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     send_x_messages(user2, channel1, 25)
@@ -540,8 +467,8 @@ def test_http_message_remove_v1_dream_owner_removes_message_in_channel():
 
 # Testing the removal of the same message in 2 different channels (different
 # message_ids though)
-def test_http_message_remove_v1_remove_same_msg_diff_channels():
-    setup = set_up_data()
+def test_http_message_remove_v1_remove_same_msg_diff_channels(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     channel2 = requests.post(f"{url}channels/create/v2", json = {
@@ -619,8 +546,8 @@ def test_http_message_remove_v1_remove_same_msg_diff_channels():
 
 
 # Testing the removal of messages within a dm
-def test_message_edit_v2_edit_msg_in_dm():
-    setup = set_up_data()
+def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     message_count = 0
@@ -678,3 +605,34 @@ def test_message_edit_v2_edit_msg_in_dm():
     print(answer)
 
     assert dm_messages_answer == answer
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# User sends x messages
+def send_x_messages(user1, channel1, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        requests.post(f"{url}message/send/v2", json= {
+            "token": user1["token"],
+            "channel_id": channel1,
+            "message": str(message_num)
+        }).json()
+        message_count += 1
+
+    return {}
+
+
+# User removes x messages
+def remove_x_messages(user, id_list=[]):
+    message_count = 0
+    while message_count < len(id_list):
+        requests.delete(f"{url}message/remove/v1", json= {
+            "token": user["token"],
+            "message_id": id_list[message_count]
+        }).json()
+        message_count += 1
+    
+    return {}

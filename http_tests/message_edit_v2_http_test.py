@@ -8,87 +8,14 @@ from src.config import url
 
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-def set_up_data():
-    requests.delete(f"{url}clear/v1")
-    user1 = requests.post(f"{url}auth/register/v2", json = {
-        "email": "bob.builder@email.com",
-        "password": "badpassword1",
-        "name_first": "Bob",
-        "name_last": "Builder"
-    }).json()
-
-    user2 = requests.post(f"{url}auth/register/v2", json = {
-        "email": "shaun.sheep@email.com",
-        "password": "password123",
-        "name_first": "Shaun",
-        "name_last": "Sheep"
-    }).json()
-
-    channel1 = requests.post(f"{url}channels/create/v2", json = {
-        "token": user1["token"],
-        "name": "Channel1",
-        "is_public": True
-    }).json()
-
-    requests.post(f"{url}channel/invite/v2", json = {
-        "token": user1["token"],
-        "channel_id": channel1["channel_id"],
-        "u_id": user2["auth_user_id"]
-    }).json()
-
-    dm1 = requests.post(f"{url}dm/create/v1", json = {
-        "token": user1["token"],
-        "u_ids": [user2["auth_user_id"]]
-    }).json()
-
-    setup = {
-        "user1": user1,
-        "user2": user2,
-        "channel1": channel1["channel_id"],
-        "dm1": dm1["dm_id"]
-    }
-
-    return setup
-
-# User sends x messages
-def send_x_messages(user1, channel1, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        requests.post(f"{url}message/send/v2", json= {
-            "token": user1["token"],
-            "channel_id": channel1,
-            "message": str(message_num)
-        }).json()
-        message_count += 1
-
-    return {}
-
-
-# User removes x messages
-def remove_x_messages(user, id_list=[]):
-    message_count = 0
-    while message_count < len(id_list):
-        requests.delete(f"{url}message/remove/v1", json= {
-            "token": user["token"],
-            "message_id": id_list[message_count]
-        }).json()
-        message_count += 1
-    
-    return {}
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
 ############################# EXCEPTION TESTING ##############################
 
 # Testing to see if message is of valid length
-def test_http_message_edit_v2_InputError_msg_too_long():
-    setup = set_up_data()
+def test_http_message_edit_v2_InputError_msg_too_long(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     m_id = requests.post(f"{url}message/send/v2", json= {
         "token": user1["token"],
@@ -110,8 +37,8 @@ def test_http_message_edit_v2_InputError_msg_too_long():
 
 
 # Testing to see if message being edited has already been removed
-def test_http_message_edit_v2_InputError_msg_removed():
-    setup = set_up_data()
+def test_http_message_edit_v2_InputError_msg_removed(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     
     m_id = requests.post(f"{url}message/send/v2", json= {
@@ -135,8 +62,8 @@ def test_http_message_edit_v2_InputError_msg_removed():
 
 # Access error when the user trying to edit the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_http_message_edit_v2_AccessError():
-    setup = set_up_data()
+def test_http_message_edit_v2_AccessError(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     m_id = requests.post(f"{url}message/send/v2", json= {
@@ -154,8 +81,8 @@ def test_http_message_edit_v2_AccessError():
     }).status_code == 403
 
 
-def test_message_edit_v2_AccessError_not_dm_owner():
-    setup = set_up_data()
+def test_message_edit_v2_AccessError_not_dm_owner(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     m_id = requests.post(f"{url}message/senddm/v1", json= {
@@ -190,8 +117,8 @@ def test_http_message_edit_v2_default_Access_Error():
 ############################ TESTING MESSAGE EDIT #############################
 
 # Testing the edit of 1 message by user2
-def test_http_message_edit_v2_edit_one():
-    setup = set_up_data()
+def test_http_message_edit_v2_edit_one(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 3 messages and edit the very first message sent
@@ -244,8 +171,8 @@ def test_http_message_edit_v2_edit_one():
 
 
 # Testing the edit of multiple messages
-def test_http_message_edit_v2_edit_multiple():
-    setup = set_up_data()
+def test_http_message_edit_v2_edit_multiple(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
@@ -334,8 +261,8 @@ def test_http_message_edit_v2_edit_multiple():
 
 
 # Editing all messages in the channel
-def test_http_message_edit_v2_edit_all_messages():
-    setup = set_up_data()
+def test_http_message_edit_v2_edit_all_messages(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3
@@ -739,8 +666,8 @@ def test_http_message_edit_v2_dream_owner_edits_message_in_channel():
 
 # Editing a message and replacing it with empty string to see if it
 # removes the message
-def test_http_message_edit_v2_edit_removes_1_msg():
-    setup = set_up_data()
+def test_http_message_edit_v2_edit_removes_1_msg(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 3 messages and edit the very first message sent
@@ -780,8 +707,8 @@ def test_http_message_edit_v2_edit_removes_1_msg():
 
 # Editing multiple messages and replacing them with empty string to see if it
 # removes the message
-def test_http_message_edit_v2_edit_removes_multiple_msg():
-    setup = set_up_data()
+def test_http_message_edit_v2_edit_removes_multiple_msg(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     # Send 5 messages and edit messages with index 0, 2, 3 
@@ -835,8 +762,8 @@ def test_http_message_edit_v2_edit_removes_multiple_msg():
 
 
 # Edit messages within a dm
-def test_message_edit_v2_edit_msg_in_dm():
-    setup = set_up_data()
+def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     message_count = 0
@@ -919,3 +846,34 @@ def test_message_edit_v2_edit_msg_in_dm():
     }).json()
 
     assert dm_messages_answer == answer
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+# User sends x messages
+def send_x_messages(user1, channel1, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        requests.post(f"{url}message/send/v2", json= {
+            "token": user1["token"],
+            "channel_id": channel1,
+            "message": str(message_num)
+        }).json()
+        message_count += 1
+
+    return {}
+
+
+# User removes x messages
+def remove_x_messages(user, id_list=[]):
+    message_count = 0
+    while message_count < len(id_list):
+        requests.delete(f"{url}message/remove/v1", json= {
+            "token": user["token"],
+            "message_id": id_list[message_count]
+        }).json()
+        message_count += 1
+    
+    return {}

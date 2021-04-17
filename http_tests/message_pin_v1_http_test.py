@@ -8,80 +8,6 @@ import urllib
 from src.config import url
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-def user_body(num):
-    return {
-        "email": f"example{num}@hotmail.com",
-        "password": f"password{num}",
-        "name_first": f"first_name{num}",
-        "name_last": f"last_name{num}"
-    }
-
-def channels_create_body(user, name):
-    return {
-        "token": user["token"],
-        "name": name,
-        "is_public": True
-    }
-
-def message_send_body(user, channel_id, message):
-    return {
-        "token": user["token"],
-        "channel_id": channel_id,
-        "message": message
-    }
-
-def message_senddm_body(user, dm, message): 
-    return {
-        "token": user["token"],
-        "dm_id": dm,
-        "message": message
-    }
-
-def message_pin_body(user, message_id): 
-    return {
-        "token": user["token"],
-        "message_id": message_id
-    }
-
-def channel_messages_body(user, channel_id, start):
-    return {
-        "token": user["token"],
-        "channel_id": channel_id,
-        "start": start
-    }
-
-def dm_messages_body(user, dm_id, start):
-    return {
-        "token": user["token"],
-        "dm_id": dm_id,
-        "start": start
-    }
-
-def channel_invite_body(user, channel_id, user_id):
-    return {
-        "token": user["token"],
-        "channel_id": channel_id,
-        "u_id": user_id["auth_user_id"]
-    }
-
-# Helper function to send x messages from 2 users to a channel
-def send_x_messages(user1, user2, channel1, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_count % 2 == 0:
-            requests.post(f"{url}message/send/v2", json=message_send_body(user1, channel1, str(message_num))).json()
-        else:
-            requests.post(f"{url}message/send/v2", json=message_send_body(user2, channel1, str(message_num))).json()
-        message_count += 1
-    
-    return {}
-
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
@@ -254,3 +180,77 @@ def test_http_message_pin_v1_pin_one_dm(set_up_data):
     assert dm_messages_ans['messages'][0]['message'] == "Hello"
     assert dm_messages_ans['messages'][0]['is_pinned'] == True
     assert dm_messages_ans['messages'][0]['message_id'] == m_id['message_id']
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+def user_body(num):
+    return {
+        "email": f"example{num}@hotmail.com",
+        "password": f"password{num}",
+        "name_first": f"first_name{num}",
+        "name_last": f"last_name{num}"
+    }
+
+def channels_create_body(user, name):
+    return {
+        "token": user["token"],
+        "name": name,
+        "is_public": True
+    }
+
+def message_send_body(user, channel_id, message):
+    return {
+        "token": user["token"],
+        "channel_id": channel_id,
+        "message": message
+    }
+
+def message_senddm_body(user, dm, message): 
+    return {
+        "token": user["token"],
+        "dm_id": dm,
+        "message": message
+    }
+
+def message_pin_body(user, message_id): 
+    return {
+        "token": user["token"],
+        "message_id": message_id
+    }
+
+def channel_messages_body(user, channel_id, start):
+    return {
+        "token": user["token"],
+        "channel_id": channel_id,
+        "start": start
+    }
+
+def dm_messages_body(user, dm_id, start):
+    return {
+        "token": user["token"],
+        "dm_id": dm_id,
+        "start": start
+    }
+
+def channel_invite_body(user, channel_id, user_id):
+    return {
+        "token": user["token"],
+        "channel_id": channel_id,
+        "u_id": user_id["auth_user_id"]
+    }
+
+# Helper function to send x messages from 2 users to a channel
+def send_x_messages(user1, user2, channel1, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_count % 2 == 0:
+            requests.post(f"{url}message/send/v2", json=message_send_body(user1, channel1, str(message_num))).json()
+        else:
+            requests.post(f"{url}message/send/v2", json=message_send_body(user2, channel1, str(message_num))).json()
+        message_count += 1
+    
+    return {}
