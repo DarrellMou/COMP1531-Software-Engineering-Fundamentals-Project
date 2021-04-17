@@ -38,12 +38,12 @@ def test_channel_removeowner_owner_error(setup_user_data):
         'channel_id': channel_id['channel_id'],
     }).json()
     
-    # Ensure AccessError
+    # Ensure InputError as user1 is currently the only owner of the channel
     assert requests.post(config.url + 'channel/removeowner/v1', json={
         'token': users['user2']['token'],
         'channel_id': channel_id['channel_id'],
         'u_id': users['user1']['auth_user_id'],
-    }).status_code == 403
+    }).status_code == 400
 
 # error when trying to remove owners without being an owner yourself
 def test_removeowner_access_error(setup_user_data):
