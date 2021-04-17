@@ -101,6 +101,7 @@ def set_up_data(setup_user_dict):
     '''
     This fixture is used in:
         - channel/messages
+        - dm/messages
         - message/send
         - message/pin
         - message/unpin
