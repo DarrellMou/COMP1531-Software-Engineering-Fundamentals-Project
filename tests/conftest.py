@@ -47,7 +47,6 @@ def set_up_data(reset):
     '''
     Brendan's fixtures used in:
         - channel/messages
-        - dm/messages
         - message/send
         - message/senddm
         - message/pin
