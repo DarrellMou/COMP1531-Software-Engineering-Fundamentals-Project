@@ -24,39 +24,6 @@ from src.other import clear_v1
 
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1 and
-    # channel2 and invite user2 to the channels
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-    channel_invite_v2(user1["token"], channel1['channel_id'], user2['auth_user_id'])
-    channel2 = channels_create_v2(user1['token'], 'Channel2', True)
-    channel_invite_v2(user1["token"], channel2['channel_id'], user2['auth_user_id'])
-    dm1 = dm_create_v1(user1["token"], [user2["auth_user_id"]])
-    dm2 = dm_create_v1(user2["token"], [user1["auth_user_id"]])
-
-
-    setup = {
-        "user1": user1,
-        "user2": user2,
-        "channel1": channel1['channel_id'],
-        "channel2": channel2['channel_id'],
-        "dm1": dm1["dm_id"],
-        "dm2": dm2["dm_id"]
-    }
-
-    return setup
-
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
@@ -64,8 +31,8 @@ def set_up_data():
 
 # Testing to see if the user who is sharing the message to a channel is
 # actually in that channel
-def test_message_share_v1_AccessError():
-    setup = set_up_data()
+def test_message_share_v1_AccessError(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
@@ -76,8 +43,8 @@ def test_message_share_v1_AccessError():
 
 # Testing to see if the user who is sharing the message to a dm is
 # actually in that dm
-def test_message_share_v1_AccessError_dm():
-    setup = set_up_data()
+def test_message_share_v1_AccessError_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
     user3 = auth_register_v1('thomas.tankengine@email.com', 'password123', 'Thomas', 'Tankengine')
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
@@ -100,8 +67,8 @@ def test_message_share_v1_default_Access_Error():
 ############################ TESTING MESSAGE SHARE ############################
 
 # Testing user1 sharing one message to channel
-def test_message_share_v1_share_one_to_channel():
-    setup = set_up_data()
+def test_message_share_v1_share_one_to_channel(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
@@ -119,8 +86,8 @@ def test_message_share_v1_share_one_to_channel():
 
 
 # Sharing and resharing the message a few times to differing channels
-def test_message_share_v1_share_one_multiple_times():
-    setup = set_up_data()
+def test_message_share_v1_share_one_multiple_times(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
@@ -136,14 +103,14 @@ def test_message_share_v1_share_one_multiple_times():
     assert channel2_messages["messages"][1]["message_id"] == shared_m_id1
     assert channel2_messages["messages"][1]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert channel2_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel2_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel2_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
 
     assert len(channel2_messages["messages"]) == 2
     assert len(channel1_messages["messages"]) == 2
 
 # Sharing to the same channel
-def test_message_share_v1_share_one_multiple_times_same_channel():
-    setup = set_up_data()
+def test_message_share_v1_share_one_multiple_times_same_channel(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
@@ -158,15 +125,15 @@ def test_message_share_v1_share_one_multiple_times_same_channel():
     assert channel_messages["messages"][2]["message_id"] == shared_m_id1
     assert channel_messages["messages"][2]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert channel_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(channel_messages["messages"]) == 4
 
 
 # There is no additional message that is attached to the og message
 # This follows the way it is shared at http://Dreams-unsw.herokuapp.com/ when
 # no optional message is added to the shared message
-def test_message_share_v1_share_with_no_added_msg():
-    setup = set_up_data()
+def test_message_share_v1_share_with_no_added_msg(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1, channel2 = setup['user1'], setup['user2'], setup['channel1'], setup['channel2']
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
 
@@ -182,16 +149,16 @@ def test_message_share_v1_share_with_no_added_msg():
     assert channel1_messages["messages"][1]["message_id"] == shared_m_id1
     assert channel1_messages["messages"][1]["message"] == '\n\n"""\nHello\n"""'
     assert channel1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert channel1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert channel1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(channel1_messages["messages"]) == 3
     assert channel2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert channel2_messages["messages"][0]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert channel2_messages["messages"][0]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(channel2_messages["messages"]) == 1
 
 # Testing user1 sharing one message from channel to dm
 
-def test_message_share_v1_share_from_channel_to_dm():
-    setup = set_up_data()
+def test_message_share_v1_share_from_channel_to_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1, dm1 = setup['user1'], setup['user2'], setup['channel1'], setup["dm1"]
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
     shared_m_id1 = message_share_v1(user2["token"], m_id, "Shared Message 1", -1, dm1)['shared_message_id']
@@ -210,8 +177,8 @@ def test_message_share_v1_share_from_channel_to_dm():
 
 # Sharing and resharing the message a few times to differing dms. Message is
 # originally sent to a dm
-def test_http_message_share_v1_share_dm_multiple_times():
-    setup = set_up_data()
+def test_http_message_share_v1_share_dm_multiple_times(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1, dm2 = setup['user1'], setup['user2'], setup['dm1'], setup['dm2']
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
     shared_m_id1 = message_share_v1(user2["token"], m_id, "Shared Message 1", -1, dm1)['shared_message_id']
@@ -226,17 +193,17 @@ def test_http_message_share_v1_share_dm_multiple_times():
     assert dm1_messages["messages"][1]["message_id"] == shared_m_id1
     assert dm1_messages["messages"][1]["message"] == 'Shared Message 1\n\n"""\nHello\n"""'
     assert dm1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm1_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n    \n    """\n    Shared Message 1\n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm1_messages["messages"][0]["message"] == 'Shared Message 3\n\n"""\nShared Message 2\n\t\n\t"""\n\tShared Message 1\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm1_messages["messages"]) == 3
 
     assert dm2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert dm2_messages["messages"][0]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n    \n    """\n    Hello\n    """\n"""'
+    assert dm2_messages["messages"][0]["message"] == 'Shared Message 2\n\n"""\nShared Message 1\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(dm2_messages["messages"]) == 1
 
 # There is no additional message that is attached to the og message which was
 # sent from dm
-def test_http_message_share_v1_share_dm_with_no_added_msg():
-    setup = set_up_data()
+def test_http_message_share_v1_share_dm_with_no_added_msg(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
 
@@ -251,15 +218,15 @@ def test_http_message_share_v1_share_dm_with_no_added_msg():
     assert dm_messages["messages"][2]["message_id"] == shared_m_id1
     assert dm_messages["messages"][2]["message"] == '\n\n"""\nHello\n"""'
     assert dm_messages["messages"][1]["message_id"] == shared_m_id2
-    assert dm_messages["messages"][1]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert dm_messages["messages"][1]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert dm_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm_messages["messages"]) == 4
 
 # There is no additional message that is attached to the og message which was
 # sent from dm - this time shared between multiple dms
-def test_http_message_share_v1_share_dm_with_no_added_msg_2_dms():
-    setup = set_up_data()
+def test_http_message_share_v1_share_dm_with_no_added_msg_2_dms(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1, dm2 = setup['user1'], setup['user2'], setup['dm1'], setup['dm2']
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
 
@@ -275,8 +242,8 @@ def test_http_message_share_v1_share_dm_with_no_added_msg_2_dms():
     assert dm1_messages["messages"][1]["message_id"] == shared_m_id1
     assert dm1_messages["messages"][1]["message"] == '\n\n"""\nHello\n"""'
     assert dm1_messages["messages"][0]["message_id"] == shared_m_id3
-    assert dm1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n    \n    """\n    \n        \n        """\n        Hello\n        """\n    """\n"""'
+    assert dm1_messages["messages"][0]["message"] == 'Hi\n\n"""\n\n\t\n\t"""\n\t\n\t\t\n\t\t"""\n\t\tHello\n\t\t"""\n\t"""\n"""'
     assert len(dm1_messages["messages"]) == 3
     assert dm2_messages["messages"][0]["message_id"] == shared_m_id2
-    assert dm2_messages["messages"][0]["message"] == '\n\n"""\n\n    \n    """\n    Hello\n    """\n"""'
+    assert dm2_messages["messages"][0]["message"] == '\n\n"""\n\n\t\n\t"""\n\tHello\n\t"""\n"""'
     assert len(dm2_messages["messages"]) == 1

@@ -6,22 +6,6 @@ import requests
 import json
 from src import config
 
-'''
-The following fixtures are used in:
-- channels/create
-- channels/listall
-- message/senddm
-- admin/userpermission/change
-- admin/user/remove
-- search
-- channel/join/v2
-- channels/list/v2,
-- channel/addowner/v1
-- channel/removeowner/v1
-- channel/leave/v1
-- notifications/get/v1
-'''
-
 @pytest.fixture
 def reset():
     requests.delete(config.url+'clear/v1')
@@ -74,7 +58,21 @@ def setup_user_dict(reset):
 
 @pytest.fixture
 def setup_user_data(setup_user_dict):
-    
+    '''
+    This fixture is used in:
+        - channels/create
+        - channels/listall
+        - message/senddm
+        - admin/userpermission/change
+        - admin/user/remove
+        - search
+        - channel/join/v2
+        - channels/list/v2,
+        - channel/addowner/v1
+        - channel/removeowner/v1
+        - channel/leave/v1
+        - notifications/get/v1
+    '''
     user1 = setup_user_dict['user1_dict']
     user1_details = requests.post(config.url + "auth/register/v2", json=user1).json()
 
@@ -98,6 +96,7 @@ def setup_user_data(setup_user_dict):
         'user5' : user5_details
     }
 
+
 @pytest.fixture
 def users(reset):
     user_list = []
@@ -111,3 +110,110 @@ def users(reset):
         user_list.append(user)
     
     return user_list
+
+
+@pytest.fixture
+def set_up_data(setup_user_dict):
+    '''
+    This fixture is used in:
+        - channel/messages
+        - dm/messages
+        - message/send
+        - message/pin
+        - message/unpin
+        - message/sendlater
+        - message/sendlaterdm
+    '''
+    user1_dict = setup_user_dict['user1_dict']
+    user1 = requests.post(config.url + "auth/register/v2", json=user1_dict).json()
+
+    user2_dict = setup_user_dict['user2_dict']
+    user2 = requests.post(config.url + "auth/register/v2", json=user2_dict).json()
+
+    user3_dict = setup_user_dict['user3_dict']
+    user3 = requests.post(config.url + "auth/register/v2", json=user3_dict).json()
+
+    channel1 = requests.post(f"{config.url}channels/create/v2",
+        json={
+            "token": user1["token"],
+            "name": "channel1",
+            "is_public": True
+        }).json()
+
+    dm1 = requests.post(f"{config.url}dm/create/v1",
+        json={
+            "token": user1["token"],
+            "u_ids": [user2["auth_user_id"]]
+        }).json()
+
+    setup = {
+        'user1': user1,
+        'user2': user2,
+        'user3': user3,
+        'channel1': channel1['channel_id'],
+        'dm1': dm1['dm_id']
+    }
+
+    return setup
+
+@pytest.fixture
+def set_up_message_data(setup_user_dict):
+    '''
+    This fixture is used in:
+        - message/edit
+        - message/remove
+        - message/share
+    '''
+    
+    # Populate data - create/register users 1 and 2 and have user 1 make channel1 and
+    # channel2 and invite user2 to the channels
+    user1_dict = setup_user_dict['user1_dict']
+    user1 = requests.post(config.url + "auth/register/v2", json=user1_dict).json()
+
+    user2_dict = setup_user_dict['user2_dict']
+    user2 = requests.post(config.url + "auth/register/v2", json=user2_dict).json()
+
+    channel1 = requests.post(f"{config.url}channels/create/v2", json = {
+        "token": user1["token"],
+        "name": "Channel1",
+        "is_public": True
+    }).json()
+
+    requests.post(f"{config.url}channel/invite/v2", json = {
+        "token": user1["token"],
+        "channel_id": channel1["channel_id"],
+        "u_id": user2["auth_user_id"]
+    }).json()
+
+    channel2 = requests.post(f"{config.url}channels/create/v2", json = {
+        "token": user1["token"],
+        "name": "Channel2",
+        "is_public": True
+    }).json()
+
+    requests.post(f"{config.url}channel/invite/v2", json = {
+        "token": user1["token"],
+        "channel_id": channel2["channel_id"],
+        "u_id": user2["auth_user_id"]
+    }).json()
+
+    dm1 = requests.post(f"{config.url}dm/create/v1", json = {
+        "token": user1["token"],
+        "u_ids": [user2["auth_user_id"]]
+    }).json()
+
+    dm2 = requests.post(f"{config.url}dm/create/v1", json = {
+        "token": user2["token"],
+        "u_ids": [user1["auth_user_id"]]
+    }).json()
+
+    setup = {
+        "user1": user1,
+        "user2": user2,
+        "channel1": channel1["channel_id"],
+        "channel2": channel2["channel_id"],
+        "dm1": dm1["dm_id"],
+        "dm2": dm2["dm_id"]
+    }
+
+    return setup
