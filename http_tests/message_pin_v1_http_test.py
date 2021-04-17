@@ -101,6 +101,21 @@ def test_http_message_pin_v1_default_Access_Error(set_up_data):
         "message_id": m_id["message_id"]
     }).status_code == 403
 
+
+# Testing for pinning a message which has been removed
+def test_http_message_pin_v1_InputError_pin_removed_msg(set_up_data):
+    setup = set_up_data
+    user1, channel1 = setup['user1'], setup['channel1']
+
+    m_id = requests.post(f"{url}message/send/v2", json=message_send_body(user1, channel1, "Hello")).json()
+    requests.delete(f"{url}message/remove/v1", json={
+        'token': user1['token'],
+        'message_id': m_id['message_id']
+    }).json()
+
+    response = requests.post(f"{url}message/pin/v1", json=message_pin_body(user1, m_id["message_id"]))
+    assert response.status_code == 400
+
 ############################ END EXCEPTION TESTING ############################
 
 
