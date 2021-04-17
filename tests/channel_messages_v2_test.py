@@ -11,6 +11,10 @@ from src.message import message_send_v2
 from src.other import clear_v1
 
 
+###############################################################################
+#                                 ASSUMPTIONS                                 #
+###############################################################################
+
 # ASSUMPTION: Start refers to the starting index of the
 # data['channels'][channel_id]['messages'] list
 
@@ -19,36 +23,6 @@ from src.other import clear_v1
 # therefore, there is no need to raise an index error.
 # E.g. trying to access data['channels'][channel_id]['messages'][1] when there
 # is only 1 message in that specific channel_id, which has an index of 0.
-
-
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Add members 1 and 2 into channel 1 and add x messages with the message just being the message id
-def add_x_messages(user1, user2, channel1, num_messages):
-
-    # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
-
-    # Physically creating num_messages amount of messages
-    # The most recent message is at the beginning of the list as per spec
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_num % 2 == 1:
-            message_send_v2(user1["token"], channel1, str(message_num))
-        else:
-            message_send_v2(user2["token"], channel1, str(message_num))
-        message_count += 1
-
-    return {}
-
-
-###############################################################################
-#                             END HELPER FUNCTIONS                            #
-###############################################################################
-
 
 
 ###############################################################################
@@ -432,3 +406,27 @@ def test_channel_messages_v2_start_21_end_neg1(set_up_data):
     
     assert messages_list['messages'][28]["u_id"] == user1["auth_user_id"]
     assert messages_list['messages'][28]["message"] == "1"
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# Add members 1 and 2 into channel 1 and add x messages with the message just being the message id
+def add_x_messages(user1, user2, channel1, num_messages):
+
+    # Add user 2 into the channel so user 1 and 2 can have a conversation
+    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
+
+    # Physically creating num_messages amount of messages
+    # The most recent message is at the beginning of the list as per spec
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_num % 2 == 1:
+            message_send_v2(user1["token"], channel1, str(message_num))
+        else:
+            message_send_v2(user2["token"], channel1, str(message_num))
+        message_count += 1
+
+    return {}

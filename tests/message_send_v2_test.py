@@ -20,32 +20,6 @@ from src.other import clear_v1
 
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-def send_x_messages(user1, user2, channel1, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_count % 2 == 0:
-            message_send_v2(user1["token"], channel1, str(message_num))
-        else:
-            message_send_v2(user2["token"], channel1, str(message_num))
-        message_count += 1
-    
-    return {}
-
-def send_x_messages_two_channels(user, channel1, channel2, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        message_send_v2(user["token"], channel1, str(message_num))
-        message_send_v2(user["token"], channel2, str(message_num))
-        message_count += 1
-    return {}
-
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
@@ -194,3 +168,29 @@ def test_message_send_v2_appends_to_data_messages(set_up_data):
     channel2_msgs = channel_messages_v2(user1["token"], channel2, 0)
 
     assert len(channel1_msgs['messages']) + len(channel2_msgs['messages']) == 20
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+def send_x_messages(user1, user2, channel1, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_count % 2 == 0:
+            message_send_v2(user1["token"], channel1, str(message_num))
+        else:
+            message_send_v2(user2["token"], channel1, str(message_num))
+        message_count += 1
+    
+    return {}
+
+def send_x_messages_two_channels(user, channel1, channel2, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        message_send_v2(user["token"], channel1, str(message_num))
+        message_send_v2(user["token"], channel2, str(message_num))
+        message_count += 1
+    return {}
