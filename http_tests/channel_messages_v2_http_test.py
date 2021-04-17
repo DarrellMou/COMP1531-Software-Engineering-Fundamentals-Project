@@ -104,33 +104,6 @@ def test_channel_messages_v2_1_message(set_up_data):
     assert messages_list['messages'][0]["message"] == "Test message"
 
 
-
-# Testing for exactly 50 messages
-# ASSUMPTION: 50th message IS the last message so return 'end': -1 rather than 'end': 50
-# when there are 50 messages in the channel with start being 0
-def test_channel_messages_v2_50_messages(set_up_data):
-    setup = set_up_data
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
-
-    # Add 50 messages
-    add_x_messages(user1, user2, channel1, 50)
-
-    messages_list = requests.get(url + 'channel/messages/v2', params={
-        "token": user1["token"],
-        "channel_id": channel1,
-        "start": 0
-    }).json()
-
-
-    assert messages_list['start'] == 0, "Start should not change"
-    
-    assert messages_list['end'] == -1,\
-    "50th message IS the least recent message so it should return 'end': -1"
-
-    assert len(messages_list['messages']) == 50
-
-
-
 # Create 100 messages, with a given start of 50 (50th index means the 51st most
 # recent message). Should return 50 messages (index 50 up to index 99 which
 # corresponds with the 51st most recent message up to the least recent message,
@@ -323,70 +296,6 @@ def test_channel_messages_v2_111_messages_start_0(set_up_data):
 
     assert messages_list['messages'][49]["u_id"] == user2["auth_user_id"]
     assert messages_list['messages'][49]["message"] == "62"
-
-
-# Testing for between 100 and 150 messages with start being 50
-def test_channel_messages_v2_111_messages_start_50(set_up_data):
-    setup = set_up_data
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
-    
-    # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    add_x_messages(user1, user2, channel1, 111)
-
-    messages_list = requests.get(url + 'channel/messages/v2', params={
-        "token": user1["token"],
-        "channel_id": channel1,
-        "start": 50
-    }).json()
-
-    assert messages_list['start'] == 50, "Start should not change"
-
-    assert messages_list['end'] == 100,\
-        "111 > start + 50 - function should return 'end': 100"
-
-    assert len(messages_list['messages']) == 50,\
-        "function should return 50 messages max"
-
-    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
-    assert messages_list['messages'][0]["message"] == "61"
-
-    assert messages_list['messages'][25]["u_id"] == user2["auth_user_id"]
-    assert messages_list['messages'][25]["message"] == "36"
-
-    assert messages_list['messages'][49]["u_id"] == user2["auth_user_id"]
-    assert messages_list['messages'][49]["message"] == "12"
-
-
-# Testing for between 100 and 150 messages with start being 100
-def test_channel_messages_v2_111_messages_start_100(set_up_data):
-    setup = set_up_data
-    user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
-
-    # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
-    add_x_messages(user1, user2, channel1, 111)
-
-    messages_list = requests.get(url + 'channel/messages/v2', params= {
-        "token": user1["token"],
-        "channel_id": channel1,
-        "start": 100
-    }).json()
-
-    assert messages_list['start'] == 100, "Start should not change"
-
-    assert messages_list['end'] == -1,\
-        "111 < start + 50 - function should return 'end': -1"
-
-    assert len(messages_list['messages']) == 11,\
-        "function should return remaining 11 messages"
-
-    assert messages_list['messages'][0]["u_id"] == user1["auth_user_id"]
-    assert messages_list['messages'][0]["message"] == "11"
-
-    assert messages_list['messages'][5]["u_id"] == user2["auth_user_id"]
-    assert messages_list['messages'][5]["message"] == "6"
-
-    assert messages_list['messages'][10]["u_id"] == user1["auth_user_id"]
-    assert messages_list['messages'][10]["message"] == "1"
 
 
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
