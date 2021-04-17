@@ -22,22 +22,6 @@ from src.data import retrieve_data
 
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-def send_x_messages(user1, user2, channel1, num_messages):
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_count % 2 == 0:
-            message_send_v2(user1["token"], channel1, str(message_num))
-        else:
-            message_send_v2(user2["token"], channel1, str(message_num))
-        message_count += 1
-    
-    return {}
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
@@ -198,3 +182,20 @@ def test_message_pin_v1_pin_one_dm(set_up_data):
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message'] == "Hello"
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['is_pinned'] == True
     assert dm_messages_v1(user1['token'], dm1, 0)['messages'][0]['message_id'] == m_id['message_id']
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+def send_x_messages(user1, user2, channel1, num_messages):
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_count % 2 == 0:
+            message_send_v2(user1["token"], channel1, str(message_num))
+        else:
+            message_send_v2(user2["token"], channel1, str(message_num))
+        message_count += 1
+    
+    return {}
