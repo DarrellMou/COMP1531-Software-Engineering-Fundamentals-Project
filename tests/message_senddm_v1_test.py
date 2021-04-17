@@ -5,7 +5,6 @@ import pytest
 
 from src.error import InputError, AccessError
 from src.other import clear_v1
-from src.data import retrieve_data
 from src.auth import auth_register_v1
 from src.dm import dm_create_v1, dm_invite_v1, dm_messages_v1
 from src.message import message_senddm_v1
@@ -16,41 +15,6 @@ from src.message import message_senddm_v1
 
 # Messages that are sent using message_senddm are appended to the message list
 # within the dm
-
-
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-def send_x_messages(user1, user2, dm1, num_messages):
-    data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
-
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_count % 2 == 0:
-            message_senddm_v1(user1, dm1, str(message_num))
-        else:
-            message_senddm_v1(user2, dm1, str(message_num))
-        message_count += 1
-
-    return data
-
-def send_x_messages_two_dms(user, dm1, dm2, num_messages):
-    data = retrieve_data()
-    #with open("data.json", "r") as FILE:
-    #    data = json.load(FILE)
-
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        message_senddm_v1(user, dm1, str(message_num))
-        message_senddm_v1(user, dm2, str(message_num))
-        message_count += 1
-
-    return data
 
 
 ###############################################################################
@@ -213,3 +177,32 @@ def test_message_senddm_v1_data_messages_in_order(set_up_data):
     assert dm2_messages['messages'][0]['message'] == "10"
 
     assert len(dm1_messages['messages']) + len(dm2_messages['messages']) == 20
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+def send_x_messages(user1, user2, dm1, num_messages):
+
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_count % 2 == 0:
+            message_senddm_v1(user1, dm1, str(message_num))
+        else:
+            message_senddm_v1(user2, dm1, str(message_num))
+        message_count += 1
+
+    return {}
+
+def send_x_messages_two_dms(user, dm1, dm2, num_messages):
+
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        message_senddm_v1(user, dm1, str(message_num))
+        message_senddm_v1(user, dm2, str(message_num))
+        message_count += 1
+
+    return {}

@@ -11,8 +11,6 @@ from src.message import message_send_v2, message_senddm_v1, message_pin_v1
 from src.other import clear_v1
 from src.dm import dm_create_v1, dm_messages_v1
 
-from src.data import retrieve_data
-
 
 ###############################################################################
 #                                 ASSUMPTIONS                                 #

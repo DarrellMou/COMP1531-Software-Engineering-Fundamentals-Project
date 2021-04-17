@@ -10,8 +10,6 @@ from src.dm import dm_create_v1, dm_messages_v1, dm_invite_v1, dm_leave_v1
 from src.other import clear_v1
 from datetime import datetime
 
-from src.data import retrieve_data
-
 import time # Used for time.sleep
 
 ###############################################################################
