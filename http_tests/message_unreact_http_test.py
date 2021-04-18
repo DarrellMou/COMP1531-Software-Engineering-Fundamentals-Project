@@ -223,7 +223,7 @@ def test_message_unreact_v1_default_Access_Error(setup_user_data):
 ############################ END EXCEPTION TESTING ############################
 
 
-############################ TESTING MESSAGE REACT #############################
+########################## TESTING MESSAGE UNREACT ############################
 
 # Testing for user unreacting to another user's in channel
 def test_message_unreact_v1_channel(setup_user_data):
