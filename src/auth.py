@@ -7,10 +7,6 @@ from src.data import retrieve_data
 import datetime
 import jwt
 import hashlib 
-
-SECRET = 'CHAMPAGGNE?'
-TOKEN_DURATION = 13 # 13 seconds
-
 import re
 import itertools
 import uuid
@@ -24,9 +20,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 SECRET = 'CHAMPAGGNE?'
-TOKEN_DURATION=300 # 5 seconds
 DREAMS_EMAIL = 'echo-dreams2021@outlook.com'
 DREAMS_EMAIL_PASS = 'cizvan-sujtam-2soTvu'
+if "pytest" in sys.modules:
+    TOKEN_DURATION=2 # for testing
+else:
+    TOKEN_DURATION=300 # for deployment
 
 #sessionID = 0
 resetPendings = set()
