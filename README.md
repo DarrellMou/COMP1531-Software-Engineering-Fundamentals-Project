@@ -17,7 +17,8 @@
 
 ## 0. Change Log
 
-N/A
+* 07/04: Added `v1` to `auth/passwordreset/reset/` route name
+* 10/04: Clarified tracking of utilization and involvement
 
 ## 1. Aims:
 
@@ -218,9 +219,9 @@ For the Dream workspace:
   * The number of channels that exist currently
   * The number of DMs that exist currently
   * The number of messages that exist currently
-  * The workspace's utilization, which is a ratio of the number of users who have joined at least one channel/DM to the total number of channels and DMs, as defined by this pseudocode: `num_users_who_have_joined_at_least_one_channel_or_dm / total_num_users`
+  * The workspace's utilization, which is a ratio of the number of users who have joined at least one channel/DM to the total number of users, as defined by this pseudocode: `num_users_who_have_joined_at_least_one_channel_or_dm / total_num_users`
 
-As UNSW is very interested in its users' engagement, the analytics must be **time-series data**. This means every change to the above metrics must be timestamped and archived, rather than just the most recent change.
+As UNSW is very interested in its users' engagement, all analytics **except for utilization and involvement** must be tracked as **time-series data**. This means every change must be timestamped and archived, rather than just the most recent change. Only the **latest** utilization and involvement rates are required to be tracked.
 
 In addition to keeping track of these metrics, you are required to implement two new endpoints, the details of which can be found in Section `6.2`.
 
@@ -253,7 +254,7 @@ Depending on how you and your team have structured your project, your current me
 
 ![](docs/deploy9.png)
 
-6. Scroll down and change "Application path" to `/www/cs1531deploy/src/server.py:app` and change the Python version to `3.9.2`. Click submit.
+6. Scroll down and change "Application path" to `/www/cs1531deploy/src/server.py:APP` and change the Python version to `3.9.2`. Click submit.
 
 ![](docs/deploy10.png)
 
@@ -1034,7 +1035,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>N/A</td>
   </tr>
   <tr>
-    <td><code>auth/passwordreset/reset</code><br /><br />Given a reset code for a user, set that user's new password to the password provided</td>
+    <td><code>auth/passwordreset/reset/v1</code><br /><br />Given a reset code for a user, set that user's new password to the password provided</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(reset_code, new_password)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>

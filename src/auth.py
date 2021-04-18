@@ -7,6 +7,10 @@ from src.data import retrieve_data
 import datetime
 import jwt
 import hashlib 
+
+SECRET = 'CHAMPAGGNE?'
+TOKEN_DURATION = 13 # 13 seconds
+
 import re
 import itertools
 import uuid

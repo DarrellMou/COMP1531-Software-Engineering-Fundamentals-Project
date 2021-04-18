@@ -23,20 +23,26 @@ def test_function():
         'members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name',
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'example2@hotmail.com',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
+                'handle_str': 'first_name2last_name',
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
+                'email': 'example3@hotmail.com',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
-            }
-        ]
+                'handle_str': 'first_name3last_name',
+            },
+        ],
     }
 
 # dm_invite run multiple times
@@ -58,30 +64,40 @@ def test_multiple():
         'members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name',
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'example2@hotmail.com',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
+                'handle_str': 'first_name2last_name',
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
+                'email': 'example3@hotmail.com',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
+                'handle_str': 'first_name3last_name',
             },
             {
                 'u_id': a_u_id4['auth_user_id'],
+                'email': 'example4@hotmail.com',
                 'name_first': 'first_name4',
                 'name_last': 'last_name4',
+                'handle_str': 'first_name4last_name',
             },
             {
                 'u_id': a_u_id5['auth_user_id'],
+                'email': 'example5@hotmail.com',
                 'name_first': 'first_name5',
                 'name_last': 'last_name5',
-            }
-        ]
+                'handle_str': 'first_name5last_name',
+            },
+        ],
     }
 
 # dm_invite given invalid token

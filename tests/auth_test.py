@@ -98,8 +98,8 @@ def test_encode_decode_token():
     assert auth_decode_token(token) == 1234567800
     assert auth_decode_token('whatisthis') == 'invalid token, log in again'
 
-    # time.sleep(6)
-    # assert auth_decode_token(token) == 'Session expired, log in again'
+    time.sleep(14)
+    assert auth_decode_token(token) == 'Session expired, log in again'
 
 
 def test_auth_token_ok():

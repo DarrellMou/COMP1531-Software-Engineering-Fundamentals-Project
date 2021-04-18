@@ -23,15 +23,19 @@ def test_function():
         'members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name',
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
+                'email': 'example3@hotmail.com',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
-            }
-        ]
+                'handle_str': 'first_name3last_name',
+            },
+        ],
     }
 
 # dm_leave run multiple times
@@ -54,10 +58,12 @@ def test_multiple():
         'members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
-            }
-        ]
+                'handle_str': 'first_name1last_name',
+            },
+        ],
     }
 
 # dm_leave given invalid token

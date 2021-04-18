@@ -33,24 +33,20 @@ def dm_create_v1(token, u_ids):
     for u_id in u_ids:
         if u_id not in data['users'] or data['users'][u_id]['is_removed'] == True: raise InputError
 
-    # Create temporary list for dm members
-    users_list = []
-    users_list.append(auth_user_id)
+    # Create users list for dm members
+    u_ids.insert(0, auth_user_id)
 
     # Create variable to make dm name by combining handle_str(s) of given users
-    dm_name = data['users'][auth_user_id]['handle_str'] + ', '
-    for u_id in u_ids:
-        if u_id == u_ids[-1]:
-            dm_name += data['users'][u_ids[-1]]['handle_str']
-        else:
-            dm_name += data['users'][u_id]['handle_str'] + ', '
-        users_list.append(u_id)
+    handle_strs = [data['users'][u_id]['handle_str'] for u_id in u_ids]
+    dm_name = ''
+    for handle_str in sorted(handle_strs):
+        dm_name += handle_str if handle_str == handle_strs[-1] else (handle_str + ', ')
 
     dm_id = int(uuid.uuid1())
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
-        'members': users_list,
+        'members': u_ids,
         'messages': []
     }
 
@@ -108,8 +104,10 @@ def dm_details_v1(token, dm_id):
     for member in members:
         tmp_dict = {
             'u_id' : member,
+            'email' : data['users'][member]['email'],
             'name_first' : data['users'][member]['name_first'],
-            'name_last' : data['users'][member]['name_last']
+            'name_last' : data['users'][member]['name_last'],
+            'handle_str' : data['users'][member]['handle_str']
         }
         tmp_list.append(tmp_dict)
 
