@@ -2,7 +2,7 @@
 # Written by Kellen Liew
 
 from src.data import data, retrieve_data
-from src.auth import auth_decode_token
+from src.auth import auth_token_ok, auth_decode_token
 
 def notifications_get_v1(token):
     '''

@@ -158,13 +158,13 @@ def test_message_unreact_v1_channel():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
-    assert data['messages'][0]["reactions"][0]["is_removed"] == False
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["is_removed"] == False
 
     message_unreact_v1(user1["token"], message_id, like)
 
-    assert data['messages'][0]["reactions"][0]["is_removed"] == True
+    assert data['messages'][0]["reacts"][0]["is_removed"] == True
 
 
 # Testing for user unreacting to another user's in dm
@@ -178,12 +178,12 @@ def test_message_unreact_v1_dm():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
     message_unreact_v1(user1["token"], message_id, like)
 
-    assert data['messages'][0]["reactions"][0]["is_removed"] == True
+    assert data['messages'][0]["reacts"][0]["is_removed"] == True
 
 
 # Testing for user reacting to themselves
@@ -196,13 +196,13 @@ def test_message_unreact_v1_self():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
-    assert data['messages'][0]["reactions"][0]["is_removed"] == False
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["is_removed"] == False
 
     message_unreact_v1(user1["token"], message_id, like)
 
-    assert data['messages'][0]["reactions"][0]["is_removed"] == True
+    assert data['messages'][0]["reacts"][0]["is_removed"] == True
 
 
 # Testing for unreacts on different messages
@@ -222,21 +222,21 @@ def test_message_unreact_v1_different_messages():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
-    assert data['messages'][1]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][1]["reactions"][0]["react_id"] == 1
+    assert data['messages'][1]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][1]["reacts"][0]["react_id"] == 1
 
-    assert data['messages'][2]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][2]["reactions"][0]["react_id"] == 1
+    assert data['messages'][2]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][2]["reacts"][0]["react_id"] == 1
 
     message_unreact_v1(user1["token"], message_id1, like)
     message_unreact_v1(user1["token"], message_id2, like)
 
-    assert data['messages'][0]["reactions"][0]["is_removed"] == True
-    assert data['messages'][1]["reactions"][0]["is_removed"] == True
-    assert data['messages'][2]["reactions"][0]["is_removed"] == False
+    assert data['messages'][0]["reacts"][0]["is_removed"] == True
+    assert data['messages'][1]["reacts"][0]["is_removed"] == True
+    assert data['messages'][2]["reacts"][0]["is_removed"] == False
 
 
 # Testing for multiple unreacts on the same message
@@ -253,21 +253,21 @@ def test_message_unreact_v1_multiple_on_message():
     message_react_v1(user3["token"], message_id, like)
 
     data = retrieve_data()
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
-    assert data['messages'][0]["reactions"][1]["u_id"] == user2["auth_user_id"]
-    assert data['messages'][0]["reactions"][1]["react_id"] == 1
+    assert data['messages'][0]["reacts"][1]["u_id"] == user2["auth_user_id"]
+    assert data['messages'][0]["reacts"][1]["react_id"] == 1
 
-    assert data['messages'][0]["reactions"][2]["u_id"] == user3["auth_user_id"]
-    assert data['messages'][0]["reactions"][2]["react_id"] == 1
+    assert data['messages'][0]["reacts"][2]["u_id"] == user3["auth_user_id"]
+    assert data['messages'][0]["reacts"][2]["react_id"] == 1
 
     message_unreact_v1(user1["token"], message_id, like)
     message_unreact_v1(user2["token"], message_id, like)
 
-    assert data['messages'][0]["reactions"][0]["is_removed"] == True
-    assert data['messages'][0]["reactions"][1]["is_removed"] == True
-    assert data['messages'][0]["reactions"][2]["is_removed"] == False
+    assert data['messages'][0]["reacts"][0]["is_removed"] == True
+    assert data['messages'][0]["reacts"][1]["is_removed"] == True
+    assert data['messages'][0]["reacts"][2]["is_removed"] == False
 
 # Testing for user reacting and unreacting to themselves over and over
 def test_message_unreact_v1_loop_react_unreact():
@@ -278,17 +278,17 @@ def test_message_unreact_v1_loop_react_unreact():
     message_react_v1(user1["token"], message_id, like)
     data = retrieve_data()
 
-    assert data['messages'][0]["reactions"][0]["u_id"] == user1["auth_user_id"]
-    assert data['messages'][0]["reactions"][0]["react_id"] == 1
-    assert data['messages'][0]["reactions"][0]["is_removed"] == False
+    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["react_id"] == 1
+    assert data['messages'][0]["reacts"][0]["is_removed"] == False
     
     x = 0
     while x < 10:
         message_unreact_v1(user1["token"], message_id, like)
-        assert data['messages'][0]["reactions"][0]["is_removed"] == True
+        assert data['messages'][0]["reacts"][0]["is_removed"] == True
 
         message_react_v1(user1["token"], message_id, like)
-        assert data['messages'][0]["reactions"][0]["is_removed"] == False
+        assert data['messages'][0]["reacts"][0]["is_removed"] == False
         x += 1
 
-    assert len(data['messages'][0]["reactions"]) == 1
+    assert len(data['messages'][0]["reacts"]) == 1

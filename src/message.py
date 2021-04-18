@@ -574,8 +574,8 @@ def message_react_v1(token, message_id, react_id):
         'notification_message' : notification_message
     })
     # Make sure notification list is len 20
-    if len(data['users'][u_id]['notifications']) > 19:
-        data['users'][u_id]['notifications'].pop(0)
+    if len(data['users'][owner]['notifications']) > 20:
+        data['users'][owner]['notifications'].pop(0)
 
 
 # Deactivate a reaction in a message

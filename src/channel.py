@@ -75,7 +75,7 @@ def channel_invite_v2(token, channel_id, u_id):
         'notification_message' : (str(data['users'][auth_user_id]['handle_str']) + " added you to " + str(data['channels'][channel_id]['name']))
     })
     # Make sure notification list is len 20
-    if len(data['users'][u_id]['notifications']) > 19:
+    if len(data['users'][u_id]['notifications']) > 20:
         data['users'][u_id]['notifications'].pop(0)
 
     return {}
