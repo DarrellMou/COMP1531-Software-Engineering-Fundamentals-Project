@@ -156,9 +156,19 @@ def retrieve_data():
 
 def read_data():
     global data
-    with open("data.json", "r") as FILE:
-        data_json = json.load(FILE)
-        data = data_json
+    try:
+        with open("data.json", "r") as FILE:
+            data_json = json.load(FILE)
+            data = data_json
+    except:
+        data = {
+            "users" : {},
+            "channels" : {},
+            "dms" : {},
+            "messages" : []
+        }
+        with open("data.json", "w") as FILE:
+            json.dump(data, FILE)
 
 def write_data():
     data = retrieve_data()
