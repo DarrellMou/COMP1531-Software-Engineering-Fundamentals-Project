@@ -14,14 +14,28 @@ TOKEN_DURATION = 13 # 13 seconds
 import re
 import itertools
 import uuid
+import random
+import string
+import threading
+import sys
 
-sessionID = 0
+import smtplib, ssl
+from email.mime.text import MIMEText 
+from email.mime.multipart import MIMEMultipart
+
+SECRET = 'CHAMPAGGNE?'
+TOKEN_DURATION=300 # 5 seconds
+DREAMS_EMAIL = 'echo-dreams2021@outlook.com'
+DREAMS_EMAIL_PASS = 'cizvan-sujtam-2soTvu'
+
+#sessionID = 0
+resetPendings = set()
 
 # generates a unique session ID for every login
 def getNewSessionID():
-    global sessionID 
-    sessionID += 1
-    return sessionID
+    # global sessionID 
+
+    return int(uuid.uuid4())
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -185,7 +199,7 @@ def auth_decode_token(token):
         sessionID = payload['sessionID'] 
 
         if sessionID not in data['users'][auth_user_id]['sessions']:
-            return 'This session is over'
+           return 'This session is over'
 
         return auth_user_id
 
@@ -244,3 +258,115 @@ def auth_logout_v1(token):
     else:
         responseObj = {'is_success':False}
         return responseObj
+
+
+def auth_passwordreset_request(email):
+    '''
+    BRIEF DESCRIPTION
+    Given an email address, if the user is a registered user, 
+    sends them an email containing a specific secret code, 
+    that when entered in auth_passwordreset_reset, 
+    shows that the user trying to reset the password is the one who got sent this email.
+
+    Arguments:
+        email (string) - email address of a registered user 
+
+    Exceptions:
+        n/a
+    
+    Return Value:
+        n/a
+    '''
+
+    data = retrieve_data()
+
+    # only send email if the email provided is legit
+    if not any(x['email'] == email for x in data['users'].values()):
+        return
+
+    # random verification code 
+    code = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(6))
+    resetPendings.add(tuple((email, code)))
+
+    # avoid actually sending email if executed within a pytest session
+    if "pytest" not in sys.modules:
+        t = threading.Thread(target=auth_send_reset_email, args=[email, code])
+        t.start()
+    # don't join() or setDaemon(True), want it asynchronous
+    # t still runs even after main thread ends
+
+    return code
+
+
+def auth_send_reset_email(email, code):
+    sender = DREAMS_EMAIL
+    msg = MIMEMultipart('alternative')
+    #msg = EmailMessage()
+    #msg.set_content("The body of the email is here")
+    msg["Subject"] = "Reset password"
+    msg["From"] = sender
+    msg["To"] = email
+
+    # HTML version after plain text
+    plaintext = f"""\
+    Hi,
+    Here is your one time use verification code: {code}
+    """
+
+    html = f"""\
+    <html>
+      <body>
+        <p>Someone requested a password reset for your account {email} on DREAMS</p>
+            <br>If you did not request a password reset, please ignore this email.</p>
+        <p><br> <a href="http://www.realpython.com"></a> 
+            Here is your one time use verification code: {code} .
+        </p>
+      </body>
+    </html>
+    """
+
+    part1 = MIMEText(plaintext, 'plain')
+    part2 = MIMEText(html, 'html')
+
+    # add the two parts to the main multipart msg
+    msg.attach(part1)
+    msg.attach(part2)
+
+    # create own SSL context with system trusted certificate from certificate authority
+    context=ssl.create_default_context()
+
+    with smtplib.SMTP("smtp.office365.com", port=587) as smtp:
+        smtp.starttls(context=context)
+        smtp.login(DREAMS_EMAIL, DREAMS_EMAIL_PASS)
+        smtp.send_message(msg)
+
+
+def auth_passwordreset_reset(reset_code, new_password):
+    '''
+    BRIEF DESCRIPTION
+    Given an verification code sent to the user's email, reset the user's login password.
+
+    Arguments:
+        reset_code (string) - email address of a registered user 
+        new_password (string) - new password to be set 
+
+    Exceptions:
+        n/a
+    
+    Return Value:
+        n/a
+    '''
+
+    data = retrieve_data()
+
+    user = next((x for x in resetPendings if x[1] == reset_code), None)
+    if user == None:
+        raise InputError
+    elif len(new_password) < 6:
+        raise InputError
+
+    targetUser = next(x for x in data['users'].values() if x['email'] == user[0])    
+    #targetUser = filter(lambda x: x['email'] == user[0], data['users'].values())
+
+    targetUser['password'] = auth_password_hash(new_password)
+    resetPendings.remove(user)

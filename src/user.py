@@ -37,20 +37,22 @@ def user_profile_v2(token, u_id):
     userDict = data['users'][u_id]
 
     if data['users'][u_id]['is_removed']:
-        return {'user' : {
+        return {'user' :
+                    {
                     'name_first': "Removed",
                     'name_last' : "user"
                     }
-                }
+               }
 
-    return {'user' : {
-                'auth_user_id' : u_id,
+    return  {'user' :
+                {
+                'u_id'         : u_id,
                 'email'        : userDict['email'],
                 'name_first'   : userDict['name_first'],
                 'name_last'    : userDict['name_last'],
                 'handle_str'   : userDict['handle_str']
                 }
-           }
+            }
 
 def user_profile_setname_v2(token, name_first, name_last):
     '''
@@ -183,4 +185,16 @@ def users_all_v1(token):
     if not auth_token_ok(token):
         raise InputError('invalid token')
 
-    return data['users']
+    usersList = []
+
+    for u_id in data['users'].keys():
+        userDict = {
+            'u_id'         : u_id,
+            'email'        : data['users'].get(u_id)['email'],
+            'name_first'   : data['users'].get(u_id)['name_first'],
+            'name_last'    : data['users'].get(u_id)['name_last'],
+            'handle_str'   : data['users'].get(u_id)['handle_str']
+        }
+        usersList.append(userDict)
+
+    return {'users' : usersList}
