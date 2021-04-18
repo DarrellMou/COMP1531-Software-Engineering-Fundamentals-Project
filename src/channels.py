@@ -127,6 +127,10 @@ def channels_create_v2(token, name, is_public):
         'owner_members': [auth_user_id],
         'all_members': [auth_user_id],
         'messages' : [],
+        'standup' : {
+            'is_active' : False,
+            'time_finish' : None,
+        },
     } 
 
     return {

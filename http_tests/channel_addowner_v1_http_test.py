@@ -108,28 +108,37 @@ def test_channel_join_owner_input_error(setup_user_data):
 
     assert channel_details == {
         'name': 'Public',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': users['user1']['auth_user_id'],
+                'email': 'user1@email.com',
                 'name_first': 'user1_first',
                 'name_last': 'user1_last',
+                'handle_str': 'user1_firstuser1_las'
             },
             {
                 'u_id': users['user2']['auth_user_id'],
+                'email': 'user2@email.com',
                 'name_first': 'user2_first',
                 'name_last': 'user2_last',
+                'handle_str': 'user2_firstuser2_las'
             }
         ],
         'all_members': [
             {
                 'u_id': users['user1']['auth_user_id'],
+                'email': 'user1@email.com',
                 'name_first': 'user1_first',
                 'name_last': 'user1_last',
+                'handle_str': 'user1_firstuser1_las'
             },
             {
                 'u_id': users['user2']['auth_user_id'],
+                'email': 'user2@email.com',
                 'name_first': 'user2_first',
                 'name_last': 'user2_last',
+                'handle_str': 'user2_firstuser2_las'
             }
         ],
     }
@@ -167,28 +176,37 @@ def test_addowner_dreams(setup_user_data):
 
     assert channel_details == {
         'name': 'Public',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': users['user2']['auth_user_id'],
+                'email': 'user2@email.com',
                 'name_first': 'user2_first',
                 'name_last': 'user2_last',
+                'handle_str': 'user2_firstuser2_las'
             },
             {
                 'u_id': users['user3']['auth_user_id'],
+                'email': 'user3@email.com',
                 'name_first': 'user3_first',
                 'name_last': 'user3_last',
+                'handle_str': 'user3_firstuser3_las'
             }
         ],
         'all_members': [
             {
                 'u_id': users['user2']['auth_user_id'],
+                'email': 'user2@email.com',
                 'name_first': 'user2_first',
                 'name_last': 'user2_last',
+                'handle_str': 'user2_firstuser2_las'
             },
             {
                 'u_id': users['user3']['auth_user_id'],
+                'email': 'user3@email.com',
                 'name_first': 'user3_first',
                 'name_last': 'user3_last',
+                'handle_str': 'user3_firstuser3_las'
             }
         ],
     }

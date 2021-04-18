@@ -23,51 +23,67 @@ def test_owner_to_member():
 
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
     }
     channel_removeowner_v1(a_u_id1['token'], chid1['channel_id'], a_u_id2['auth_user_id'])
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
         ],
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
     }
@@ -83,51 +99,67 @@ def test_remove_self():
 
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
     }
     channel_removeowner_v1(a_u_id1['token'], chid1['channel_id'], a_u_id1['auth_user_id'])
     assert channel_details_v2(a_u_id1['token'], chid1['channel_id']) == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             },
         ],
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
+                'email': 'temp1@gmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
+                'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
+                'email': 'temp2@gmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
+                'handle_str': 'first2last2'
             }
         ],
     }

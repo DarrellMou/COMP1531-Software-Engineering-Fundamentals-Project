@@ -111,12 +111,14 @@ def channel_details_v2(token, channel_id):
 
     # Creates list with necessary data
     name = data['channels'][channel_id]['name']
+    is_public = data['channels'][channel_id]['is_public']
     owners = data['channels'][channel_id]['owner_members']
     members = data['channels'][channel_id]['all_members']
 
     # Create list to return
     details_dict = {
         'name' : name,
+        'is_public' : is_public,
         'owner_members' : [],
         'all_members' : []
     }
@@ -126,8 +128,10 @@ def channel_details_v2(token, channel_id):
     for owner in owners:
         tmp_dict = {
             'u_id' : owner,
+            'email' : data['users'][owner]['email'],
             'name_first' : data['users'][owner]['name_first'],
-            'name_last' : data['users'][owner]['name_last']
+            'name_last' : data['users'][owner]['name_last'],
+            'handle_str' : data['users'][owner]['handle_str']
         }
         tmp_list.append(tmp_dict)
 
@@ -141,8 +145,10 @@ def channel_details_v2(token, channel_id):
     for member in members:
         tmp_dict = {
             'u_id' : member,
+            'email' : data['users'][member]['email'],
             'name_first' : data['users'][member]['name_first'],
-            'name_last' : data['users'][member]['name_last']
+            'name_last' : data['users'][member]['name_last'],
+            'handle_str' : data['users'][member]['handle_str']
         }
         tmp_list.append(tmp_dict)
     

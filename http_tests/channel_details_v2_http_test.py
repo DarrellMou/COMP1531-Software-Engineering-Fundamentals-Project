@@ -58,23 +58,30 @@ def test_function():
 
     assert channel_details == {
         'name': 'channel0',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': user0['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             }
         ],
         'all_members': [
             {
                 'u_id': user0['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             },
             {
                 'u_id': user1['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name'
             }
         ],
     }
@@ -98,63 +105,86 @@ def test_multiple():
 
     assert channel_details == {
         'name': 'channel0',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': users[0]['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             }
         ],
         'all_members': [
             {
                 'u_id': users[0]['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             },
             {
                 'u_id': users[1]['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name'
             },
             {
                 'u_id': users[2]['auth_user_id'],
+                'email': 'example2@hotmail.com',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
+                'handle_str': 'first_name2last_name'
             },
             {
                 'u_id': users[3]['auth_user_id'],
+                'email': 'example3@hotmail.com',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
+                'handle_str': 'first_name3last_name'
             },
             {
                 'u_id': users[4]['auth_user_id'],
+                'email': 'example4@hotmail.com',
                 'name_first': 'first_name4',
                 'name_last': 'last_name4',
+                'handle_str': 'first_name4last_name'
             },
             {
                 'u_id': users[5]['auth_user_id'],
+                'email': 'example5@hotmail.com',
                 'name_first': 'first_name5',
                 'name_last': 'last_name5',
+                'handle_str': 'first_name5last_name'
             },
             {
                 'u_id': users[6]['auth_user_id'],
+                'email': 'example6@hotmail.com',
                 'name_first': 'first_name6',
                 'name_last': 'last_name6',
+                'handle_str': 'first_name6last_name'
             },
             {
                 'u_id': users[7]['auth_user_id'],
+                'email': 'example7@hotmail.com',
                 'name_first': 'first_name7',
                 'name_last': 'last_name7',
+                'handle_str': 'first_name7last_name'
             },
             {
                 'u_id': users[8]['auth_user_id'],
+                'email': 'example8@hotmail.com',
                 'name_first': 'first_name8',
                 'name_last': 'last_name8',
+                'handle_str': 'first_name8last_name'
             },
             {
                 'u_id': users[9]['auth_user_id'],
+                'email': 'example9@hotmail.com',
                 'name_first': 'first_name9',
                 'name_last': 'last_name9',
+                'handle_str': 'first_name9last_name'
             }
         ],
     }
@@ -184,38 +214,51 @@ def test_multiple_channels():
 
     assert channel_details0 == {
         'name': 'channel0',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': users[0]['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             }
         ],
         'all_members': [
             {
                 'u_id': users[0]['auth_user_id'],
+                'email': 'example0@hotmail.com',
                 'name_first': 'first_name0',
                 'name_last': 'last_name0',
+                'handle_str': 'first_name0last_name'
             },
             {
                 'u_id': users[1]['auth_user_id'],
+                'email': 'example1@hotmail.com',
                 'name_first': 'first_name1',
                 'name_last': 'last_name1',
+                'handle_str': 'first_name1last_name'
             },
             {
                 'u_id': users[2]['auth_user_id'],
+                'email': 'example2@hotmail.com',
                 'name_first': 'first_name2',
                 'name_last': 'last_name2',
+                'handle_str': 'first_name2last_name'
             },
             {
                 'u_id': users[3]['auth_user_id'],
+                'email': 'example3@hotmail.com',
                 'name_first': 'first_name3',
                 'name_last': 'last_name3',
+                'handle_str': 'first_name3last_name'
             },
             {
                 'u_id': users[4]['auth_user_id'],
+                'email': 'example4@hotmail.com',
                 'name_first': 'first_name4',
                 'name_last': 'last_name4',
+                'handle_str': 'first_name4last_name'
             },
         ],
     }
@@ -225,38 +268,51 @@ def test_multiple_channels():
 
     assert channel_details1 == {
         'name': 'channel1',
+        'is_public': True,
         'owner_members': [
             {
                 'u_id': users[5]['auth_user_id'],
+                'email': 'example5@hotmail.com',
                 'name_first': 'first_name5',
                 'name_last': 'last_name5',
+                'handle_str': 'first_name5last_name'
             }
         ],
         'all_members': [
-            {   
+            {
                 'u_id': users[5]['auth_user_id'],
+                'email': 'example5@hotmail.com',
                 'name_first': 'first_name5',
                 'name_last': 'last_name5',
+                'handle_str': 'first_name5last_name'
             },
             {
                 'u_id': users[6]['auth_user_id'],
+                'email': 'example6@hotmail.com',
                 'name_first': 'first_name6',
                 'name_last': 'last_name6',
+                'handle_str': 'first_name6last_name'
             },
             {
                 'u_id': users[7]['auth_user_id'],
+                'email': 'example7@hotmail.com',
                 'name_first': 'first_name7',
                 'name_last': 'last_name7',
+                'handle_str': 'first_name7last_name'
             },
             {
                 'u_id': users[8]['auth_user_id'],
+                'email': 'example8@hotmail.com',
                 'name_first': 'first_name8',
                 'name_last': 'last_name8',
+                'handle_str': 'first_name8last_name'
             },
             {
                 'u_id': users[9]['auth_user_id'],
+                'email': 'example9@hotmail.com',
                 'name_first': 'first_name9',
                 'name_last': 'last_name9',
+                'handle_str': 'first_name9last_name'
             }
         ],
     }

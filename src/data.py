@@ -69,7 +69,11 @@ data = {
                     'time_created': 123456789,
                     'is_removed': False,
                 },
-            ]
+            ],
+            'standup' : {
+                'is_active' : False,
+                'time_finish' : None,
+            },
         },
         31627643273 : {
             'name' : 'channel2',
@@ -92,6 +96,10 @@ data = {
                     'is_removed': False,
                 }
             ],
+            'standup' : {
+                'is_active' : False,
+                'time_finish' : None,
+            },
         },
     },
     'dms': {

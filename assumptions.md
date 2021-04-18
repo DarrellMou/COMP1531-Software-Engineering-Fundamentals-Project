@@ -72,8 +72,8 @@
 * Channels can be created without a name.
 
 ## dm_create_v1 (darrell)
-* The function is never given an empty u_ids list.
-* If even one of the dm_id in the u_ids list is removed or invalid, a dm is NOT created.
+* The function can be given an empty u_ids list.
+* If even one of the u_id in the u_ids list is removed or invalid, a dm is NOT created.
 * The user who called dm_create_v1 is the owner, i.e. first person on dm_members list.
 * Users can create as many dms with the exact same users.
 
