@@ -23,7 +23,7 @@ SECRET = 'CHAMPAGGNE?'
 DREAMS_EMAIL = 'echo-dreams2021@outlook.com'
 DREAMS_EMAIL_PASS = 'cizvan-sujtam-2soTvu'
 if "pytest" in sys.modules:
-    TOKEN_DURATION=2 # for testing
+    TOKEN_DURATION=13 # for testing
 else:
     TOKEN_DURATION=300 # for deployment
 
