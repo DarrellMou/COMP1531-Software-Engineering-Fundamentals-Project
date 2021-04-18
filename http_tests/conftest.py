@@ -44,7 +44,7 @@ def setup_user_dict(reset):
     }
 
     a_u_id3 = {
-        'email': 'user30@email.com',
+        'email': 'user3@email.com',
         'password': 'user3_pass!',
         'name_first': 'user3_first',
         'name_last': 'user3_last'
