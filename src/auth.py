@@ -24,14 +24,14 @@ TOKEN_DURATION=300 # 5 seconds
 DREAMS_EMAIL = 'echo-dreams2021@outlook.com'
 DREAMS_EMAIL_PASS = 'cizvan-sujtam-2soTvu'
 
-sessionID = 0
+#sessionID = 0
 resetPendings = set()
 
 # generates a unique session ID for every login
 def getNewSessionID():
-    global sessionID 
-    sessionID += 1
-    return sessionID
+    # global sessionID 
+
+    return int(uuid.uuid4())
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -257,6 +257,22 @@ def auth_logout_v1(token):
 
 
 def auth_passwordreset_request(email):
+    '''
+    BRIEF DESCRIPTION
+    Given an email address, if the user is a registered user, 
+    sends them an email containing a specific secret code, 
+    that when entered in auth_passwordreset_reset, 
+    shows that the user trying to reset the password is the one who got sent this email.
+
+    Arguments:
+        email (string) - email address of a registered user 
+
+    Exceptions:
+        n/a
+    
+    Return Value:
+        n/a
+    '''
 
     data = retrieve_data()
 
@@ -322,6 +338,20 @@ def auth_send_reset_email(email, code):
 
 
 def auth_passwordreset_reset(reset_code, new_password):
+    '''
+    BRIEF DESCRIPTION
+    Given an verification code sent to the user's email, reset the user's login password.
+
+    Arguments:
+        reset_code (string) - email address of a registered user 
+        new_password (string) - new password to be set 
+
+    Exceptions:
+        n/a
+    
+    Return Value:
+        n/a
+    '''
 
     data = retrieve_data()
 
