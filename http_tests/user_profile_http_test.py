@@ -21,7 +21,7 @@ def test_user_profile():
 
 	assert json_data_profile == {'user' : 
 				{
-	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'u_id'         : json_data_register['auth_user_id'],
 	            'email'        : 'exampleUserEmail@email.com',
 	            'name_first'   : 'FIRSTNAME',
 	            'name_last'    : 'LASTNAME',
@@ -67,7 +67,7 @@ def test_user_profile_setname():
 	json_data_profile = json.loads(resp_profile.text)
 	assert json_data_profile == {'user' : 
 				{	
-	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'u_id'         : json_data_register['auth_user_id'],
 	            'email'        : 'exampleUserEmail@email.com',
 	            'name_first'   : 'changedFirstname',
 	            'name_last'    : 'changedLastname',
@@ -114,7 +114,7 @@ def test_user_profile_setemail():
 
 	assert json_data_profile == {'user' : 
 				{
-	            'auth_user_id' : json_data_register['auth_user_id'],
+	            'u_id'         : json_data_register['auth_user_id'],
 	            'email'        : 'changedEmail@outlook.com',
 	            'name_first'   : 'FIRSTNAME',
 	            'name_last'    : 'LASTNAME',
@@ -137,7 +137,7 @@ def test_user_profile_sethandle_v1():
 
 	assert json_data_profile == {'user' :
 				{
-            	'auth_user_id' : json_data_register['auth_user_id'],
+            	'u_id' : json_data_register['auth_user_id'],
             	'email'        : 'exampleUserEmail@email.com',
             	'name_first'   : 'FIRSTNAME',
             	'name_last'    : 'LASTNAME',

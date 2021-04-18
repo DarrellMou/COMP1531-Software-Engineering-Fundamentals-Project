@@ -9,6 +9,8 @@ from datetime import datetime
 import json
 import re
 
+import threading # Used for timer
+
 ###############################################################################
 #                                 ASSUMPTIONS                                 #
 ###############################################################################
@@ -73,10 +75,40 @@ def tab_given_message(msg):
             flag = 2
     beginning_of_string = msg[0:index]
     to_be_changed_str = msg[index:]
-    changed_string = to_be_changed_str.replace("\n", "\n    ")
+    changed_string = to_be_changed_str.replace("\n", "\n\t")
 
     tabbed_msg = beginning_of_string + changed_string
     return tabbed_msg
+
+
+# Given a message_id, check if the message refers to a valid message
+def check_message_existence(message_id):
+    data = retrieve_data()
+    message_exists = 0
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            # Check to see if the message has been removed previously
+            if msg['is_removed'] == False:
+                message_exists = 1
+    if message_exists == 1:
+        return True
+    else:
+        return False
+
+
+# Given a message_id, check if the message is pinned
+def check_message_pin_status(message_id):
+    data = retrieve_data()
+    pin_status = 0
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            # Check to see if the message has been removed previously
+            if msg['is_pinned'] == True:
+                pin_status = 1
+    if pin_status == 1:
+        return True
+    else:
+        return False
 
 
 ###############################################################################
@@ -137,6 +169,12 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -149,13 +187,17 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False,
     }
 
     # Append our dictionaries to their appropriate lists
     data['channels'][channel_id]['messages'].append(channel_message_dictionary)
     data['messages'].append(message_dictionary)
-    #f = open("demofile3.txt", "w")
-    #f.write(data)
     
     # Create notification if someone is tagged
     tag = re.search("@[a-zA-Z1-9]*", message)
@@ -450,6 +492,12 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -462,6 +510,12 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
     }
 
     # Append our dictionaries to their appropriate lists
@@ -497,3 +551,382 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def message_sendlater_v1(token, channel_id, message, time_sent):
+    '''
+    BRIEF DESCRIPTION
+    Send a message from authorised_user to the channel specified by channel_id at a
+    time specified at time_sent.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        channel_id (integer)    - The channel that the message is being sent to
+        message (string)        - Message content
+        time_sent (integer)     - The time (in the future) that the message is going to be sent at
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user has not joined the channel they are trying to post to
+        InputError  - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when the channel_id is not a valid channel
+        InputError  - Occurs when the time_sent is in the past
+    
+    Return Value:
+        Returns a message id (integer) of the message sent
+    '''
+
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+    
+    # Checks if given channel_id is valid
+    if channel_id not in data['channels']:
+        raise InputError(description="The inputted channel is not a valid channel")
+    
+    # Check to see if the message is too long
+    if len(message) > 1000:
+        raise InputError(description="The message exceeds 1000 characters")
+    
+    if time_sent < datetime.now().timestamp():
+        raise InputError(description="You can't send a message to the past")
+    
+    # Check to see if the given user (from token) is actully in the given channel
+    if user_id not in data['channels'][channel_id]['all_members']:
+        raise AccessError(description=\
+            "The user corresponding to the given token is not in the channel")
+
+    unique_message_id = int(uuid4())
+
+    time_until_send = round(time_sent - datetime.now().timestamp())
+
+    # Start a timer which only performs the helper function after time_until_send seconds occur
+    sendlater = threading.Timer(time_until_send, message_sendlater_channel_helper,
+                                args=[user_id, channel_id, unique_message_id, message])
+    sendlater.start()
+
+    return {'message_id': unique_message_id}
+
+
+def message_sendlater_channel_helper(user_id, channel_id, unique_message_id, message):
+    data = retrieve_data()
+    
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp()),
+        'channel_id': channel_id,
+        'dm_id': -1,
+        'is_removed': False,
+        'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
+    }
+
+    data['messages'].append(message_dictionary)
+
+    channel_message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp()),
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
+    }
+
+    for msg in data['messages']:
+        if unique_message_id == msg['message_id']:
+            data['channels'][channel_id]['messages'].append(channel_message_dictionary)
+    
+    return {}
+
+
+def message_sendlaterdm_v1(token, dm_id, message, time_sent):
+    '''
+    BRIEF DESCRIPTION
+    Send a message from authorised_user to the dm specified by dm_id at a
+    time specified by time_sent.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        dm_id (integer)         - The dm that the message is being sent to
+        message (string)        - Message content
+        time_sent (integer)     - The time (in the future) that the message is going to be sent at
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user has not joined the dm they are trying to post to
+        InputError  - Occurs when the length of message is over 1000 characters
+        InputError  - Occurs when the dm_id is not a valid dm
+        InputError  - Occurs when the time_sent is in the past
+    
+    Return Value:
+        Returns a message id (integer) of the message sent
+    '''
+
+    data = retrieve_data()
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+    
+    # Checks if given dm_id is valid
+    if dm_id not in data['dms']:
+        raise InputError(description="The inputted dm is not a valid dm")
+    
+    # Check to see if the message is too long
+    if len(message) > 1000:
+        raise InputError(description="The message exceeds 1000 characters")
+    
+    if time_sent < datetime.now().timestamp():
+        raise InputError(description="You can't send a message to the past")
+    
+    # Check to see if the given user (from token) is actully in the given dm
+    if user_id not in data['dms'][dm_id]['members']:
+        raise AccessError(description=\
+            "The user corresponding to the given token is not in the dm")
+
+    unique_message_id = int(uuid4())
+
+    time_until_send = round(time_sent - datetime.now().timestamp())
+
+    # Start a timer which only performs the helper function after time_until_send seconds occur
+    sendlater = threading.Timer(time_until_send, message_sendlater_dm_helper,
+                                args=[user_id, dm_id, unique_message_id, message])
+    sendlater.start()
+
+    return {'message_id': unique_message_id}
+
+
+def message_sendlater_dm_helper(user_id, dm_id, unique_message_id, message):
+    data = retrieve_data()
+    
+    message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp()),
+        'channel_id': -1,
+        'dm_id': dm_id,
+        'is_removed': False,
+        'was_shared': False,
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
+    }
+
+    data['messages'].append(message_dictionary)
+
+    dm_message_dictionary = {
+        'message_id': unique_message_id,
+        'u_id': user_id,
+        'message': message,
+        'time_created': round(datetime.now().timestamp()),
+        'reacts': [{
+            'react_id': 1,
+            'u_ids': [],
+            'is_this_user_reacted': False
+        }],
+        'is_pinned': False
+    }
+
+    for msg in data['messages']:
+        if unique_message_id == msg['message_id']:
+            data['dms'][dm_id]['messages'].append(dm_message_dictionary)
+    
+    return {}
+
+
+
+def message_pin_v1(token, message_id):
+    '''
+    BRIEF DESCRIPTION
+    The owner of a channel/dm pins a message (given by message_id) so that it
+    has special display treatment in the frontend. It is pinned by setting the
+    pinned flag to true.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        message_id (integer)    - The message id of the message to be pinned
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user is not a member of the channel/dm that the message is within
+        AccessError - Occurs when the authorised user is not an owner of channel/dm
+        InputError  - Occurs when the given message_id does not refer to a valid message
+        InputError  - Occurs when the given message_id is already pinned
+    
+    Return Value:
+        N/A
+    '''
+
+    data = retrieve_data()
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Check to see that the message refers to a valid message
+    if not check_message_existence(message_id):
+        raise InputError(description="You can't pin a message that doesn't exist")
+    
+    # Check to see that the message is not already pinned
+    if check_message_pin_status(message_id):
+        raise InputError(description="You can't pin a message that is already pinned")
+
+    # Check to see if the given user (from token) is actully in the channel/dm of a given message.
+    # Also, check to see if the given user is actually an owner of the channel/dm of a given msg
+    channel_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if channel_id != -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the channel")
+        elif user_id not in data['channels'][channel_id]['owner_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not an owner of the channel")
+    else:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the dm")
+        elif user_id != data['dms'][dm_id]['members'][0]:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not the owner of the dm")
+
+    # Mark the message as pinned on the messages list of data
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            msg['is_pinned'] = True
+            ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
+    
+    # Mark the message as pinned on the messages list of its corresponding
+    # channel of dm
+    if ch_id != -1:
+        for msg_channel in data['channels'][ch_id]['messages']:
+            if msg_channel['message_id'] == message_id:
+                msg_channel['is_pinned'] = True
+    else:
+        for msg_dm in data['dms'][dm_id]['messages']:
+            if msg_dm['message_id'] == message_id:
+                msg_dm['is_pinned'] = True
+    
+    return {}
+
+
+
+
+def message_unpin_v1(token, message_id):
+    '''
+    BRIEF DESCRIPTION
+    The owner of a channel/dm unpins a message (given by message_id) so that it
+    no longer has special display treatment in the frontend. It is unpinned by
+    setting the pinned flag to false.
+
+    Arguments:
+        token (string)          - User that sends the messages
+        message_id (integer)    - The message id of the message to be pinned
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user is not a member of the channel/dm that the message is within
+        AccessError - Occurs when the authorised user is not an owner of channel/dm
+        InputError  - Occurs when the given message_id does not refer to a valid message
+        InputError  - Occurs when the given message_id is already unpinned
+    
+    Return Value:
+        N/A
+    '''
+
+    data = retrieve_data()
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if token is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Check to see that the message refers to a valid message
+    if not check_message_existence(message_id):
+        raise InputError(description="You can't unpin a message that doesn't exist")
+    
+    # Check to see that the message is not already unpinned
+    if not check_message_pin_status(message_id):
+        raise InputError(description="You can't unpin a message that is already unpinned")
+
+    # Check to see if the given user (from token) is actully in the channel/dm of a given message.
+    # Also, check to see if the given user is actually an owner of the channel/dm of a given msg
+    channel_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if channel_id != -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the channel")
+        elif user_id not in data['channels'][channel_id]['owner_members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not an owner of the channel")
+    else:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not in the dm")
+        elif user_id != data['dms'][dm_id]['members'][0]:
+            raise AccessError(description=\
+                "The user corresponding to the given token is not the owner of the dm")
+
+    # Mark the message as pinned on the messages list of data
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            msg['is_pinned'] = False
+            ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
+    
+    # Mark the message as pinned on the messages list of its corresponding
+    # channel of dm
+    if ch_id != -1:
+        for msg_channel in data['channels'][ch_id]['messages']:
+            if msg_channel['message_id'] == message_id:
+                msg_channel['is_pinned'] = False
+    else:
+        for msg_dm in data['dms'][dm_id]['messages']:
+            if msg_dm['message_id'] == message_id:
+                msg_dm['is_pinned'] = False
+    
+    return {}

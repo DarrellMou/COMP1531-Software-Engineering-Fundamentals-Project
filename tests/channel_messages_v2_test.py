@@ -11,6 +11,10 @@ from src.message import message_send_v2
 from src.other import clear_v1
 
 
+###############################################################################
+#                                 ASSUMPTIONS                                 #
+###############################################################################
+
 # ASSUMPTION: Start refers to the starting index of the
 # data['channels'][channel_id]['messages'] list
 
@@ -22,71 +26,22 @@ from src.other import clear_v1
 
 
 ###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id']
-    }
-
-    return setup
-
-
-# Add members 1 and 2 into channel 1 and add x messages with the message just being the message id
-def add_x_messages(user1, user2, channel1, num_messages):
-
-    # Add user 2 into the channel so user 1 and 2 can have a conversation
-    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
-
-    # Physically creating num_messages amount of messages
-    # The most recent message is at the beginning of the list as per spec
-    message_count = 0
-    while message_count < num_messages:
-        message_num = message_count + 1
-        if message_num % 2 == 1:
-            message_send_v2(user1["token"], channel1, str(message_num))
-        else:
-            message_send_v2(user2["token"], channel1, str(message_num))
-        message_count += 1
-
-    return {}
-
-
-###############################################################################
-#                             END HELPER FUNCTIONS                            #
-###############################################################################
-
-
-
-###############################################################################
 #                                   TESTING                                   #
 ###############################################################################
 
 ############################# EXCEPTION TESTING ##############################
 
 # Testing for when the user token is invalid (testing Access Error)
-def test_channel_messages_v2_token_AccessError():
-    setup = set_up_data()
+def test_channel_messages_v2_token_AccessError(set_up_data):
+    setup = set_up_data
     channel1 = setup["channel1"]
 
     with pytest.raises(AccessError):
         assert channel_messages_v2("Invalid token", channel1, 0)
 
 # Testing for when the user is not part of the channel (testing Access Error)
-def test_channel_messages_v2_AccessError():
-    setup = set_up_data()
+def test_channel_messages_v2_AccessError(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add 1 message to channel1
@@ -98,8 +53,8 @@ def test_channel_messages_v2_AccessError():
 
 
 # Testing for when an invalid channel_id is used (testing input error)
-def test_channel_messages_v2_InputError_invalid_channel():
-    setup = set_up_data()
+def test_channel_messages_v2_InputError_invalid_channel(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
     
     # Add 1 message to channel1
@@ -111,8 +66,8 @@ def test_channel_messages_v2_InputError_invalid_channel():
 
 
 # Testing for when an invalid start is used (start > num messages in channel)
-def test_channel_messages_v2_InputError_invalid_start():
-    setup = set_up_data()
+def test_channel_messages_v2_InputError_invalid_start(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     # Add 1 message to channel1
@@ -130,8 +85,8 @@ def test_channel_messages_v2_InputError_invalid_start():
 
 # Testing for when there are no messages - should return {'messages': [], 'start': 0, 'end': -1}
 # ASSUMPTION: No messages mean that the most recent message has been returned - therefore end = -1
-def test_channel_messages_v2_no_messages():
-    setup = set_up_data()
+def test_channel_messages_v2_no_messages(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     assert channel_messages_v2(user1["token"], channel1, 0) ==\
@@ -139,8 +94,8 @@ def test_channel_messages_v2_no_messages():
 
 
 # Testing to see if the function is working for a single message
-def test_channel_messages_v2_1_message():
-    setup = set_up_data()
+def test_channel_messages_v2_1_message(set_up_data):
+    setup = set_up_data
     user1, channel1 = setup['user1'], setup['channel1']
 
     message_send_v2(user1["token"], channel1, "Test message")
@@ -161,8 +116,8 @@ def test_channel_messages_v2_1_message():
 # Testing for exactly 50 messages
 # ASSUMPTION: 50th message IS the last message so return 'end': -1 rather than 'end': 50
 # when there are 50 messages in the channel with start being 0
-def test_channel_messages_v2_50_messages():
-    setup = set_up_data()
+def test_channel_messages_v2_50_messages(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 50 messages
@@ -184,8 +139,8 @@ def test_channel_messages_v2_50_messages():
 # recent message). Should return 50 messages (index 50 up to index 99 which
 # corresponds with the 51st most recent message up to the least recent message,
 # i.e. the 100th message) and an end of -1 as per the reasons in the test above
-def test_channel_messages_v2_100_messages_start_50():
-    setup = set_up_data()
+def test_channel_messages_v2_100_messages_start_50(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 100 messages
@@ -210,8 +165,8 @@ def test_channel_messages_v2_100_messages_start_50():
 # Given a channel with 10 messages and a start of 9 (10th most recent message
 # i.e. the least recent message), return that last message as the only one in
 # the messages list and an end of -1
-def test_channel_messages_start_is_last_message():
-    setup = set_up_data()
+def test_channel_messages_start_is_last_message(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 10 messages
@@ -233,8 +188,8 @@ def test_channel_messages_start_is_last_message():
 # Given a start being equal to the number of messages in the given channel,
 # return and empty messages list and an end of -1 as per spec and this
 # forum post: https://edstem.org/courses/5306/discussion/384787
-def test_start_equals_num_messages():
-    setup = set_up_data()
+def test_start_equals_num_messages(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add 10 messages
@@ -253,8 +208,8 @@ def test_start_equals_num_messages():
 
 
 # Testing for <50 messages (checking if 'end' returns -1)
-def test_channel_messages_v2_48_messages():
-    setup = set_up_data()
+def test_channel_messages_v2_48_messages(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 48 messages with the message just being the message id
@@ -276,8 +231,8 @@ def test_channel_messages_v2_48_messages():
 
 
 # Testing for >50 messages (checking if the correct final message is returned)
-def test_channel_messages_v2_51_messages_start_0():
-    setup = set_up_data()
+def test_channel_messages_v2_51_messages_start_0(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     add_x_messages(user1, user2, channel1, 51)
@@ -297,8 +252,8 @@ def test_channel_messages_v2_51_messages_start_0():
 
 
 # Testing for >50 messages wit start being 50
-def test_channel_messages_v2_51_messages_start_50():
-    setup = set_up_data()
+def test_channel_messages_v2_51_messages_start_50(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     add_x_messages(user1, user2, channel1, 51)
@@ -317,8 +272,8 @@ def test_channel_messages_v2_51_messages_start_50():
 
 
 # Testing for between 100 and 150 messages with start being 0
-def test_channel_messages_v2_111_messages_start_0():
-    setup = set_up_data()
+def test_channel_messages_v2_111_messages_start_0(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1'] 
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
@@ -345,8 +300,8 @@ def test_channel_messages_v2_111_messages_start_0():
 
 
 # Testing for between 100 and 150 messages with start being 50
-def test_channel_messages_v2_111_messages_start_50():
-    setup = set_up_data()
+def test_channel_messages_v2_111_messages_start_50(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
@@ -373,8 +328,8 @@ def test_channel_messages_v2_111_messages_start_50():
 
 
 # Testing for between 100 and 150 messages with start being 100
-def test_channel_messages_v2_111_messages_start_100():
-    setup = set_up_data()
+def test_channel_messages_v2_111_messages_start_100(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
@@ -401,8 +356,8 @@ def test_channel_messages_v2_111_messages_start_100():
 
 
 # Test for when start is not a multiple of 50 and there are more than 50 messages remaining
-def test_channel_messages_v2_start_21():
-    setup = set_up_data()
+def test_channel_messages_v2_start_21(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 111 messages with the message just being the message id
@@ -427,8 +382,8 @@ def test_channel_messages_v2_start_21():
 
 
 # Test for when start is not a multiple of 50 and there are less than 50 messages remaining
-def test_channel_messages_v2_start_21_end_neg1():
-    setup = set_up_data()
+def test_channel_messages_v2_start_21_end_neg1(set_up_data):
+    setup = set_up_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     
     # Add members 1 and 2 into channel 1 and add 50 messages with the message just being the message id 
@@ -451,3 +406,27 @@ def test_channel_messages_v2_start_21_end_neg1():
     
     assert messages_list['messages'][28]["u_id"] == user1["auth_user_id"]
     assert messages_list['messages'][28]["message"] == "1"
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# Add members 1 and 2 into channel 1 and add x messages with the message just being the message id
+def add_x_messages(user1, user2, channel1, num_messages):
+
+    # Add user 2 into the channel so user 1 and 2 can have a conversation
+    channel_invite_v2(user1["token"], channel1, user2["auth_user_id"])
+
+    # Physically creating num_messages amount of messages
+    # The most recent message is at the beginning of the list as per spec
+    message_count = 0
+    while message_count < num_messages:
+        message_num = message_count + 1
+        if message_num % 2 == 1:
+            message_send_v2(user1["token"], channel1, str(message_num))
+        else:
+            message_send_v2(user2["token"], channel1, str(message_num))
+        message_count += 1
+
+    return {}

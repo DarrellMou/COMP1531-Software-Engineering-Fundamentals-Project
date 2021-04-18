@@ -48,19 +48,23 @@ def test_admin_userpermission_change_invalid_permissionid(setup_user):
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user1']['token'], users['user2']['token'],5)
 
-
+'''
 # Checks invalid removal as user is the only owner
 def test_admin_userpermission_change_only_owner(setup_user):
     users = setup_user
 
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user1']['token'], users['user1']['auth_user_id'],2)
-
+'''
 
 # Checks basic test of changing a member into owner
 def test_admin_userpermission_change_basic(setup_user):
     users = setup_user
     data = retrieve_data()
+
+    admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 2)
+
+    admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
 
     admin_userpermission_change_v1(users['user1']['token'], users['user2']['auth_user_id'], 1)
 
@@ -107,7 +111,9 @@ def test_admin_userpermission_change_ogowner(setup_user):
     admin_userpermission_change_v1(users['user2']['token'],users['user1']['auth_user_id'],2)
     assert data['users'][users['user1']['auth_user_id']]['permission_id'] == 2
 
+    '''
     # Global User 2 changes itself into member
     with pytest.raises(InputError):
         admin_userpermission_change_v1(users['user2']['token'], users['user2']['auth_user_id'],2)
+    '''
         

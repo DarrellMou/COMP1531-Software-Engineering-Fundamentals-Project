@@ -78,7 +78,9 @@ def search_v2(token, query_str):
                     if query_str in message['message']:
                         collection_messages.append(message['message'])
     
-    return collection_messages
+    return {
+        'messages': collection_messages
+    }
 
 
 def admin_user_remove_v1(token, u_id):
@@ -204,13 +206,15 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
     # Checks if permission_id refers to a value permission
     if not (permission_id == 1 or permission_id == 2): raise InputError("Not a value permission")
 
-    # Checks if the user is the currently the only owner
-    if permission_id == 2:
+    ''' * Removed as Exception is not raised in the given spec *
+    # Checks if the user is the currently the only owner and wants to be changed to a member
+    if permission_id == 2 and auth_user_id == u_id:
         admin_flag = 0
         for user in data['users']:
             if data['users'][user]['permission_id'] == 1:
                 admin_flag += 1
         if admin_flag <= 1: raise InputError("The user is currently the only global owner")
+    '''
 
     # Change u_id permission to permission_id
     data['users'][u_id]['permission_id'] = permission_id

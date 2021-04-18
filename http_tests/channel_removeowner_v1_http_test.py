@@ -38,7 +38,7 @@ def test_channel_removeowner_owner_error(setup_user_data):
         'channel_id': channel_id['channel_id'],
     }).json()
     
-    # Ensure InputError
+    # Ensure InputError as user1 is currently the only owner of the channel
     assert requests.post(config.url + 'channel/removeowner/v1', json={
         'token': users['user2']['token'],
         'channel_id': channel_id['channel_id'],

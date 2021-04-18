@@ -68,6 +68,7 @@ def channel_invite_v2(token, channel_id, u_id):
     if data['users'][u_id]['permission_id'] == 1:
         data['channels'][channel_id]['owner_members'].append(u_id)
     data['channels'][channel_id]['all_members'].append(u_id)
+
     # Create notification for added user
     data['users'][u_id]['notifications'].append({
         'channel_id' : channel_id,
@@ -362,14 +363,23 @@ def channel_addowner_v1(token, channel_id, u_id):
     if u_id in data['channels'][channel_id]['owner_members']: raise InputError
 
     # If the commanding user is not an owner or dreams owner
-    if (user_id not in data['channels'][channel_id]['owner_members'] and
-    data['users'][user_id]['permission_id'] != 1): raise AccessError
+    if user_id not in data['channels'][channel_id]['owner_members'] and data['users'][user_id]['permission_id'] != 1: raise AccessError
 
     # All error checks passed, continue on to add owner
     data['channels'][channel_id]['owner_members'].append(u_id)
     # If not already in server, add on to all members
     if (u_id not in data['channels'][channel_id]['all_members']):
         data['channels'][channel_id]['all_members'].append(u_id)
+    
+        # Create notification for added user
+        data['users'][u_id]['notifications'].append({
+            'channel_id' : channel_id,
+            'dm_id' : -1,
+            'notification_message' : (str(data['users'][user_id]['handle_str']) + " added you to " + str(data['channels'][channel_id]['name']))
+        })
+        # Make sure notification list is len 20
+        if len(data['users'][u_id]['notifications']) > 19:
+            data['users'][u_id]['notifications'].pop(0)
 
     return {
     }

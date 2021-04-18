@@ -26,29 +26,6 @@ from src.dm import dm_create_v1, dm_messages_v1
 #                               HELPER FUNCTIONS                              #
 ###############################################################################
 
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1 and
-    # invite user2 to the channel
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1["token"], 'Channel1', True)
-    channel_invite_v2(user1["token"], channel1['channel_id'], user2['auth_user_id'])
-    dm1 = dm_create_v1(user1["token"], [user2["auth_user_id"]])
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id'],
-        "dm1": dm1["dm_id"]
-    }
-
-    return setup
-
-
 # User sends x messages
 def send_x_messages(user, channel, num_messages):
     message_count = 0
@@ -80,8 +57,8 @@ def remove_x_messages(user, id_list=[]):
 
 # Access error when the user trying to remove the message did not send the
 # message OR is not an owner of the channel/dreams
-def test_message_remove_v1_AccessError():
-    setup = set_up_data()
+def test_message_remove_v1_AccessError(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     m_id = message_send_v2(user1["token"], channel1, "Hello")['message_id']
@@ -93,8 +70,8 @@ def test_message_remove_v1_AccessError():
 
 
 # Input error when the message_id has already been removed
-def test_message_remove_v1_InputError():
-    setup = set_up_data()
+def test_message_remove_v1_InputError(set_up_message_data):
+    setup = set_up_message_data
     user1, channel1 = setup['user1'], setup['channel1']
     
     m_id2 = message_send_v2(user1["token"], channel1, "Hello")['message_id']
@@ -104,8 +81,8 @@ def test_message_remove_v1_InputError():
     with pytest.raises(InputError):
         assert message_remove_v1(user1["token"], m_id2)
 
-def test_message_remove_v1_AccessError_not_dm_owner():
-    setup = set_up_data()
+def test_message_remove_v1_AccessError_not_dm_owner(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, dm1 = setup['user1'], setup['user2'], setup['dm1']
 
     m_id = message_senddm_v1(user1["token"], dm1, "Hello")['message_id']
@@ -129,8 +106,8 @@ def test_message_remove_v1_default_Access_Error():
 
 
 # Testing the removal of 1 message by user2
-def test_message_remove_v1_remove_one():
-    setup = set_up_data()
+def test_message_remove_v1_remove_one(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 3 messages and remove the very first message sent
@@ -154,8 +131,8 @@ def test_message_remove_v1_remove_one():
 
 
 # Testing the removal of multiple messages
-def test_message_remove_v1_remove_multiple():
-    setup = set_up_data()
+def test_message_remove_v1_remove_multiple(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     # Send 5 messages and remove messages with index 0, 2, 3
@@ -183,8 +160,8 @@ def test_message_remove_v1_remove_multiple():
 
 
 # Testing the removal of all messages in the channel
-def test_message_remove_v1_remove_all():
-    setup = set_up_data()
+def test_message_remove_v1_remove_all(set_up_message_data):
+    setup = set_up_message_data
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
     send_x_messages(user2, channel1, 25)
@@ -295,8 +272,8 @@ def test_message_remove_v1_dream_owner_removes_message_in_channel():
 
 # Testing the removal of the same message in 2 different channels (different
 # message_ids though)
-def test_message_remove_v1_remove_same_msg_diff_channels():
-    setup = set_up_data()
+def test_message_remove_v1_remove_same_msg_diff_channels(set_up_message_data):
+    setup = set_up_message_data
     user2, channel1 = setup['user2'], setup['channel1']
 
     channel2 = channels_create_v2(user2["token"], 'Channel2', True)['channel_id']
@@ -329,8 +306,8 @@ def test_message_remove_v1_remove_same_msg_diff_channels():
     assert channel_messages_v2(user2["token"], channel2, 0) == ans2
 
 # Testing the removal of a message in a dm
-def test_message_edit_v2_edit_msg_in_dm():
-    setup = set_up_data()
+def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
+    setup = set_up_message_data
     user1, dm1 = setup['user1'], setup['dm1']
 
     message_count = 0

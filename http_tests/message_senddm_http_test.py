@@ -12,7 +12,7 @@ from src import config
                                                          
 #   * uses pytest fixtures from http_tests/conftest.py                                 
                                                                                                                                                 
-##########################################################################
+###########################################################################
 
 ###                         HELPER FUNCTIONS                           ###
 
@@ -26,7 +26,7 @@ def dm_create_body(user, u_ids):
 ###                       END HELPER FUNCTIONS                         ###
  
 
-def test_channels_create_access_error(setup_user_data):
+def test_message_senddm_v1_access_error(setup_user_data):
     users = setup_user_data
 
     # Creating a dm
@@ -48,7 +48,7 @@ def test_channels_create_access_error(setup_user_data):
 
 
 # error when creating a channel name longer than 20 characters
-def test_channels_create_input_error(setup_user_data):
+def test_message_senddm_v1_input_error(setup_user_data):
     users = setup_user_data
 
     # Creating a dm
@@ -61,7 +61,7 @@ def test_channels_create_input_error(setup_user_data):
         long_message += "a" 
 
     # Ensure input error: Message over 1000 characters
-    requests.post(config.url + 'message/senddm/v1', json={
+    assert requests.post(config.url + 'message/senddm/v1', json={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
         'message': long_message,

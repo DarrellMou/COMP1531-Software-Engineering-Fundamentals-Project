@@ -306,7 +306,8 @@ def test_admin_user_remove(setup_user_data):
     }).json()
     
     # Ensure the correct output after calling admin_user_remove
-    assert user_profile_id1a['user']['name_first'] == "Removed"
+    assert f'{user_profile_id1a["user"]["name_first"]} {user_profile_id1a["user"]["name_last"]}' == "Removed user"
+    assert user_profile_id1a['user']['handle_str'] == "Removed user"
     assert messages_channel_id1a['messages'][0]['message'] == "Removed user"
     assert messages_channel_id2a['messages'][0]['message'] == "Hello user1"
     assert messages_channel_id2a['messages'][1]['message'] == "Removed user"

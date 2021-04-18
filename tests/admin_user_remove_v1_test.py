@@ -96,7 +96,7 @@ def test_admin_user_remove_only_channel_owner(setup_user):
     user_profile_id1a = user_profile_v2(users['user2']['token'],users['user1']['auth_user_id'])
     
     # Ensure the correct output after calling admin_user_remove
-    assert user_profile_id1a['user']['name_first'] == "Removed"
+    assert f'{user_profile_id1a["user"]["name_first"]} {user_profile_id1a["user"]["name_last"]}' == "Removed user"
     assert messages_channel_id1['messages'][0]['message'] == "Removed user"
     assert messages_channel_id2['messages'][0]['message'] == "Removed user"
     assert messages_dm_id_1['messages'][0]['message'] == "Removed user"
