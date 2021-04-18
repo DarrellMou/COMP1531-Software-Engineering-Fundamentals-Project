@@ -42,14 +42,14 @@ def test_member_to_owner():
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
-                'email': 'temp1@gmail.com',
+                'email': 'example1@hotmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
                 'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
@@ -58,14 +58,14 @@ def test_member_to_owner():
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
-                'email': 'temp1@gmail.com',
+                'email': 'example1@hotmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
                 'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
@@ -88,14 +88,14 @@ def test_outsider_to_owner():
         'owner_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
-                'email': 'temp1@gmail.com',
+                'email': 'example1@hotmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
                 'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
@@ -104,14 +104,14 @@ def test_outsider_to_owner():
         'all_members': [
             {
                 'u_id': a_u_id1['auth_user_id'],
-                'email': 'temp1@gmail.com',
+                'email': 'example1@hotmail.com',
                 'name_first': 'first1',
                 'name_last': 'last1',
                 'handle_str': 'first1last1'
             },
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
@@ -134,14 +134,14 @@ def test_dream_owner():
         'owner_members': [
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
-                'email': 'temp3@gmail.com',
+                'email': 'example3@hotmail.com',
                 'name_first': 'first3',
                 'name_last': 'last3',
                 'handle_str': 'first3last3'
@@ -150,14 +150,14 @@ def test_dream_owner():
         'all_members': [
             {
                 'u_id': a_u_id2['auth_user_id'],
-                'email': 'temp2@gmail.com',
+                'email': 'example2@hotmail.com',
                 'name_first': 'first2',
                 'name_last': 'last2',
                 'handle_str': 'first2last2'
             },
             {
                 'u_id': a_u_id3['auth_user_id'],
-                'email': 'temp3@gmail.com',
+                'email': 'example3@hotmail.com',
                 'name_first': 'first3',
                 'name_last': 'last3',
                 'handle_str': 'first3last3'
