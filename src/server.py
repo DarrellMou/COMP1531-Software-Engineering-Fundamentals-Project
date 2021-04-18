@@ -16,7 +16,7 @@ from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, 
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
 from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1, dm_invite_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
-from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1
+from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1, user_profile_uploadphoto_v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 from src.notifications import notifications_get_v1
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
@@ -318,6 +318,14 @@ def users_all_v1_flask():
     token = request.args.get('token')
 
     return dumps(users_all_v1(token))
+    
+    
+@APP.route('/user_profile_uploadphoto_v1', methods=['POST'])
+def user_profile_uploadphoto_flask():
+    payload = request.get_json()
+    user_profile_uploadphoto_v1(payload['token'], payload['img_url'], payload['x_start'], payload['y_start'], payload['x_end'], payload['y_end'])
+    
+    return dumps({})
 
 
 @APP.route("/message/senddm/v1", methods=['POST'])
