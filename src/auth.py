@@ -9,7 +9,7 @@ import jwt
 import hashlib 
 
 SECRET = 'CHAMPAGGNE?'
-TOKEN_DURATION=10000 # 5 seconds
+TOKEN_DURATION= 13 # 13 seconds
 
 import re
 import itertools
