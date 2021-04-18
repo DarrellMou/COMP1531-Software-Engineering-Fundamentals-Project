@@ -126,15 +126,10 @@ data = {
             'was_shared': False,
             'reacts': [
                 {
-                    'u_id': 35746842521,
-                    'react_id': 1,
-                    'is_removed': False,
-                },
-                {
-                    'u_id': 11753764853,
-                    'react_id': 1,
-                    'is_removed': False,
-                },
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
             ],
         },
         {
@@ -148,15 +143,10 @@ data = {
             'was_shared': False,
             'reacts': [
                 {
-                    'u_id': 35746842521,
-                    'react_id': 1,
-                    'is_removed': False,
-                },
-                {
-                    'u_id': 11753764853,
-                    'react_id': 1,
-                    'is_removed': False,
-                },
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
             ],
         },
     ],

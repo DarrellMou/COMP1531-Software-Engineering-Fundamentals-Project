@@ -151,7 +151,7 @@ def test_message_react_v1_channel():
     message_id = message_send_v2(user2["token"], channel1, "Hello")
     message_react_v1(user1["token"], message_id, like)
     data = retrieve_data()
-    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
 
@@ -165,7 +165,7 @@ def test_message_react_v1_dm():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
 
@@ -179,7 +179,7 @@ def test_message_react_v1_self():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
 
@@ -199,10 +199,10 @@ def test_message_react_v1_different_messages():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reacts"][0]["u_id"] == user2["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["u_ids"] == [user2["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
-    assert data['messages'][1]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][1]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][1]["reacts"][0]["react_id"] == 1
 
     assert data['messages'][2]["reacts"] == []
@@ -222,11 +222,5 @@ def test_message_react_v1_multiple_reacts():
 
     data = retrieve_data()
 
-    assert data['messages'][0]["reacts"][0]["u_id"] == user1["auth_user_id"]
+    assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"], user2["auth_user_id"], user3["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
-
-    assert data['messages'][0]["reacts"][1]["u_id"] == user2["auth_user_id"]
-    assert data['messages'][0]["reacts"][1]["react_id"] == 1
-
-    assert data['messages'][0]["reacts"][2]["u_id"] == user3["auth_user_id"]
-    assert data['messages'][0]["reacts"][2]["react_id"] == 1
