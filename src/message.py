@@ -149,7 +149,7 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
-        'reactions': []
+        'reacts': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -463,7 +463,7 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
-        'reactions': []
+        'reacts': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -517,7 +517,8 @@ def message_react_v1(token, message_id, react_id):
         if message['message_id'] == message_id['message_id']:
             channel_id = message['channel_id']
             dm_id = message['dm_id']
-            reactions = message['reactions']
+            reacts = message['reacts']
+            owner = message['u_id']
             found = 1
             break
 
@@ -540,7 +541,7 @@ def message_react_v1(token, message_id, react_id):
         raise InputError(description="The react_id is not valid")
 
     # Check to see if there has been an identical reaction from the user
-    for reaction in reactions:
+    for reaction in reacts:
         if user_id == reaction['u_id']:
             # If found, check if reaction is active
             if reaction['is_removed'] == False:
@@ -558,9 +559,23 @@ def message_react_v1(token, message_id, react_id):
         'react_id': react_id,
         'is_removed': False,
     }
-    reactions.append(reaction_dict)
-
-    #Notification part goes here
+    reacts.append(reaction_dict)
+    
+    # Create notification message based on whether react was in dm or channel
+    if channel_id != -1:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['channels'][channel_id]['name']))
+    else:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['dms'][dm_id]['name']))
+    
+    # Create notification for user being reacted to
+    data['users'][owner]['notifications'].append({
+        'channel_id' : channel_id,
+        'dm_id' : dm_id,
+        'notification_message' : notification_message
+    })
+    # Make sure notification list is len 20
+    if len(data['users'][u_id]['notifications']) > 19:
+        data['users'][u_id]['notifications'].pop(0)
 
 
 # Deactivate a reaction in a message
@@ -580,7 +595,7 @@ def message_unreact_v1(token, message_id, react_id):
         if message['message_id'] == message_id['message_id']:
             channel_id = message['channel_id']
             dm_id = message['dm_id']
-            reactions = message['reactions']
+            reacts = message['reacts']
             found = 1
             break
 
@@ -603,7 +618,7 @@ def message_unreact_v1(token, message_id, react_id):
         raise InputError(description="The react_id is not valid")
 
     # Check to see if there has been an identical reaction from the user
-    for reaction in reactions:
+    for reaction in reacts:
         if user_id == reaction['u_id']:
             # If found, check if reaction is active
             if reaction['is_removed'] == True:

@@ -124,7 +124,7 @@ data = {
             'dm_id': -1,
             'is_removed': False,
             'was_shared': False,
-            'reactions': [
+            'reacts': [
                 {
                     'u_id': 35746842521,
                     'react_id': 1,
@@ -146,7 +146,7 @@ data = {
             'dm_id': 1691360831,
             'is_removed': False,
             'was_shared': False,
-            'reactions': [
+            'reacts': [
                 {
                     'u_id': 35746842521,
                     'react_id': 1,
