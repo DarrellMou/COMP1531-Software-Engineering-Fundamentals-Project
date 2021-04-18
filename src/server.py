@@ -16,7 +16,7 @@ from src.channel import channel_details_v2, channel_join_v2, channel_invite_v2, 
 from src.channels import channels_create_v2, channels_list_v2, channels_listall_v2
 from src.dm import dm_create_v1, dm_messages_v1, dm_details_v1, dm_leave_v1, dm_invite_v1, dm_list_v1, dm_remove_v1, dm_messages_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1 #, message_react_v1, message_unreact_v1
-from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1 #, user/stats/v1, users/stats/v1
+from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, user_profile_uploadphoto_v1, users_all_v1 #, user/stats/v1, users/stats/v1
 from src.other import clear_v1, admin_userpermission_change_v1, admin_user_remove_v1, search_v2
 from src.notifications import notifications_get_v1
 from src.standup import standup_start_v1, standup_active_v1, standup_send_v1
@@ -280,17 +280,6 @@ def message_senddm_v1_flask():
     write_data()
     return dumps(message_senddm_v1(token,dm_id,message))
 
-@APP.route("/message/share/v1", methods=['POST'])
-def message_share_v1_flask():
-    data = request.get_json()
-    token, og_message_id = data["token"], data["og_message_id"]
-    message, channel_id, dm_id = data["message"], data['channel_id'], data['dm_id']
-    shared = message_share_v1(token, og_message_id, message, channel_id, dm_id)
-
-    write_data()
-    return json.dumps(shared)
-
-
 @APP.route("/message/edit/v2", methods=['PUT'])
 def message_edit_v2_flask():
     data = request.get_json()
@@ -332,6 +321,33 @@ def message_unreact_v1_flask():
     write_data()
     return dumps(message_unreact_v1(token,message_id,react_id))'''
 
+
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_start_v1_flask():
+    data = request.get_json()
+    time_finish = standup_start_v1(data['token'], data['channel_id'], data['length'])
+
+    write_data()
+    return dumps(time_finish)
+
+
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active_v1_flask():
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    standup_status = standup_active_v1(token, channel_id)
+
+    return dumps(standup_status)
+
+
+@APP.route("/standup/send/v1", methods=['POST'])
+def standup_send_v1_flask():
+    data = request.get_json()
+    standup_send_v1(data['token'], data['channel_id'], data['message'])
+
+    write_data()
+    return dumps({})
+    
 
 @APP.route("/notifications/get/v1", methods=['GET'])
 def notification_get_v1_flask():
@@ -376,23 +392,12 @@ def user_profile_sethandle_v2_flask():
     return dumps(returnDict) 
     
     
-@APP.route('/user_profile_uploadphoto_v1', methods=['POST'])
+@APP.route('/user/profile/uploadphoto/v1', methods=['POST'])
 def user_profile_uploadphoto_flask():
     payload = request.get_json()
     user_profile_uploadphoto_v1(payload['token'], payload['img_url'], payload['x_start'], payload['y_start'], payload['x_end'], payload['y_end'])
     
     return dumps({})
-
-
-@APP.route("/message/senddm/v1", methods=['POST'])
-def message_senddm_v1_flask():
-    payload = request.get_json()
-    token = payload['token']
-    dm_id = payload['dm_id']
-    message = payload['message']
-
-    write_data()
-    return dumps(user_stats_v1(token))
     
 
 '''@APP.route('/user/stats/v1', methods=['GET'])
