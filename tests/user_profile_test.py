@@ -144,9 +144,16 @@ def test_user_profile_sethandle_duplicate(test_users):
         user_profile_sethandle_v2(test_users['login1']['token'], 'user1_firstuser1_las')
 
 
-def test_users_all_v1(test_users):
-    resp = users_all_v1(test_users['login1']['token'])
-    assert resp == {}
+def test_users_all_v1():
+    clear_v1()
+    user1 = auth_register_v1('user1@email.com', 'User1_pass!', 'user1_first', 'user1_last')
+    
+    resp = users_all_v1(user1['token'])
+    assert resp == {'users': [{'email': 'user1@email.com',
+                         'handle_str' : 'user1_firstuser1_las',
+                         'name_first' : 'user1_first',
+                         'name_last'  : 'user1_last',
+                         'u_id'       :  user1['auth_user_id']}]}
 
 
 def test_users_all_v1_invalid_token(test_users):
