@@ -610,6 +610,7 @@ def message_unreact_v1(token, message_id, react_id):
             found = 1
             break
 
+
     # If it doesn't exist, raise error
     if found == 0:
         raise InputError(description="The given message_id is not valid")
