@@ -27,7 +27,6 @@ if "pytest" in sys.modules:
 else:
     TOKEN_DURATION=300 # for deployment
 
-#sessionID = 0
 resetPendings = set()
 
 # generates a unique session ID for every login
@@ -67,7 +66,7 @@ def auth_login_v1(email, password):
 
     # Checks for invalid email format
     if auth_email_format(email) == False:
-        raise InputError
+        raise InputError('invalid email format')
     
     # Checks for existing email and password
     for key_it in data['users'].keys():
@@ -79,7 +78,7 @@ def auth_login_v1(email, password):
 
             data['users'][key_it]['sessions'].append(new_sessionID)
             return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it, new_sessionID)}        
-    raise InputError
+    raise InputError('Credentials do not match')
 
 
 # Given a user's first and last name, email address, and password
@@ -198,15 +197,11 @@ def auth_decode_token(token):
         sessionID = payload['sessionID'] 
 
         if sessionID not in data['users'][auth_user_id]['sessions']:
-           return 'This session is over'
+           return False
 
         return auth_user_id
 
-    except jwt.ExpiredSignatureError:
-        # return 'Session expired, log in again'
-        return False
-    except jwt.InvalidTokenError:
-        #return 'invalid token, log in again'
+    except Exception:
         return False
 
 
