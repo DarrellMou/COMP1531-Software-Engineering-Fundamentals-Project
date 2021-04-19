@@ -12,134 +12,8 @@ import re
 import threading # Used for timer
 
 ###############################################################################
-#                                 ASSUMPTIONS                                 #
+#                                  FUNCTIONS                                  #
 ###############################################################################
-
-# The first member of the dm in the dm list is the owner. Only they are allowed
-# to remove and edit any messages within that dm regardless of if they sent the
-# message or not
-
-
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Given a message_id return the channel in which it was sent
-def get_channel_id(message_id):
-    data = retrieve_data()
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            ch_id = msg['channel_id']
-    return ch_id
-
-# Given a message_id return the dm in which it was sent
-def get_dm_id(message_id):
-    data = retrieve_data()
-    dm_id = -1
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            dm_id = msg["dm_id"]
-    return dm_id
-
-
-# Given a message_id return the message within that message_id
-def get_message(message_id):
-    data = retrieve_data()
-    message = ""
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            message = msg["message"]
-    return message
-
-# Given a message_id, return whether the message is a shared message or not
-def get_share_status(message_id):
-    data = retrieve_data()
-    share_status = False
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            share_status = msg['was_shared']
-    return share_status
-
-
-# Given a message, return a tab in front of the relevant lines
-def tab_given_message(msg):
-    index = 0
-    flag = 0
-    for n in range(0, len(msg) - 2):
-        if msg[n] == msg[n + 1] == msg[n + 2] == '"':
-            if flag != 2:
-                flag = 1
-        if flag == 1:
-            index = n - 2
-            flag = 2
-    beginning_of_string = msg[0:index]
-    to_be_changed_str = msg[index:]
-    changed_string = to_be_changed_str.replace("\n", "\n\t")
-
-    tabbed_msg = beginning_of_string + changed_string
-    return tabbed_msg
-
-
-# Given a message_id, check if the message refers to a valid message
-def check_message_existence(message_id):
-    data = retrieve_data()
-    message_exists = False
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            # Check to see if the message has been removed previously
-            if msg['is_removed'] == False:
-                message_exists = True
-    return message_exists
-
-
-# Given a message_id, check if the message is pinned
-def check_message_pin_status(message_id):
-    data = retrieve_data()
-    pin_status = 0
-    for msg in data['messages']:
-        if msg['message_id'] == message_id:
-            # Check to see if the message has been removed previously
-            if msg['is_pinned'] == True:
-                pin_status = 1
-    if pin_status == 1:
-        return True
-    else:
-        return False
-
-
-# Check for the access error conditions of message remove and message edit
-def check_access_error_conditions(token, message_id):
-    data = retrieve_data()
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
-    
-    return AccessErrorConditions
-
-
-###############################################################################
-#                             END HELPER FUNCTIONS                            #
-###############################################################################
-
 
 def message_send_v2(token, channel_id, message):
     '''
@@ -979,6 +853,8 @@ def message_react_v1(token, message_id, react_id):
     if len(data['users'][owner]['notifications']) > 20:
         data['users'][owner]['notifications'].pop(0)
 
+    return { }
+
 
 # Deactivate a reaction in a message
 def message_unreact_v1(token, message_id, react_id):
@@ -1019,7 +895,6 @@ def message_unreact_v1(token, message_id, react_id):
             dm_id = message['dm_id']
             msg = message
             found = 1
-            break
 
 
     # If it doesn't exist, raise error
@@ -1053,8 +928,131 @@ def message_unreact_v1(token, message_id, react_id):
                     if len(i['u_ids']) == 0: {
                         msg['reacts'].clear()
                     }
-                    return
+                    return {}
 
     # If not found, return an error, because we're not creating a new react
     # we don't need to send a notification
     raise InputError(description="User already has no reaction of the same type on message")
+
+
+###############################################################################
+#                                END FUNCTIONS                                #
+###############################################################################
+
+
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# Given a message_id return the channel in which it was sent
+def get_channel_id(message_id):
+    data = retrieve_data()
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            ch_id = msg['channel_id']
+    return ch_id
+
+# Given a message_id return the dm in which it was sent
+def get_dm_id(message_id):
+    data = retrieve_data()
+    dm_id = -1
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            dm_id = msg["dm_id"]
+    return dm_id
+
+
+# Given a message_id return the message within that message_id
+def get_message(message_id):
+    data = retrieve_data()
+    message = ""
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            message = msg["message"]
+    return message
+
+# Given a message_id, return whether the message is a shared message or not
+def get_share_status(message_id):
+    data = retrieve_data()
+    share_status = False
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            share_status = msg['was_shared']
+    return share_status
+
+
+# Given a message, return a tab in front of the relevant lines
+def tab_given_message(msg):
+    index = 0
+    flag = 0
+    for n in range(0, len(msg) - 2):
+        if msg[n] == msg[n + 1] == msg[n + 2] == '"':
+            if flag != 2:
+                flag = 1
+        if flag == 1:
+            index = n - 2
+            flag = 2
+    beginning_of_string = msg[0:index]
+    to_be_changed_str = msg[index:]
+    changed_string = to_be_changed_str.replace("\n", "\n\t")
+
+    tabbed_msg = beginning_of_string + changed_string
+    return tabbed_msg
+
+
+# Given a message_id, check if the message refers to a valid message
+def check_message_existence(message_id):
+    data = retrieve_data()
+    message_exists = False
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            # Check to see if the message has been removed previously
+            if msg['is_removed'] == False:
+                message_exists = True
+    return message_exists
+
+
+# Given a message_id, check if the message is pinned
+def check_message_pin_status(message_id):
+    data = retrieve_data()
+    pin_status = 0
+    for msg in data['messages']:
+        if msg['message_id'] == message_id:
+            # Check to see if the message has been removed previously
+            if msg['is_pinned'] == True:
+                pin_status = 1
+    if pin_status == 1:
+        return True
+    else:
+        return False
+
+
+# Check for the access error conditions of message remove and message edit
+def check_access_error_conditions(token, message_id):
+    data = retrieve_data()
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
+    
+    return AccessErrorConditions

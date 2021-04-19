@@ -13,36 +13,6 @@ from src.data import retrieve_data
 from src.other import clear_v1
 
 
-###############################################################################
-#                                 ASSUMPTIONS                                 #
-###############################################################################
-
-# Messages that are sent using send_message are appended to the message list
-# within the channel
-
-
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id']
-    }
-
-    return setup
-
 #Define like react
 like = 1
 
@@ -53,7 +23,7 @@ like = 1
 ############################# EXCEPTION TESTING ##############################
 
 # The user attempts to unreact to a message id that doesn't exist in any of his channels
-def unreact_v1_invalid_message_id_nonexistent_InputError():
+def test_unreact_v1_invalid_message_id_nonexistent_InputError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
@@ -75,7 +45,7 @@ def unreact_v1_invalid_message_id_nonexistent_InputError():
 
 
 # The react id the user unreacts is not valid (currently only id 1 is valid)
-def unreact_v1_invalid_react_id_InputError():
+def test_unreact_v1_invalid_react_id_InputError():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
 
@@ -89,7 +59,7 @@ def unreact_v1_invalid_react_id_InputError():
 
 
 # User has no reaction of that type on the message
-def unreact_v1_no_react_InputError():
+def test_unreact_v1_no_react_InputError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
     channel_invite_v2(user1['token'], channel1, user2['auth_user_id'])
@@ -104,7 +74,7 @@ def unreact_v1_no_react_InputError():
 
 
 # The user attempts to unreact to an existing message, but is not in the corresponding channel
-def unreact_v1_invalid_message_id_inaccessible_channel_InputError():
+def test_unreact_v1_invalid_message_id_inaccessible_channel_InputError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -117,7 +87,7 @@ def unreact_v1_invalid_message_id_inaccessible_channel_InputError():
 
 
 # The user attempts to react to an existing message, but is not in the corresponding dm
-def unreact_v1_invalid_message_id_inaccessible_dm_InputError():
+def test_unreact_v1_invalid_message_id_inaccessible_dm_InputError():
     setup = set_up_data()
     user1, user2 = setup['user1'], setup['user2']
     user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
@@ -285,3 +255,25 @@ def test_message_unreact_v1_loop_react_unreact():
         x += 1
 
     assert len(data['messages'][0]["reacts"]) == 1
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# Simple data population helper function; registers users 1 and 2,
+# creates channel_1 with member u_id = 1
+def set_up_data():
+    clear_v1()
+    
+    # Populate data - create/register users 1 and 2 and have user 1 make channel1
+    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
+
+    setup = {
+        'user1': user1,
+        'user2': user2,
+        'channel1': channel1['channel_id']
+    }
+
+    return setup

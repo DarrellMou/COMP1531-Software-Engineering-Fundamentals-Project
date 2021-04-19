@@ -119,9 +119,11 @@ def channel_join_v2_flask():
     payload = request.get_json()
     token = payload['token']
     channel_id = payload['channel_id']
+    response = channel_join_v2(token,channel_id)
+
 
     write_data()
-    return dumps(channel_join_v2(token,channel_id))
+    return dumps(response)
 
 
 @APP.route("/channel/invite/v2", methods=['POST'])
@@ -130,9 +132,10 @@ def channel_invite_v2_flask():
     token = payload['token']
     channel_id = payload['channel_id']
     u_id = payload['u_id']
+    response = channel_invite_v2(token,channel_id,u_id)
 
     write_data()
-    return dumps(channel_invite_v2(token,channel_id,u_id))
+    return dumps(response)
 
 
 @APP.route("/channel/addowner/v1", methods=['POST'])
@@ -141,9 +144,10 @@ def channel_addowner_v1_flask():
     token = payload['token']
     channel_id = payload['channel_id']
     u_id = payload['u_id']
+    response = channel_addowner_v1(token,channel_id,u_id)
 
     write_data()
-    return dumps(channel_addowner_v1(token,channel_id,u_id))
+    return dumps(response)
 
 
 @APP.route("/channel/removeowner/v1", methods=['POST'])
@@ -152,9 +156,10 @@ def channel_removeowner_v1_flask():
     token = payload['token']
     channel_id = payload['channel_id']
     u_id = payload['u_id']
+    response = channel_removeowner_v1(token,channel_id,u_id)
 
     write_data()
-    return dumps(channel_removeowner_v1(token,channel_id,u_id))
+    return dumps(response)
 
 
 @APP.route("/channel/messages/v2", methods=['GET'])
@@ -162,8 +167,9 @@ def channel_messages_v2_flask():
     token = request.args.get('token')
     channel_id = int(request.args.get('channel_id'))
     start = int(request.args.get('start'))
+    response = channel_messages_v2(token, channel_id, start)
 
-    return dumps(channel_messages_v2(token, channel_id, start))
+    return dumps(response)
 
 
 @APP.route("/channel/leave/v1", methods=['POST'])
@@ -171,9 +177,10 @@ def channel_leave_v1_flask():
     payload = request.get_json()
     token = payload['token']
     channel_id = payload['channel_id']
+    response = channel_leave_v1(token,channel_id)
 
     write_data()
-    return dumps(channel_leave_v1(token,channel_id))
+    return dumps(response)
 
 
 @APP.route('/dm/create/v1', methods=['POST'])
@@ -190,8 +197,9 @@ def dm_messages_v1_flask():
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
+    response = dm_messages_v1(token, dm_id, start)
 
-    return dumps(dm_messages_v1(token, dm_id, start))
+    return dumps(response)
 
 
 @APP.route('/dm/details/v1', methods=['GET'])
@@ -244,9 +252,10 @@ def message_send_v2_flask():
     token = payload['token']
     channel_id = int(payload['channel_id'])
     message = payload['message']
+    response = message_send_v2(token,channel_id,message)
 
     write_data()
-    return dumps(message_send_v2(token,channel_id,message))
+    return dumps(response)
 
 
 @APP.route("/message/senddm/v1", methods=['POST'])
@@ -255,9 +264,10 @@ def message_senddm_v1_flask():
     token = payload['token']
     dm_id = payload['dm_id']
     message = payload['message']
+    response = message_senddm_v1(token,dm_id,message)
 
     write_data()
-    return dumps(message_senddm_v1(token,dm_id,message))
+    return dumps(response)
 
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_remove_v1_flask():
@@ -298,9 +308,10 @@ def message_sendlater_v1_flask():
     channel_id = data['channel_id']
     message = data['message']
     time_sent = data['time_sent']
+    response = message_sendlater_v1(token, channel_id, message, time_sent)
 
     write_data()
-    return dumps(message_sendlater_v1(token, channel_id, message, time_sent))
+    return dumps(response)
 
 
 @APP.route("/message/sendlaterdm/v1", methods=['POST'])
@@ -310,9 +321,10 @@ def message_sendlaterdm_v1_flask():
     dm_id = data['dm_id']
     message = data['message']
     time_sent = data['time_sent']
+    response = message_sendlaterdm_v1(token, dm_id, message, time_sent)
 
     write_data()
-    return dumps(message_sendlaterdm_v1(token, dm_id, message, time_sent))
+    return dumps(response)
 
 
 @APP.route("/message/pin/v1", methods=['POST'])
@@ -320,9 +332,10 @@ def message_pin_v1_flask():
     data = request.get_json()
     token = data['token']
     message_id = data['message_id']
+    response = message_pin_v1(token, message_id)
 
     write_data()
-    return dumps(message_pin_v1(token, message_id))
+    return dumps(response)
 
 
 @APP.route("/message/unpin/v1", methods=['POST'])
@@ -330,9 +343,10 @@ def message_unpin_v1_flask():
     data = request.get_json()
     token = data['token']
     message_id = data['message_id']
+    response = message_unpin_v1(token, message_id)
 
     write_data()
-    return dumps(message_unpin_v1(token, message_id))
+    return dumps(response)
 
 
 @APP.route("/message/react/v1", methods=['POST'])
@@ -341,9 +355,10 @@ def message_react_v1_flask():
     token = payload['token']
     message_id = payload['message_id']
     react_id = payload['react_id']
+    response = message_react_v1(token, message_id, react_id)
 
     write_data()
-    return dumps(message_react_v1(token, message_id, react_id))
+    return dumps(response)
 
 
 @APP.route("/message/unreact/v1", methods=['POST'])
@@ -352,9 +367,10 @@ def message_unreact_v1_flask():
     token = payload['token']
     message_id = payload['message_id']
     react_id = payload['react_id']
+    response = message_unreact_v1(token, message_id, react_id)
 
     write_data()
-    return dumps(message_unreact_v1(token, message_id, react_id))
+    return dumps(response)
 
 @APP.route("/standup/start/v1", methods=['POST'])
 def standup_start_v1_flask():
@@ -437,25 +453,28 @@ def user_profile_uploadphoto_flask():
 @APP.route('/user/stats/v1', methods=['GET'])
 def user_stats_v1_flask():
     token = request.args.get('token')
+    response = user_stats_v1(token)
 
     write_data()
-    return dumps(user_stats_v1(token))
+    return dumps(response)
 
 
 @APP.route('/users/stats/v1', methods=['GET'])
 def users_stats_v1_flask():
     token = request.args.get('token')
+    response = users_stats_v1(token)
 
     write_data()
-    return dumps(users_stats_v1(token))
+    return dumps(response)
 
 
 @APP.route('/users/all/v1', methods=['GET'])
 def users_all_v1_flask():
     token = request.args.get('token')
+    response = users_all_v1(token)
 
     write_data()
-    return dumps(users_all_v1(token))
+    return dumps(response)
 
 
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
@@ -464,9 +483,10 @@ def admin_userpermission_change_v1_flask():
     token = payload['token']
     u_id = payload['u_id']
     permission_id = payload['permission_id']
+    response = admin_userpermission_change_v1(token, u_id, permission_id)
 
     write_data()
-    return dumps(admin_userpermission_change_v1(token, u_id, permission_id))
+    return dumps(response)
 
 
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
@@ -474,17 +494,19 @@ def admin_user_remove_v1_flask():
     payload = request.get_json()
     token = payload['token']
     u_id = int(payload['u_id'])
+    response = admin_user_remove_v1(token, u_id)
 
     write_data()
-    return dumps(admin_user_remove_v1(token, u_id))
+    return dumps(response)
 
 
 @APP.route("/search/v2", methods=['GET'])
 def search_v2_flask():
     token = request.args.get('token')
     query_str = request.args.get('query_str')
-
-    return dumps(search_v2(token, query_str))
+    response = search_v2(token, query_str)
+    
+    return dumps(response)
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear_v1_flask():

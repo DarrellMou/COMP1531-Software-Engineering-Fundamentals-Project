@@ -13,36 +13,6 @@ from src.data import retrieve_data
 from src.other import clear_v1
 
 
-###############################################################################
-#                                 ASSUMPTIONS                                 #
-###############################################################################
-
-# Messages that are sent using send_message are appended to the message list
-# within the channel
-
-
-###############################################################################
-#                               HELPER FUNCTIONS                              #
-###############################################################################
-
-# Simple data population helper function; registers users 1 and 2,
-# creates channel_1 with member u_id = 1
-def set_up_data():
-    clear_v1()
-    
-    # Populate data - create/register users 1 and 2 and have user 1 make channel1
-    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
-    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
-    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
-
-    setup = {
-        'user1': user1,
-        'user2': user2,
-        'channel1': channel1['channel_id']
-    }
-
-    return setup
-
 #Define like react
 like = 1
 
@@ -52,7 +22,7 @@ like = 1
 
 ############################# EXCEPTION TESTING ##############################
 
-# The user attempts to react to a message id that doesn't exist in any of his channels
+# The user attempts to react to a message id that doesn't exist in any of his channels or dms
 def test_react_v1_invalid_message_id_nonexistent_InputError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
@@ -101,7 +71,7 @@ def test_react_v1_repeat_react_InputError():
 
 
 # The user attempts to react to an existing message, but is not in the corresponding channel
-def test_react_v1_invalid_message_id_inaccessible_channel_InputError():
+def test_react_v1_invalid_message_id_inaccessible_channel_AccessError():
     setup = set_up_data()
     user1, user2, channel1 = setup['user1'], setup['user2'], setup['channel1']
 
@@ -114,7 +84,7 @@ def test_react_v1_invalid_message_id_inaccessible_channel_InputError():
 
 
 # The user attempts to react to an existing message, but is not in the corresponding dm
-def test_react_v1_invalid_message_id_inaccessible_dm_InputError():
+def test_react_v1_invalid_message_id_inaccessible_dm_AccessError():
     setup = set_up_data()
     user1, user2 = setup['user1'], setup['user2']
     user3 = auth_register_v1('user3@gmail.com', 'password123', 'first3', 'last3')
@@ -223,3 +193,26 @@ def test_message_react_v1_multiple_reacts():
 
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"], user2["auth_user_id"], user3["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
+
+
+###############################################################################
+#                               HELPER FUNCTIONS                              #
+###############################################################################
+
+# Simple data population helper function; registers users 1 and 2,
+# creates channel_1 with member u_id = 1
+def set_up_data():
+    clear_v1()
+    
+    # Populate data - create/register users 1 and 2 and have user 1 make channel1
+    user1 = auth_register_v1('bob.builder@email.com', 'badpassword1', 'Bob', 'Builder')
+    user2 = auth_register_v1('shaun.sheep@email.com', 'password123', 'Shaun', 'Sheep')
+    channel1 = channels_create_v2(user1['token'], 'Channel1', True)
+
+    setup = {
+        'user1': user1,
+        'user2': user2,
+        'channel1': channel1['channel_id']
+    }
+
+    return setup
