@@ -107,6 +107,35 @@ def check_message_pin_status(message_id):
         return False
 
 
+# Check for the access error conditions of message remove and message edit
+def check_access_error_conditions(token, message_id):
+    data = retrieve_data()
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
+    
+    return AccessErrorConditions
+
+
 ###############################################################################
 #                             END HELPER FUNCTIONS                            #
 ###############################################################################
@@ -256,30 +285,10 @@ def message_remove_v1(token, message_id):
             if message_dict['is_removed'] == True:
                 raise InputError(description="Message (based on id) no longer exists")
     
-    # Check to see if the user trying to remove the message sent the message
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
 
+    # Check to see if the user trying to edit the message was the one who sent it
+    # or if they are an owner of the channel/dm or dreams
+    AccessErrorConditions = check_access_error_conditions(token, message_id)
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -288,9 +297,8 @@ def message_remove_v1(token, message_id):
         if msg['message_id'] == message_id:
             msg['is_removed'] = True
 
+    return { }
 
-    return {
-    }
 
 def message_edit_v2(token, message_id, message):
     '''
@@ -329,31 +337,9 @@ def message_edit_v2(token, message_id, message):
     if len(message) > 1000:
         raise InputError(description="The message exceeds 1000 characters")
 
-
-    # Check to see if the user trying to remove the message sent the message
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
-
+    # Check to see if the user trying to edit the message was the one who sent it
+    # or if they are an owner of the channel/dm or dreams
+    AccessErrorConditions = check_access_error_conditions(token, message_id)
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -370,11 +356,11 @@ def message_edit_v2(token, message_id, message):
             dms_id = msg['dm_id']
             msg['message'] = message
     if channel_id != -1:
-        for ch_msg in data['channels'][ch_id]['messages']:
+        for ch_msg in data['channels'][channel_id]['messages']:
             if ch_msg['message_id'] == message_id:
                 ch_msg['message'] = message
     else:
-        for dm_msg in data['dms'][dm_id]['messages']:
+        for dm_msg in data['dms'][dms_id]['messages']:
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
@@ -546,6 +532,88 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
