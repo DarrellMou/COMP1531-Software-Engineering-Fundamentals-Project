@@ -218,3 +218,5 @@ def admin_userpermission_change_v1(token, u_id, permission_id):
 
     # Change u_id permission to permission_id
     data['users'][u_id]['permission_id'] = permission_id
+
+    return {}

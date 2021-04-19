@@ -979,6 +979,8 @@ def message_react_v1(token, message_id, react_id):
     if len(data['users'][owner]['notifications']) > 20:
         data['users'][owner]['notifications'].pop(0)
 
+    return { }
+
 
 # Deactivate a reaction in a message
 def message_unreact_v1(token, message_id, react_id):
@@ -1053,7 +1055,7 @@ def message_unreact_v1(token, message_id, react_id):
                     if len(i['u_ids']) == 0: {
                         msg['reacts'].clear()
                     }
-                    return
+                    return {}
 
     # If not found, return an error, because we're not creating a new react
     # we don't need to send a notification
