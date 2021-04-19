@@ -183,7 +183,7 @@ def message_send_v2(token, channel_id, message):
     # Creating a unique id for our message_id. The chances of uuid4 returning
     # the same time is infinitesimally small.
     # ASSUMPTION: int(uuid4()) will never reproduce the same id
-    unique_message_id = int(uuid4()) >> 64
+    unique_message_id = int(uuid4()) >> 100
     # Creating a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -462,7 +462,7 @@ def message_senddm_v1(token, dm_id, message):
             "The user corresponding to the given token is not in the dm")
 
     # Create a unique id for our message_id
-    unique_message_id = int(uuid4()) >> 64
+    unique_message_id = int(uuid4()) >> 100
     # Create a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -682,7 +682,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the channel")
 
-    unique_message_id = int(uuid4()) >> 64
+    unique_message_id = int(uuid4()) >> 100
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
@@ -782,7 +782,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
 
-    unique_message_id = int(uuid4()) >> 64
+    unique_message_id = int(uuid4()) >> 100
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
