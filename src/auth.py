@@ -130,7 +130,7 @@ def auth_register_v1(email, password, name_first, name_last):
         new_handle = new_handle[0:20]
 
     # Randomly generate a unique auth_user_id
-    new_auth_user_id = int(uuid.uuid4())
+    new_auth_user_id = int(uuid.uuid4()) >> 100 #avoid overflow
 
     # type 1 is owner, type 2 is member 
     if not data['users']:
@@ -203,14 +203,16 @@ def auth_decode_token(token):
         return auth_user_id
 
     except jwt.ExpiredSignatureError:
-        return 'Session expired, log in again'
+        # return 'Session expired, log in again'
+        return False
     except jwt.InvalidTokenError:
-        return 'invalid token, log in again'
+        #return 'invalid token, log in again'
+        return False
 
 
 # check before using auth_token_decode
 def auth_token_ok(token):
-    if(isinstance(auth_decode_token(token), str)):
+    if(auth_decode_token(token) == False):
         return False
     else:
         return True
