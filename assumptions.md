@@ -13,6 +13,24 @@
 ## message_unpin_v1 (brendan)
 * N/A
 
+## message_react_v1 (kellen)
+* Users don't react to removed messages.
+
+## message_unreact_v1 (kellen)
+* Users don't unreact to removed messages.
+
+## user_stats_v1 (kellen)
+
+## users_stats_v1 (kellen)
+
+## standup_start (darrell)
+* The length cannot be negative, and can be as large as any amount.
+
+## standup_active (darrell)
+* The function can be called by anyone, no matter whether they are in the channel or not.
+
+## standup_send (darrell)
+* Message is sent in the following format - handle_str : message
 
 
 # ARCHIVE
