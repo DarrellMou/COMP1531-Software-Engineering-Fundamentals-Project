@@ -3,6 +3,7 @@
 
 from src.data import data, retrieve_data
 from src.auth import auth_decode_token, auth_token_ok
+from src.error import AccessError, InputError
 
 def notifications_get_v1(token):
     '''
@@ -19,7 +20,10 @@ def notifications_get_v1(token):
     Return value:
         notifications (list of notification data structures) - A list of notifications that the user has recieved
     '''
-
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+        
     data = retrieve_data()
 
     if not auth_token_ok(token):

@@ -24,7 +24,7 @@ data = {
                     'dm_id': 4561328123,
                     'notification_message': 'Hello World2',
                 },
-            ]
+            ],
         },
         11753764853 : {
             'name_first' : 'first_name2',
@@ -45,7 +45,7 @@ data = {
                     'dm_id': 4561328124,
                     'notification_message': 'Hello World4',
                 },
-            ]
+            ],
         },
     },
     'channels' : {
@@ -60,7 +60,15 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 123416589,
-                    'is_pinned': False
+                    'is_pinned': False,
+                    'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 61510648893,
@@ -68,6 +76,14 @@ data = {
                     'message': 'Hello World2',
                     'time_created': 123456789,
                     'is_pinned': False,
+                    'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
             ],
             'standup' : {
@@ -87,6 +103,14 @@ data = {
                     'message': 'Hello World1',
                     'time_created': 45132806512,
                     'is_pinned': False,
+                    'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 123156231064,
@@ -94,6 +118,14 @@ data = {
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
                     'is_pinned': False,
+                    'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 }
             ],
             'standup' : {
@@ -112,14 +144,28 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 45132806512,
-                    'is_pinned': False
+                    'is_pinned': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 123156231064,
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
-                    'is_pinned': False
+                    'is_pinned': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
             ],
         }
@@ -134,7 +180,14 @@ data = {
             'dm_id': -1,
             'is_removed': False,
             'was_shared': False,
-            'is_pinned': False
+            'is_pinned': False,
+            'reacts': [
+                {
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
+            ],
         },
         {
             'message_id': 789416137,
@@ -145,7 +198,14 @@ data = {
             'dm_id': 1691360831,
             'is_removed': False,
             'was_shared': False,
-            'is_pinned': False
+            'is_pinned': False,
+            'reacts': [
+                {
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
+            ],
         },
     ],
 }

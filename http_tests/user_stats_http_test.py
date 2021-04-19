@@ -1,4 +1,4 @@
-'''# PROJECT-BACKEND: Team Echo
+# PROJECT-BACKEND: Team Echo
 # Written by Nikki Yao
 
 from http_tests import * # import fixtures for pytest
@@ -52,7 +52,6 @@ def test_user_stats_v1_empty(setup_user_data):
     user_stats = requests.get(config.url + 'user/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
-
     assert user_stats['num_channels_joined'] == 0
     assert user_stats['num_dms_joined'] == 0
     assert user_stats['num_msgs_sent'] == 0
@@ -64,7 +63,7 @@ def test_user_stats_v1_full(setup_user_data):
     users = setup_user_data
 
     # Creating a public channel
-    channel_id = requests.post(config.url + 'channels/create/v2', json={
+    requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Public',
         'is_public': True,
@@ -77,7 +76,7 @@ def test_user_stats_v1_full(setup_user_data):
     assert user_stats['num_channels_joined'] == 1
     assert user_stats['num_dms_joined'] == 0
     assert user_stats['num_msgs_sent'] == 0
-    assert user_stats['involvement'] == 0
+    assert user_stats['involvement'] == 1
 
 # Test stats with user involved in all types of activity
 def test_user_stats_v1_all(setup_user_data):
@@ -185,8 +184,8 @@ def test_user_stats_v1_invite_join(setup_user_data):
     }).json()
 
     # User 1 invites user 3 to channel
-    requests.post(config.url + 'channel/invites/v2', json={
-        'token': users['user3']['token'],
+    requests.post(config.url + 'channel/invite/v2', json={
+        'token': users['user1']['token'],
         'channel_id': channel_id1['channel_id'],
         'u_id': users['user3']['auth_user_id'],
     }).json()
@@ -225,11 +224,11 @@ def test_user_stats_v1_invite_join(setup_user_data):
 
 # Test a really active user
 # Test stats with user involved in all types of activity
-def test_user_stats_v1_active():
+def test_user_stats_v1_active(setup_user_data):
     users = setup_user_data
 
     # User 1 creates 5 channels
-    requests.post(config.url + 'channels/create/v2', json={
+    channel_id1 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'C1',
         'is_public': True,
@@ -318,4 +317,3 @@ def test_user_stats_v1_active():
     assert user_stats1['num_dms_joined'] == 5
     assert user_stats1['num_msgs_sent'] == 7
     assert user_stats1['involvement'] == 1
-'''
