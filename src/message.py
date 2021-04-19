@@ -27,13 +27,12 @@ import threading # Used for timer
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
     data = retrieve_data()
-    ch_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             ch_id = msg['channel_id']
     return ch_id
 
-# Given a message_id return the channel in which it was sent
+# Given a message_id return the dm in which it was sent
 def get_dm_id(message_id):
     data = retrieve_data()
     dm_id = -1
@@ -84,16 +83,13 @@ def tab_given_message(msg):
 # Given a message_id, check if the message refers to a valid message
 def check_message_existence(message_id):
     data = retrieve_data()
-    message_exists = 0
+    message_exists = False
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             # Check to see if the message has been removed previously
             if msg['is_removed'] == False:
-                message_exists = 1
-    if message_exists == 1:
-        return True
-    else:
-        return False
+                message_exists = True
+    return message_exists
 
 
 # Given a message_id, check if the message is pinned
@@ -367,13 +363,13 @@ def message_edit_v2(token, message_id, message):
     if message == "":
         message_remove_v1(token, message_id)
     
-    # Otherwise, update the message in both data['messages'] and the channel
+    # Otherwise, update the message in both data['messages'] and the channel or dm
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            ch_id = msg['channel_id']
-            dm_id = msg['dm_id']
+            channel_id = msg['channel_id']
+            dms_id = msg['dm_id']
             msg['message'] = message
-    if ch_id != -1:
+    if channel_id != -1:
         for ch_msg in data['channels'][ch_id]['messages']:
             if ch_msg['message_id'] == message_id:
                 ch_msg['message'] = message
@@ -382,8 +378,7 @@ def message_edit_v2(token, message_id, message):
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
-    return {
-    }
+    return { }
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
