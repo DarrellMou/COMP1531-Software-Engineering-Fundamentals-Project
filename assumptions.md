@@ -1,4 +1,23 @@
+# COMP1531 Assignment Iteration 3 Assumptions
+
+## message_sendlater_v1 (brendan)
+* If a user leaves a channel after using message_sendlater before the message is sent, then the message is still sent after they leave the channel
+
+## message_sendlaterdm_v1 (brendan)
+* If a user leaves a dm after using message_sendlater before the message is sent, then the message is still sent after they leave the dm
+
+## message_pin_v1 (brendan)
+* If a message is pinned and the original message is edited, the pinned message on display will also be edited.
+* If a message is pinned and the og message is removed, the pinned message on display will also be removed and no longer remain on display.
+
+## message_unpin_v1 (brendan)
+* N/A
+
+
+
+# ARCHIVE
 # COMP1531 Assignment Iteration 2 Assumptions
+
 ## auth_register_v2 (winston)
 * Users can have the same first_name, last_name and password.
 * Users' first name, last name can be composed of any characters supported by python3, including symbols like '@#[]&^'
