@@ -27,14 +27,13 @@ if "pytest" in sys.modules:
 else:
     TOKEN_DURATION=300 # for deployment
 
-#sessionID = 0
 resetPendings = set()
 
 # generates a unique session ID for every login
 def getNewSessionID():
     # global sessionID 
 
-    return int(uuid.uuid4())
+    return int(uuid.uuid4()) >> 64
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
@@ -67,7 +66,7 @@ def auth_login_v1(email, password):
 
     # Checks for invalid email format
     if auth_email_format(email) == False:
-        raise InputError
+        raise InputError('invalid email format')
     
     # Checks for existing email and password
     for key_it in data['users'].keys():
@@ -79,7 +78,7 @@ def auth_login_v1(email, password):
 
             data['users'][key_it]['sessions'].append(new_sessionID)
             return {'auth_user_id' : key_it, 'token' : auth_encode_token(key_it, new_sessionID)}        
-    raise InputError
+    raise InputError('Credentials do not match')
 
 
 # Given a user's first and last name, email address, and password
@@ -130,7 +129,7 @@ def auth_register_v1(email, password, name_first, name_last):
         new_handle = new_handle[0:20]
 
     # Randomly generate a unique auth_user_id
-    new_auth_user_id = int(uuid.uuid4())
+    new_auth_user_id = int(uuid.uuid4()) >> 100 #avoid overflow
 
     # type 1 is owner, type 2 is member 
     if not data['users']:
@@ -198,19 +197,17 @@ def auth_decode_token(token):
         sessionID = payload['sessionID'] 
 
         if sessionID not in data['users'][auth_user_id]['sessions']:
-           return 'This session is over'
+           return False
 
         return auth_user_id
 
-    except jwt.ExpiredSignatureError:
-        return 'Session expired, log in again'
-    except jwt.InvalidTokenError:
-        return 'invalid token, log in again'
+    except Exception:
+        return False
 
 
 # check before using auth_token_decode
 def auth_token_ok(token):
-    if(isinstance(auth_decode_token(token), str)):
+    if(auth_decode_token(token) == False):
         return False
     else:
         return True

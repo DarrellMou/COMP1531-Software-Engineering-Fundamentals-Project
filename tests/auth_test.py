@@ -4,10 +4,11 @@
 import pytest
 
 from src.error import InputError
-from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1, auth_get_token_session, auth_passwordreset_request, auth_passwordreset_reset
+from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok, auth_logout_v1, auth_get_token_session, auth_passwordreset_request, auth_passwordreset_reset, auth_send_reset_email
 from src.data import retrieve_data
 from src.other import clear_v1
 import time
+import threading
 
 #from error import InputError
 #from auth import auth_login_v1, auth_email_format, auth_register_v1
@@ -96,10 +97,10 @@ def test_encode_decode_token():
 
     assert isinstance(token, str) == True
     assert auth_decode_token(token) == 1234567800
-    assert auth_decode_token('whatisthis') == 'invalid token, log in again'
+    assert auth_decode_token('whatisthis') == False
 
     time.sleep(14)
-    assert auth_decode_token(token) == 'Session expired, log in again'
+    assert auth_decode_token(token) == False
 
 
 def test_auth_token_ok():
@@ -177,3 +178,6 @@ def test_auth_passwordreset_reset_invalid_pass_len(test_users):
     with pytest.raises(InputError):
         auth_passwordreset_reset(code, '123')
 
+
+# def test_auth_send_an_email():
+#     auth_send_reset_email('unlucksdfkjndsy@gmail.com', 'HAHA')

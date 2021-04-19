@@ -118,7 +118,7 @@ def channels_create_v2(token, name, is_public):
     auth_user_id = auth_decode_token(token)
 
     # Generate unique channel_id
-    channel_id = int(uuid.uuid1())
+    channel_id = int(uuid.uuid4()) >> 100 # avoid overflow
 
     # Add new channel to channels data
     data['channels'][channel_id] = {
