@@ -20,8 +20,10 @@
 * Users don't unreact to removed messages.
 
 ## user_stats_v1 (kellen)
+* N/A
 
 ## users_stats_v1 (kellen)
+* N/A
 
 ## standup_start (darrell)
 * The length cannot be negative, and can be as large as any amount.
@@ -41,7 +43,7 @@
 * Verification code never expires, until server restarts.
 
 ## user_profile_uploadphoto_v1 (Winston)
-* N/A
+* No inappropriate photos will be uploaded by users.
 
 
 # ARCHIVE
@@ -54,7 +56,7 @@
 * Registration acts as a login, a new user after registration is automatically granted a session to DREAMS.
 
 ## auth/login/v2 (winston)
-* N/A
+* A user can login from various devices, having multiple sessions at the same time.
 
 ## auth/logout/v1 (winston)
 * Token associated with a session on device A can be used to logout that session on device B.

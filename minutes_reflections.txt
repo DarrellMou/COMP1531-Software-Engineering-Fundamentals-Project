@@ -1,6 +1,129 @@
 COMP1531 ASSIGNMENT 
 Meeting Minutes and Reflection
 
+COMP1531 ASSIGNMENT 
+Meeting Minutes and Reflection
+
+————————————— ITERATION 3 —————————————
+Meeting - Wednesday 07/04/21
+Duration	8:30pm - 11:00pm
+Platform	Discord
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+Allocation of work
+* Look in taskboard
+* NOTE: Nikki was given planning.pdf and no new functions to her own will and regularly garnered feedback from members on her report. She will also serve to help members with code commitments and ensuring neat style.
+
+Actions
+-	Read spec carefully
+- 	Distribute tasks/functions and chore
+-	One member implement AlwaysData
+	- Winston implements AlwaysData and we pin the SSH pass, login pass and email to our discord channel
+-	Start on functions (only have <2 wks yikes)
+
+TO-DO: 
+-   	Get front-end to work appropriately.
+-   	Work on new functions.
+- 	Soft deadline for functions on Sunday.
+
+
+Tutorial - Friday 09/03/21
+
+UPDATES: 
+-	Everyone’s working on their functions.
+-	Nikki finished Elicitation section of planning.pdf
+
+ACTIONS:
+-	A struggle to deploy backend.
+
+TO-DO: 
+-   	Finish draft functions.
+
+
+13.04.21
+- 	Winston can’t seem to get frontend to work.
+-	Iter2 results out and we observe what code we need .to fix.
+
+
+Meeting - Wednesday 14/04/21
+Duration	8:30pm - 11:45pm
+Platform	Discord
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+UPDATES:
+-	Still trying to figure out deployment and frontend.
+
+ACTIONS:
+-	Nikki finishes draft planning.pdf ahead of schedule.
+
+TO-DO:
+-	Implemented assigned functions and routes
+-	Fix errors from iter2 autotests
+-	Successfully deploy frontend
+
+
+Tutorial - Friday 16/03/21
+
+UPDATES: 
+-	Everyone’s working on their functions.
+-	Brendan and Darrell finish their functions.
+
+ACTIONS:
+-	A struggle to deploy backend.
+
+TO-DO: 
+-   	Kellen to finish draft new functions.
+
+
+Meeting - Sunday 18/04/21
+Duration	8:30pm - 2:00am
+Platform	Discord
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+UPDATES:
+-	Still trying to figure out deployment and frontend.
+
+ACTIONS:
+-	Nikki helps Kellen with his routes and http tests
+-	Darrell, Winston, Brendan and Nikki merge into iter3
+-	Darrell and Brendan successfully deployed our backend
+-	Kellen testing http tests
+
+
+TO-DO:
+-	Kellen to test and pass all tests
+-	Successfully deploy frontend
+-	Write assumptions
+-	Review Nikki’s planning.pdf
+-	Winston to ensure coverage in his functions
+
+
+Meeting - Monday 19/04/21
+Duration	8:30pm - 3:00am
+Platform	Discord
+Attendees	Darrell, Brendan, Winston, Nikki, Kellen
+
+UPDATES:
+-	Brendan and Winston playing around with frontend
+
+ACTIONS:
+-	Kellen testing his http_tests
+-	Everyone to write assumptions
+-	Winston to debug his auth functions 
+-	Darrell finished reviewing planning.pdf
+-	Brendan and Nikki deploy frontend to work out errors
+	
+
+TO-DO:
+-	Push everything to master
+
+
+Reflections:
+-	Project was a very insightful experience - learning git, working on code collaboratively, deployment and seeing our code work a platform.
+-	Time management, communicating effectively improved from Iter1, but still could have been many times better.
+-	Members should seek to speak up more as it led to more time lag later on.
+
+
 ————————————— ITERATION 2 —————————————
 Week 4 Friday - Allocation of work
 
