@@ -42,7 +42,7 @@ def dm_create_v1(token, u_ids):
     for handle_str in sorted(handle_strs):
         dm_name += handle_str if handle_str == handle_strs[-1] else (handle_str + ', ')
 
-    dm_id = int(uuid.uuid1())
+    dm_id = int(uuid.uuid4()) >> 100
     # Add new dm to dms data
     data['dms'][dm_id] = {
         'name': dm_name,
