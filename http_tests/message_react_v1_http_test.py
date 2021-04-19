@@ -33,7 +33,7 @@ like = 1
 ###############################################################################
 
 ############################# EXCEPTION TESTING ###############################
-"""
+
 # The user attempts to react to a message id that doesn't exist in any of his channels
 def test_react_v1_invalid_message_id_nonexistent_InputError(setup_user_data):
     users = setup_user_data
@@ -71,7 +71,7 @@ def test_react_v1_invalid_message_id_nonexistent_InputError(setup_user_data):
     # Ensure input error: Invalid message_id
     assert requests.post(config.url + 'message/react/v1', json={
         'token': users['user1']['token'],
-        'message_id': will_remove["message_id"],
+        'message_id': -99999,
         'react_id': like,
     }).status_code == 400
 
@@ -211,7 +211,7 @@ def test_message_react_v1_default_Access_Error(setup_user_data):
         'message_id': dm_message["message_id"],
         'react_id': like,
     }).status_code == 403
-"""
+
 ############################ END EXCEPTION TESTING ############################
 
 
@@ -254,11 +254,10 @@ def test_message_react_v1_channel(setup_user_data):
         'channel_id': channel_id1['channel_id'],
         'start': 0
     }).json()
-    print (channel1_messages)
-    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"] == [user2["auth_user_id"]]
+    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"] == [users['user2']["auth_user_id"]]
     assert channel1_messages['messages'][0]["reacts"][0]["react_id"] == 1
 
-"""
+
 # Testing for user reacting to another user's in dm
 def test_message_react_v1_dm(setup_user_data):
     users = setup_user_data
@@ -281,14 +280,15 @@ def test_message_react_v1_dm(setup_user_data):
         'react_id': like,
     }).json()
 
-    # Check that channel details have all been set correctly
-    dm1_details = requests.get(config.url + 'dm/details/v1', params={
+    # Check that dm details have all been set correctly
+    dm1_messages = requests.get(config.url + 'dm/messages/v1', params={
         'token': users['user1']['token'],
         'dm_id': dm_id1['dm_id'],
+        'start': 0
     }).json()
 
-    assert dm1_details['messages'][0]["reactions"][0]["u_ids"] == [user3["auth_user_id"]]
-    assert dm1_details['messages'][0]["reactions"][0]["react_id"] == 1
+    assert dm1_messages['messages'][0]["reacts"][0]["u_ids"] == [users['user3']["auth_user_id"]]
+    assert dm1_messages['messages'][0]["reacts"][0]["react_id"] == 1
 
 # Testing for user reacting to themselves
 def test_message_react_v1_self(setup_user_data):
@@ -316,13 +316,14 @@ def test_message_react_v1_self(setup_user_data):
     }).json()
 
     # Check that channel details have all been set correctly
-    channel1_details = requests.get(config.url + 'channel/details/v2', params={
+    channel1_messages = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id1['channel_id'],
+        'start': 0
     }).json()
 
-    assert channel1_details['messages'][0]["reactions"][0]["u_ids"] == [user1["auth_user_id"]]
-    assert channel1_details['messages'][0]["reactions"][0]["react_id"] == 1
+    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"] == [users['user1']["auth_user_id"]]
+    assert channel1_messages['messages'][0]["reacts"][0]["react_id"] == 1
 
 
 # Testing for reacts on different messages
@@ -378,18 +379,20 @@ def test_message_react_v1_different_messages(setup_user_data):
     }).json() 
 
     # Check that channel details have all been set correctly
-    channel1_details = requests.get(config.url + 'channel/details/v2', params={
+    channel1_messages = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id1['channel_id'],
+        'start': 0
     }).json()
 
-    assert channel1_details['messages'][0]["reactions"][0]["u_ids"] == [user2["auth_user_id"]]
-    assert channel1_details['messages'][0]["reactions"][0]["react_id"] == 1
+    
+    assert channel1_messages['messages'][2]["reacts"][0]["u_ids"] == [users['user2']["auth_user_id"]]
+    assert channel1_messages['messages'][2]["reacts"][0]["react_id"] == 1
 
-    assert channel1_details['messages'][1]["reactions"][0]["u_ids"] == [user1["auth_user_id"]]
-    assert channel1_details['messages'][1]["reactions"][0]["react_id"] == 1
-
-    assert channel1_details['messages'][2]["reactions"] == []
+    assert channel1_messages['messages'][1]["reacts"][0]["u_ids"] == [users['user1']["auth_user_id"]]
+    assert channel1_messages['messages'][1]["reacts"][0]["react_id"] == 1
+    
+    assert channel1_messages['messages'][0]["reacts"] == []
 
 # Testing for multiple reacts on the same message
 def test_message_react_v1_multiple_reacts(setup_user_data):
@@ -443,17 +446,13 @@ def test_message_react_v1_multiple_reacts(setup_user_data):
     }).json()
 
     # Check that channel details have all been set correctly
-    channel1_details = requests.get(config.url + 'channel/details/v2', params={
+    channel1_messages = requests.get(config.url + 'channel/messages/v2', params={
         'token': users['user1']['token'],
         'channel_id': channel_id1['channel_id'],
+        'start': 0
     }).json()
-
-    assert channel1_details['messages'][0]["reactions"][0]["u_ids"] == [user1["auth_user_id"]]
-    assert channel1_details['messages'][0]["reactions"][0]["react_id"] == 1
-
-    assert channel1_details['messages'][0]["reactions"][1]["u_ids"] == [user2["auth_user_id"]]
-    assert channel1_details['messages'][0]["reactions"][1]["react_id"] == 1
-
-    assert channel1_details['messages'][0]["reactions"][2]["u_ids"] == [user3["auth_user_id"]]
-    assert channel1_details['messages'][0]["reactions"][2]["react_id"] == 1
-"""
+    print(channel1_messages)
+    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"][0] == users['user1']["auth_user_id"]
+    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"][1] == users['user2']["auth_user_id"]
+    assert channel1_messages['messages'][0]["reacts"][0]["u_ids"][2] == users['user3']["auth_user_id"]
+    assert channel1_messages['messages'][0]["reacts"][0]["react_id"] == 1
