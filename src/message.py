@@ -603,7 +603,7 @@ def message_unreact_v1(token, message_id, react_id):
     found = 0
     for message in data['messages']:
         # If the message_id exists and is valid, copy important information
-        if message['message_id'] == message_id['message_id']:
+        if message['message_id'] == message_id:
             channel_id = message['channel_id']
             dm_id = message['dm_id']
             msg = message

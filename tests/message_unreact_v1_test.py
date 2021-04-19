@@ -61,8 +61,8 @@ def unreact_v1_invalid_message_id_nonexistent_InputError():
     # Fill the channel and dm with one message and react to them
     message_id1 = message_send_v2(user1["token"], channel1, "Hello world!_ch")
     message_id2 = message_senddm_v1(user1['token'], dmid1['dm_id'], "Hello world!_dm")
-    message_react_v1(user1["token"], message_id1, like)
-    message_react_v1(user1["token"], message_id2, like)
+    message_react_v1(user1["token"], message_id1['message_id'], like)
+    message_react_v1(user1["token"], message_id2['message_id'], like)
 
     # dict jank
     bad_id = {
@@ -81,11 +81,11 @@ def unreact_v1_invalid_react_id_InputError():
 
     # User 1 sends and reacts a message in a channel, of which they are the only user
     message_id = message_send_v2(user1["token"], channel1, "Hello world!")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
 
     # user1 tries to unreact to his own message (legal) with a react that doesn't exist (illegal)
     with pytest.raises(InputError):
-        assert message_unreact_v1(user1["token"], message_id, -9999)
+        assert message_unreact_v1(user1["token"], message_id['message_id'], -9999)
 
 
 # User has no reaction of that type on the message
@@ -96,11 +96,11 @@ def unreact_v1_no_react_InputError():
 
     # User1 sends message in a channel and user2 reacts to it
     message_id = message_send_v2(user1["token"], channel1, "Hello world!")
-    message_react_v1(user2["token"], message_id, like)
+    message_react_v1(user2["token"], message_id['message_id'], like)
 
     # user1 tries to unreact the message when there are no reacts with his u_id
     with pytest.raises(InputError):
-        assert message_unreact_v1(user1["token"], message_id, like)
+        assert message_unreact_v1(user1["token"], message_id['message_id'], like)
 
 
 # The user attempts to unreact to an existing message, but is not in the corresponding channel
@@ -113,7 +113,7 @@ def unreact_v1_invalid_message_id_inaccessible_channel_InputError():
 
     # user2 tries to react the message despite not being a member of channel1
     with pytest.raises(AccessError):
-        assert message_unreact_v1(user2["token"], message_id, like)
+        assert message_unreact_v1(user2["token"], message_id['message_id'], like)
 
 
 # The user attempts to react to an existing message, but is not in the corresponding dm
@@ -128,7 +128,7 @@ def unreact_v1_invalid_message_id_inaccessible_dm_InputError():
 
     # user3 tries to react the message despite not being a member of channel1
     with pytest.raises(AccessError):
-        assert message_unreact_v1(user3["token"], message_id, like)
+        assert message_unreact_v1(user3["token"], message_id['message_id'], like)
 
 
 # Default access error when token is invalid
@@ -136,11 +136,11 @@ def test_message_unreact_v1_default_Access_Error():
     setup = set_up_data()
     user1, channel1 = setup['user1'], setup['channel1']
     message_id = message_send_v2(user1["token"], channel1, "Hello world!")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
 
 
     with pytest.raises(AccessError):
-        message_unreact_v1("imposter", message_id, like)
+        message_unreact_v1("imposter", message_id['message_id'], like)
 
 ############################ END EXCEPTION TESTING ############################
 
@@ -154,7 +154,7 @@ def test_message_unreact_v1_channel():
     channel_invite_v2(user1['token'], channel1, user2['auth_user_id'])
 
     message_id = message_send_v2(user2["token"], channel1, "Hello")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
 
     data = retrieve_data()
 
@@ -162,7 +162,7 @@ def test_message_unreact_v1_channel():
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
     assert data['messages'][0]["reacts"][0]["is_this_user_reacted"] == False
 
-    message_unreact_v1(user1["token"], message_id, like)
+    message_unreact_v1(user1["token"], message_id['message_id'], like)
 
     assert len(data['messages'][0]["reacts"]) == 0
 
@@ -173,14 +173,14 @@ def test_message_unreact_v1_dm():
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
     message_id = message_senddm_v1(user2["token"], dmid1["dm_id"], "Hello")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
 
     data = retrieve_data()
 
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
-    message_unreact_v1(user1["token"], message_id, like)
+    message_unreact_v1(user1["token"], message_id['message_id'], like)
 
     assert len(data['messages'][0]["reacts"]) == 0
 
@@ -191,7 +191,7 @@ def test_message_unreact_v1_self():
     user1, channel1 = setup['user1'], setup['channel1']
 
     message_id = message_send_v2(user1["token"], channel1, "Hello")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
 
     data = retrieve_data()
 
@@ -199,7 +199,7 @@ def test_message_unreact_v1_self():
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
     assert data['messages'][0]["reacts"][0]["is_this_user_reacted"] == False
 
-    message_unreact_v1(user1["token"], message_id, like)
+    message_unreact_v1(user1["token"], message_id['message_id'], like)
 
     assert len(data['messages'][0]["reacts"]) == 0
 
@@ -210,13 +210,13 @@ def test_message_unreact_v1_different_messages():
     channel_invite_v2(user1['token'], channel1, user2['auth_user_id'])
 
     message_id1 = message_send_v2(user1["token"], channel1, "Creeper")
-    message_react_v1(user1["token"], message_id1, like)
+    message_react_v1(user1["token"], message_id1['message_id'], like)
 
     message_id2 = message_send_v2(user2["token"], channel1, "Oh")
-    message_react_v1(user1["token"], message_id2, like)
+    message_react_v1(user1["token"], message_id2['message_id'], like)
 
     message_id3 = message_send_v2(user1["token"], channel1, "Man")
-    message_react_v1(user1["token"], message_id3, like)
+    message_react_v1(user1["token"], message_id3['message_id'], like)
 
     data = retrieve_data()
 
@@ -229,8 +229,8 @@ def test_message_unreact_v1_different_messages():
     assert data['messages'][2]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
     assert data['messages'][2]["reacts"][0]["react_id"] == 1
 
-    message_unreact_v1(user1["token"], message_id1, like)
-    message_unreact_v1(user1["token"], message_id2, like)
+    message_unreact_v1(user1["token"], message_id1['message_id'], like)
+    message_unreact_v1(user1["token"], message_id2['message_id'], like)
 
     assert len(data['messages'][0]["reacts"]) == 0
     assert len(data['messages'][1]["reacts"]) == 0
@@ -246,16 +246,16 @@ def test_message_unreact_v1_multiple_on_message():
     channel_invite_v2(user1['token'], channel1, user3['auth_user_id'])
 
     message_id = message_send_v2(user1["token"], channel1, "3 likes on this message and I die")
-    message_react_v1(user1["token"], message_id, like)
-    message_react_v1(user2["token"], message_id, like)
-    message_react_v1(user3["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
+    message_react_v1(user2["token"], message_id['message_id'], like)
+    message_react_v1(user3["token"], message_id['message_id'], like)
 
     data = retrieve_data()
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"], user2["auth_user_id"], user3["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
 
-    message_unreact_v1(user1["token"], message_id, like)
-    message_unreact_v1(user2["token"], message_id, like)
+    message_unreact_v1(user1["token"], message_id['message_id'], like)
+    message_unreact_v1(user2["token"], message_id['message_id'], like)
 
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user3["auth_user_id"]]
     assert data['messages'][0]["reacts"][0]["react_id"] == 1
@@ -266,7 +266,7 @@ def test_message_unreact_v1_loop_react_unreact():
     user1, channel1 = setup['user1'], setup['channel1']
 
     message_id = message_send_v2(user1["token"], channel1, "Hello")
-    message_react_v1(user1["token"], message_id, like)
+    message_react_v1(user1["token"], message_id['message_id'], like)
     data = retrieve_data()
 
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
@@ -275,10 +275,10 @@ def test_message_unreact_v1_loop_react_unreact():
     
     x = 0
     while x < 10:
-        message_unreact_v1(user1["token"], message_id, like)
+        message_unreact_v1(user1["token"], message_id['message_id'], like)
         assert len(data['messages'][0]["reacts"]) == 0
 
-        message_react_v1(user1["token"], message_id, like)
+        message_react_v1(user1["token"], message_id['message_id'], like)
         assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
         assert data['messages'][0]["reacts"][0]["react_id"] == 1
         assert data['messages'][0]["reacts"][0]["is_this_user_reacted"] == False

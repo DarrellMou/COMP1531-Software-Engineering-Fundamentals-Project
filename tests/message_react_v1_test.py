@@ -162,7 +162,6 @@ def test_message_react_v1_dm():
     dmid1 = dm_create_v1(user1['token'], [user2['auth_user_id']])
     message_id = message_senddm_v1(user2["token"], dmid1["dm_id"], "Hello")
     message_react_v1(user1["token"], message_id['message_id'], like)
-
     data = retrieve_data()
 
     assert data['messages'][0]["reacts"][0]["u_ids"] == [user1["auth_user_id"]]
