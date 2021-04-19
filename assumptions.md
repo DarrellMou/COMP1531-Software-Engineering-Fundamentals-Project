@@ -54,7 +54,7 @@
 * Registration acts as a login, a new user after registration is automatically granted a session to DREAMS.
 
 ## auth/login/v2 (winston)
-* N/A
+* A user can login from various devices, having multiple sessions at the same time.
 
 ## auth/logout/v1 (winston)
 * Token associated with a session on device A can be used to logout that session on device B.
