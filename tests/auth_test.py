@@ -179,5 +179,5 @@ def test_auth_passwordreset_reset_invalid_pass_len(test_users):
         auth_passwordreset_reset(code, '123')
 
 
-def test_auth_send_an_email():
-    auth_send_reset_email('someonesunlucky@gmail.com', 'HAHA')
+# def test_auth_send_an_email():
+#     auth_send_reset_email('unlucksdfkjndsy@gmail.com', 'HAHA')
