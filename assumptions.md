@@ -41,7 +41,7 @@
 * Verification code never expires, until server restarts.
 
 ## user_profile_uploadphoto_v1 (Winston)
-* N/A
+* No inappropriate photos will be uploaded by users.
 
 
 # ARCHIVE
