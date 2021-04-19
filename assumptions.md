@@ -1,4 +1,52 @@
+# COMP1531 Assignment Iteration 3 Assumptions
+
+## message_sendlater_v1 (brendan)
+* If a user leaves a channel after using message_sendlater before the message is sent, then the message is still sent after they leave the channel
+
+## message_sendlaterdm_v1 (brendan)
+* If a user leaves a dm after using message_sendlater before the message is sent, then the message is still sent after they leave the dm
+
+## message_pin_v1 (brendan)
+* If a message is pinned and the original message is edited, the pinned message on display will also be edited.
+* If a message is pinned and the og message is removed, the pinned message on display will also be removed and no longer remain on display.
+
+## message_unpin_v1 (brendan)
+* N/A
+
+## message_react_v1 (kellen)
+* Users don't react to removed messages.
+
+## message_unreact_v1 (kellen)
+* Users don't unreact to removed messages.
+
+## user_stats_v1 (kellen)
+
+## users_stats_v1 (kellen)
+
+## standup_start (darrell)
+* The length cannot be negative, and can be as large as any amount.
+
+## standup_active (darrell)
+* The function can be called by anyone, no matter whether they are in the channel or not.
+
+## standup_send (darrell)
+* Message is sent in the following format - handle_str : message
+
+## auth_passwordreset_request (Winston)
+* The user has access to that email account.
+* the user can memorise or copy/paste the verification code to DREAMS page
+
+## auth_passwordreset_reset (Winston)
+* The new password can be the same as the old one.
+* Verification code never expires, until server restarts.
+
+## user_profile_uploadphoto_v1 (Winston)
+* N/A
+
+
+# ARCHIVE
 # COMP1531 Assignment Iteration 2 Assumptions
+
 ## auth_register_v2 (winston)
 * Users can have the same first_name, last_name and password.
 * Users' first name, last name can be composed of any characters supported by python3, including symbols like '@#[]&^'

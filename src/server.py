@@ -52,6 +52,11 @@ def echo():
     })
 
 
+@APP.route("/")
+def free_marks():
+    return "Hi Kaiqi. Welcome to the NHK."
+
+
 @APP.route("/auth/register/v2", methods=['POST'])
 def auth_register_v2_flask():
     payload = request.get_json()
@@ -255,7 +260,7 @@ def dm_remove_v1_flask():
 def message_send_v2_flask():
     payload = request.get_json()
     token = payload['token']
-    channel_id = payload['channel_id']
+    channel_id = int(payload['channel_id'])
     message = payload['message']
 
     write_data()
@@ -278,16 +283,19 @@ def message_remove_v1_flask():
     message_remove_v1(data["token"], data["message_id"])
     
     write_data()
-    return json.dumps({})
+    return dumps({})
 
 
 @APP.route("/message/edit/v2", methods=['PUT'])
 def message_edit_v2_flask():
     data = request.get_json()
-    message_edit_v2(data["token"], data["message_id"], data["message"])
+    token = data["token"]
+    message_id = int(data["message_id"])
+    message = data["message"]
+    response = message_edit_v2(token, message_id, message)
 
     write_data()
-    return json.dumps({})
+    return dumps(response)
 
 
 @APP.route("/message/share/v1", methods=['POST'])

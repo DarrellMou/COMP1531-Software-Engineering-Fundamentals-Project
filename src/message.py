@@ -27,13 +27,12 @@ import threading # Used for timer
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
     data = retrieve_data()
-    ch_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             ch_id = msg['channel_id']
     return ch_id
 
-# Given a message_id return the channel in which it was sent
+# Given a message_id return the dm in which it was sent
 def get_dm_id(message_id):
     data = retrieve_data()
     dm_id = -1
@@ -84,16 +83,13 @@ def tab_given_message(msg):
 # Given a message_id, check if the message refers to a valid message
 def check_message_existence(message_id):
     data = retrieve_data()
-    message_exists = 0
+    message_exists = False
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             # Check to see if the message has been removed previously
             if msg['is_removed'] == False:
-                message_exists = 1
-    if message_exists == 1:
-        return True
-    else:
-        return False
+                message_exists = True
+    return message_exists
 
 
 # Given a message_id, check if the message is pinned
@@ -109,6 +105,35 @@ def check_message_pin_status(message_id):
         return True
     else:
         return False
+
+
+# Check for the access error conditions of message remove and message edit
+def check_access_error_conditions(token, message_id):
+    data = retrieve_data()
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
+    
+    return AccessErrorConditions
 
 
 ###############################################################################
@@ -158,7 +183,7 @@ def message_send_v2(token, channel_id, message):
     # Creating a unique id for our message_id. The chances of uuid4 returning
     # the same time is infinitesimally small.
     # ASSUMPTION: int(uuid4()) will never reproduce the same id
-    unique_message_id = int(uuid4())
+    unique_message_id = int(uuid4()) >> 100
     # Creating a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -260,30 +285,10 @@ def message_remove_v1(token, message_id):
             if message_dict['is_removed'] == True:
                 raise InputError(description="Message (based on id) no longer exists")
     
-    # Check to see if the user trying to remove the message sent the message
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
 
+    # Check to see if the user trying to edit the message was the one who sent it
+    # or if they are an owner of the channel/dm or dreams
+    AccessErrorConditions = check_access_error_conditions(token, message_id)
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -292,9 +297,8 @@ def message_remove_v1(token, message_id):
         if msg['message_id'] == message_id:
             msg['is_removed'] = True
 
+    return { }
 
-    return {
-    }
 
 def message_edit_v2(token, message_id, message):
     '''
@@ -333,31 +337,9 @@ def message_edit_v2(token, message_id, message):
     if len(message) > 1000:
         raise InputError(description="The message exceeds 1000 characters")
 
-
-    # Check to see if the user trying to remove the message sent the message
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
-
+    # Check to see if the user trying to edit the message was the one who sent it
+    # or if they are an owner of the channel/dm or dreams
+    AccessErrorConditions = check_access_error_conditions(token, message_id)
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -367,23 +349,22 @@ def message_edit_v2(token, message_id, message):
     if message == "":
         message_remove_v1(token, message_id)
     
-    # Otherwise, update the message in both data['messages'] and the channel
+    # Otherwise, update the message in both data['messages'] and the channel or dm
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            ch_id = msg['channel_id']
-            dm_id = msg['dm_id']
+            channel_id = msg['channel_id']
+            dms_id = msg['dm_id']
             msg['message'] = message
-    if ch_id != -1:
-        for ch_msg in data['channels'][ch_id]['messages']:
+    if channel_id != -1:
+        for ch_msg in data['channels'][channel_id]['messages']:
             if ch_msg['message_id'] == message_id:
                 ch_msg['message'] = message
     else:
-        for dm_msg in data['dms'][dm_id]['messages']:
+        for dm_msg in data['dms'][dms_id]['messages']:
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
-    return {
-    }
+    return { }
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
@@ -481,7 +462,7 @@ def message_senddm_v1(token, dm_id, message):
             "The user corresponding to the given token is not in the dm")
 
     # Create a unique id for our message_id
-    unique_message_id = int(uuid4())
+    unique_message_id = int(uuid4()) >> 100
     # Create a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -573,6 +554,88 @@ def message_senddm_v1(token, dm_id, message):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def message_sendlater_v1(token, channel_id, message, time_sent):
     '''
     BRIEF DESCRIPTION
@@ -619,7 +682,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the channel")
 
-    unique_message_id = int(uuid4())
+    unique_message_id = int(uuid4()) >> 100
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
@@ -719,7 +782,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
 
-    unique_message_id = int(uuid4())
+    unique_message_id = int(uuid4()) >> 100
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
