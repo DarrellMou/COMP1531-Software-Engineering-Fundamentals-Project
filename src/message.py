@@ -137,6 +137,7 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': [],
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -149,7 +150,7 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
-        'reacts': []
+        'reacts': [],
     }
 
     # Append our dictionaries to their appropriate lists
@@ -451,6 +452,7 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': []
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -558,10 +560,18 @@ def message_react_v1(token, message_id, react_id):
             'is_this_user_reacted': False,
             }
         msg['reacts'].append(reaction_dict)
+        if channel_id != -1:
+            for messages in data['channels'][channel_id]['messages']:
+                if messages['message_id'] == message_id:
+                    messages['reacts'].append(reaction_dict)
+        else:
+            for messages in data['dms'][dm_id]['messages']:
+                if messages['message_id'] == message_id:
+                    messages['reacts'].append(reaction_dict)
     # Otherwise just add to u_ids list
     else:
         msg['reacts'][0]['u_ids'].append(user_id)
-
+    
     # Create notification message based on whether react was in dm or channel
     if channel_id != -1:
         notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['channels'][channel_id]['name']))

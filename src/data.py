@@ -61,6 +61,13 @@ data = {
                     'message': 'Hello World1',
                     'time_created': 123416589,
                     'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 61510648893,
@@ -68,6 +75,13 @@ data = {
                     'message': 'Hello World2',
                     'time_created': 123456789,
                     'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
             ]
         },
@@ -83,6 +97,13 @@ data = {
                     'message': 'Hello World1',
                     'time_created': 45132806512,
                     'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 123156231064,
@@ -90,6 +111,13 @@ data = {
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
                     'is_removed': False,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 }
             ],
         },
@@ -104,12 +132,26 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 45132806512,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
                 {
                     'message_id': 123156231064,
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
+                    'reacts': [
+                        {
+                        'react_id': 1,
+                        'u_ids': [35746842521, 11753764853],
+                        'is_this_user_reacted': False,
+                        }
+                    ],
                 },
             ],
         }
