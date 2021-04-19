@@ -2,7 +2,7 @@
 # Written by Kellen Liew
 
 from src.data import data, retrieve_data
-from src.auth import auth_decode_token
+from src.auth import auth_token_ok, auth_decode_token
 
 def notifications_get_v1(token):
     '''
@@ -19,7 +19,10 @@ def notifications_get_v1(token):
     Return value:
         notifications (list of notification data structures) - A list of notifications that the user has recieved
     '''
-
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+        
     data = retrieve_data()
     user_id = auth_decode_token(token)
 

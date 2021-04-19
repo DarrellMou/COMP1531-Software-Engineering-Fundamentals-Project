@@ -27,12 +27,13 @@ import threading # Used for timer
 # Given a message_id return the channel in which it was sent
 def get_channel_id(message_id):
     data = retrieve_data()
+    ch_id = -1
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             ch_id = msg['channel_id']
     return ch_id
 
-# Given a message_id return the dm in which it was sent
+# Given a message_id return the channel in which it was sent
 def get_dm_id(message_id):
     data = retrieve_data()
     dm_id = -1
@@ -83,13 +84,16 @@ def tab_given_message(msg):
 # Given a message_id, check if the message refers to a valid message
 def check_message_existence(message_id):
     data = retrieve_data()
-    message_exists = False
+    message_exists = 0
     for msg in data['messages']:
         if msg['message_id'] == message_id:
             # Check to see if the message has been removed previously
             if msg['is_removed'] == False:
-                message_exists = True
-    return message_exists
+                message_exists = 1
+    if message_exists == 1:
+        return True
+    else:
+        return False
 
 
 # Given a message_id, check if the message is pinned
@@ -105,35 +109,6 @@ def check_message_pin_status(message_id):
         return True
     else:
         return False
-
-
-# Check for the access error conditions of message remove and message edit
-def check_access_error_conditions(token, message_id):
-    data = retrieve_data()
-    given_id = auth_decode_token(token)
-    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
-    for msg_dict in data['messages']:
-        if msg_dict['message_id'] == message_id:
-            if msg_dict['u_id'] != given_id:
-                did_user_send = False
-    # Now, check to see if the user is an owner of the channel
-    ch_id = get_channel_id(message_id)
-    dm_id = get_dm_id(message_id)
-    if ch_id != -1:
-        for member in data['channels'][ch_id]['owner_members']:
-            if given_id == member:
-                is_ch_owner = True
-    else:
-        if given_id == data['dms'][dm_id]['members'][0]:
-            is_dm_owner = True
-    # Now, check to see if the user is an owner of dreams server
-    if data['users'][given_id]['permission_id'] == 1:
-        is_dreams_owner = True
-    if is_ch_owner or is_dreams_owner or is_dm_owner:
-        is_owner = True
-    AccessErrorConditions = [is_owner, did_user_send]
-    
-    return AccessErrorConditions
 
 
 ###############################################################################
@@ -183,7 +158,7 @@ def message_send_v2(token, channel_id, message):
     # Creating a unique id for our message_id. The chances of uuid4 returning
     # the same time is infinitesimally small.
     # ASSUMPTION: int(uuid4()) will never reproduce the same id
-    unique_message_id = int(uuid4()) >> 100
+    unique_message_id = int(uuid4())
     # Creating a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -212,12 +187,7 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
-        'is_pinned': False,
+        'reacts': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -285,10 +255,30 @@ def message_remove_v1(token, message_id):
             if message_dict['is_removed'] == True:
                 raise InputError(description="Message (based on id) no longer exists")
     
+    # Check to see if the user trying to remove the message sent the message
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
 
-    # Check to see if the user trying to edit the message was the one who sent it
-    # or if they are an owner of the channel/dm or dreams
-    AccessErrorConditions = check_access_error_conditions(token, message_id)
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -297,8 +287,9 @@ def message_remove_v1(token, message_id):
         if msg['message_id'] == message_id:
             msg['is_removed'] = True
 
-    return { }
 
+    return {
+    }
 
 def message_edit_v2(token, message_id, message):
     '''
@@ -337,9 +328,31 @@ def message_edit_v2(token, message_id, message):
     if len(message) > 1000:
         raise InputError(description="The message exceeds 1000 characters")
 
-    # Check to see if the user trying to edit the message was the one who sent it
-    # or if they are an owner of the channel/dm or dreams
-    AccessErrorConditions = check_access_error_conditions(token, message_id)
+
+    # Check to see if the user trying to remove the message sent the message
+    given_id = auth_decode_token(token)
+    did_user_send, is_ch_owner, is_dm_owner, is_dreams_owner, is_owner = True, False, False, False, False
+    for msg_dict in data['messages']:
+        if msg_dict['message_id'] == message_id:
+            if msg_dict['u_id'] != given_id:
+                did_user_send = False
+    # Now, check to see if the user is an owner of the channel
+    ch_id = get_channel_id(message_id)
+    dm_id = get_dm_id(message_id)
+    if ch_id != -1:
+        for member in data['channels'][ch_id]['owner_members']:
+            if given_id == member:
+                is_ch_owner = True
+    else:
+        if given_id == data['dms'][dm_id]['members'][0]:
+            is_dm_owner = True
+    # Now, check to see if the user is an owner of dreams server
+    if data['users'][given_id]['permission_id'] == 1:
+        is_dreams_owner = True
+    if is_ch_owner or is_dreams_owner or is_dm_owner:
+        is_owner = True
+    AccessErrorConditions = [is_owner, did_user_send]
+
     if not any(AccessErrorConditions):
         raise AccessError(description=\
             "User is not dreams owner or channel owner and did not send the message")
@@ -349,22 +362,23 @@ def message_edit_v2(token, message_id, message):
     if message == "":
         message_remove_v1(token, message_id)
     
-    # Otherwise, update the message in both data['messages'] and the channel or dm
+    # Otherwise, update the message in both data['messages'] and the channel
     for msg in data['messages']:
         if msg['message_id'] == message_id:
-            channel_id = msg['channel_id']
-            dms_id = msg['dm_id']
+            ch_id = msg['channel_id']
+            dm_id = msg['dm_id']
             msg['message'] = message
-    if channel_id != -1:
-        for ch_msg in data['channels'][channel_id]['messages']:
+    if ch_id != -1:
+        for ch_msg in data['channels'][ch_id]['messages']:
             if ch_msg['message_id'] == message_id:
                 ch_msg['message'] = message
     else:
-        for dm_msg in data['dms'][dms_id]['messages']:
+        for dm_msg in data['dms'][dm_id]['messages']:
             if dm_msg['message_id'] == message_id:
                 dm_msg['message'] = message
 
-    return { }
+    return {
+    }
 
 
 def message_share_v1(token, og_message_id, message, channel_id, dm_id):
@@ -462,7 +476,7 @@ def message_senddm_v1(token, dm_id, message):
             "The user corresponding to the given token is not in the dm")
 
     # Create a unique id for our message_id
-    unique_message_id = int(uuid4()) >> 100
+    unique_message_id = int(uuid4())
     # Create a timestamp for our time_created key for our messages dictionary
     # which is based on unix time (epoch/POSIX time)
     time_created_timestamp = round(datetime.now().timestamp())
@@ -491,12 +505,7 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
-        'is_pinned': False
+        'reacts': []
     }
 
     # Append our dictionaries to their appropriate lists
@@ -532,109 +541,6 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
     '''
@@ -682,7 +588,7 @@ def message_sendlater_v1(token, channel_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the channel")
 
-    unique_message_id = int(uuid4()) >> 100
+    unique_message_id = int(uuid4())
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
@@ -782,7 +688,7 @@ def message_sendlaterdm_v1(token, dm_id, message, time_sent):
         raise AccessError(description=\
             "The user corresponding to the given token is not in the dm")
 
-    unique_message_id = int(uuid4()) >> 100
+    unique_message_id = int(uuid4())
 
     time_until_send = round(time_sent - datetime.now().timestamp())
 
@@ -993,3 +899,139 @@ def message_unpin_v1(token, message_id):
                 msg_dm['is_pinned'] = False
     
     return {}
+# Create or reactivate a reaction to a message in channel/dm
+def message_react_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            owner = message['u_id']
+            msg = message
+            found = 1
+            break
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # Check to see if there has been an identical reaction from the user
+    if len(msg['reacts']) != 0:
+        for i in msg['reacts']:
+            for j in i['u_ids']:
+                if (j == user_id and i['react_id'] == react_id):
+                    raise InputError(description="User already has identical active reaction on message")
+
+    # If not found append a new reaction to the message and send a notification
+
+    # Add the reaction
+    # If the first to react with this react_id, create and append a reaction
+    if len(msg['reacts']) == 0:
+        reaction_dict = {
+            'react_id': react_id,
+            'u_ids': [user_id],
+            'is_this_user_reacted': False,
+            }
+        msg['reacts'].append(reaction_dict)
+    # Otherwise just add to u_ids list
+    else:
+        msg['reacts'][0]['u_ids'].append(user_id)
+
+    # Create notification message based on whether react was in dm or channel
+    if channel_id != -1:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['channels'][channel_id]['name']))
+    else:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['dms'][dm_id]['name']))
+    
+    # Create notification for user being reacted to
+    data['users'][owner]['notifications'].append({
+        'channel_id' : channel_id,
+        'dm_id' : dm_id,
+        'notification_message' : notification_message
+    })
+    # Make sure notification list is len 20
+    if len(data['users'][owner]['notifications']) > 20:
+        data['users'][owner]['notifications'].pop(0)
+
+
+# Deactivate a reaction in a message
+def message_unreact_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id['message_id']:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            msg = message
+            found = 1
+            break
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # If message has no reacts whatsoever
+    if len(msg['reacts']) == 0:
+        raise InputError(description="User already has no reaction of the same type on message")
+    # Check to see if there has been an identical reaction from the user
+    else:
+        for i in msg['reacts']:
+            for j in i['u_ids']:
+                if (j == user_id and i['react_id'] == react_id):
+                    i['u_ids'].remove(user_id)
+                    # Delete react element if last u_id on the u_ids list
+                    if len(i['u_ids']) == 0: {
+                        msg['reacts'].clear()
+                    }
+                    return
+
+    # If not found, return an error, because we're not creating a new react
+    # we don't need to send a notification
+    raise InputError(description="User already has no reaction of the same type on message")

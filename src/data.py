@@ -24,7 +24,7 @@ data = {
                     'dm_id': 4561328123,
                     'notification_message': 'Hello World2',
                 },
-            ]
+            ],
         },
         11753764853 : {
             'name_first' : 'first_name2',
@@ -45,7 +45,7 @@ data = {
                     'dm_id': 4561328124,
                     'notification_message': 'Hello World4',
                 },
-            ]
+            ],
         },
     },
     'channels' : {
@@ -134,7 +134,17 @@ data = {
             'dm_id': -1,
             'is_removed': False,
             'was_shared': False,
+<<<<<<< HEAD
             'is_pinned': False
+=======
+            'reacts': [
+                {
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
+            ],
+>>>>>>> Kellen_v2
         },
         {
             'message_id': 789416137,
@@ -145,7 +155,17 @@ data = {
             'dm_id': 1691360831,
             'is_removed': False,
             'was_shared': False,
+<<<<<<< HEAD
             'is_pinned': False
+=======
+            'reacts': [
+                {
+                'react_id': 1,
+                'u_ids': [35746842521, 11753764853],
+                'is_this_user_reacted': False,
+                }
+            ],
+>>>>>>> Kellen_v2
         },
     ],
 }

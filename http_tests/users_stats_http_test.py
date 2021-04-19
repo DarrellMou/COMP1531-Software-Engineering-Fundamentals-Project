@@ -1,4 +1,4 @@
-'''# PROJECT-BACKEND: Team Echo
+# PROJECT-BACKEND: Team Echo
 # Written by Nikki Yao
 
 from http_tests import * # import fixtures for pytest
@@ -7,6 +7,7 @@ import json
 import requests
 import pytest
 from src import config
+from datetime import datetime
 
 ########################## Tests user_stats route #########################
                                                          
@@ -26,7 +27,6 @@ def dm_create_body(user, u_ids):
 ###                       END HELPER FUNCTIONS                         ###
 
 # Time stamp 
-time_stamp = round(datetime.now().timestamp())
 
 ###############################################################################
 #                                   TESTING                                   #
@@ -51,14 +51,15 @@ def test_user_stats_v1_default_Access_Error():
 # Test stats when only users exist, but no boards of discussion
 def test_users_stats_v1_empty(setup_user_data):
     users = setup_user_data
-
+    print(users['user1'])
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
 
-    assert dreams_stats['channels_exist'] == {0, time_stamp}
-    assert dreams_stats['dms_exist'] == {0, time_stamp}
-    assert dreams_stats['messages_exist'] == {0, time_stamp}
+    assert dreams_stats['channels_exist'] == [{'num_channels_exist': 0,'time_stamp': time_stamp}]
+    assert dreams_stats['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time_stamp}]
+    assert dreams_stats['messages_exist'] == [{'num_messages_exist': 0, 'time_stamp': time_stamp}]
     assert dreams_stats['utilization_rate'] == 0
 
 
@@ -77,14 +78,15 @@ def test_users_stats_v1_no_msg(setup_user_data):
     u_id_list = [users['user2']]
     dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
 
-    assert dreams_stats['channels_exist'] == {1, time_stamp}
-    assert dreams_stats['dms_exist'] == {1, time_stamp}
-    assert dreams_stats['messages_exist'] == {0, time_stamp}
-    assert dreams_stats['utilization_rate'] == 1
+    assert dreams_stats['channels_exist'] == [{'num_channels_exist': 1,'time_stamp': time_stamp}]
+    assert dreams_stats['dms_exist'] == [{'num_dms_exist': 1, 'time_stamp': time_stamp}]
+    assert dreams_stats['messages_exist'] == [{'num_messages_exist': 0, 'time_stamp': time_stamp}]
+    assert dreams_stats['utilization_rate'] == 0.4
 
 
 # Test stats when there is only one active user contributing to full utilization and sending messages
@@ -123,18 +125,19 @@ def test_users_stats_v1_loner(setup_user_data):
         'message': "Welcome 4"
     }).json() 
 
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
 
-    assert dreams_stats['channels_exist'] == {1, time_stamp}
-    assert dreams_stats['dms_exist'] == {0, time_stamp}
-    assert dreams_stats['messages_exist'] == {4, time_stamp}
-    assert dreams_stats['utilization_rate'] == 1
+    assert dreams_stats['channels_exist'] == [{'num_channels_exist': 1,'time_stamp': time_stamp}]
+    assert dreams_stats['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time_stamp}]
+    assert dreams_stats['messages_exist'] == [{'num_messages_exist': 4, 'time_stamp': time_stamp}]
+    assert dreams_stats['utilization_rate'] == 0.2
 
 
 # Test stats to see if invited/joined users count towards utilization
-def test_users_stats_v1_invite_join():
+def test_users_stats_v1_invite_join(setup_user_data):
     users = setup_user_data
 
     # Creating a public channel
@@ -210,14 +213,15 @@ def test_users_stats_v1_invite_join():
         'message': "Hello",
     }).json()
   
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
 
-    assert dreams_stats['channels_exist'] == {1, time_stamp}
-    assert dreams_stats['dms_exist'] == {1, time_stamp}
-    assert dreams_stats['messages_exist'] == {6, time_stamp}
-    assert dreams_stats['utilization_rate'] == 1
+    assert dreams_stats['channels_exist'] == [{'num_channels_exist': 1,'time_stamp': time_stamp}]
+    assert dreams_stats['dms_exist'] == [{'num_dms_exist': 1, 'time_stamp': time_stamp}]
+    assert dreams_stats['messages_exist'] == [{'num_messages_exist': 6, 'time_stamp': time_stamp}]
+    assert dreams_stats['utilization_rate'] == 0.6
 
 
 # Test to see partial utilization rates
@@ -238,14 +242,15 @@ def test_users_stats_v1_partial_util(setup_user_data):
         'message': "Welcome 1"
     }).json() 
 
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user1']['token'],
     }).json()
 
-    assert dreams_stats['channels_exist'] == {1, time_stamp}
-    assert dreams_stats['dms_exist'] == {0, time_stamp}
-    assert dreams_stats['messages_exist'] == {1, time_stamp}
-    assert dreams_stats['utilization_rate'] == 0.25
+    assert dreams_stats['channels_exist'] == [{'num_channels_exist': 1,'time_stamp': time_stamp}]
+    assert dreams_stats['dms_exist'] == [{'num_dms_exist': 0, 'time_stamp': time_stamp}]
+    assert dreams_stats['messages_exist'] == [{'num_messages_exist': 1, 'time_stamp': time_stamp}]
+    assert dreams_stats['utilization_rate'] == 0.2
 
 
 # Test stats to see if multiple users get the same stats
@@ -253,7 +258,7 @@ def test_users_stats_v1_active(setup_user_data):
     users = setup_user_data
 
     # User 1 creates 5 channels
-    requests.post(config.url + 'channels/create/v2', json={
+    channel_id1 = requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'C1',
         'is_public': True,
@@ -335,29 +340,32 @@ def test_users_stats_v1_active(setup_user_data):
     }).json() 
 
     # Observe dreams stats
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats1 = requests.get(config.url + 'users/stats/v1', params={
-        'token': users['user1']['token'],
+        'token': users['user1']['token']
     }).json()
 
-    assert dreams_stats1['channels_exist'] == {5, time_stamp}
-    assert dreams_stats1['dms_exist'] == {5, time_stamp}
-    assert dreams_stats1['messages_exist'] == {7, time_stamp}
-    assert dreams_stats1['utilization_rate'] == 0.5
+    assert dreams_stats1['channels_exist'] == [{'num_channels_exist': 5,'time_stamp': time_stamp}]
+    assert dreams_stats1['dms_exist'] == [{'num_dms_exist': 5, 'time_stamp': time_stamp}]
+    assert dreams_stats1['messages_exist'] == [{'num_messages_exist': 7, 'time_stamp': time_stamp}]
+    assert dreams_stats1['utilization_rate'] == 0.4
 
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats2 = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user2']['token'],
     }).json()
 
-    assert dreams_stats2['channels_exist'] == {5, time_stamp}
-    assert dreams_stats2['dms_exist'] == {5, time_stamp}
-    assert dreams_stats2['messages_exist'] == {7, time_stamp}
-    assert dreams_stats2['utilization_rate'] == 0.5
+    assert dreams_stats2['channels_exist'] == [{'num_channels_exist': 5,'time_stamp': time_stamp}]
+    assert dreams_stats2['dms_exist'] == [{'num_dms_exist': 5, 'time_stamp': time_stamp}]
+    assert dreams_stats2['messages_exist'] == [{'num_messages_exist': 7, 'time_stamp': time_stamp}]
+    assert dreams_stats2['utilization_rate'] == 0.4
     
+    time_stamp = round(datetime.now().timestamp())
     dreams_stats3 = requests.get(config.url + 'users/stats/v1', params={
         'token': users['user3']['token'],
     }).json()
 
-    assert dreams_stats3['channels_exist'] == {5, time_stamp}
-    assert dreams_stats3['dms_exist'] == {5, time_stamp}
-    assert dreams_stats3['messages_exist'] == {7, time_stamp}
-    assert dreams_stats3['utilization_rate'] == 0.5'''
+    assert dreams_stats3['channels_exist'] == [{'num_channels_exist': 5,'time_stamp': time_stamp}]
+    assert dreams_stats3['dms_exist'] == [{'num_dms_exist': 5, 'time_stamp': time_stamp}]
+    assert dreams_stats3['messages_exist'] == [{'num_messages_exist': 7, 'time_stamp': time_stamp}]
+    assert dreams_stats3['utilization_rate'] == 0.4
