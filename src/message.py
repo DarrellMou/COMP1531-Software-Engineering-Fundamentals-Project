@@ -137,7 +137,6 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
-        'reacts': []
     }
 
     # Create a dictionary which we will append to our data['messages'] list
