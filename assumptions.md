@@ -20,8 +20,10 @@
 * Users don't unreact to removed messages.
 
 ## user_stats_v1 (kellen)
+* N/A
 
 ## users_stats_v1 (kellen)
+* N/A
 
 ## standup_start (darrell)
 * The length cannot be negative, and can be as large as any amount.
