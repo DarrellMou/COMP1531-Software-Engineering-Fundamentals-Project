@@ -38,8 +38,6 @@ CORS(APP)
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 
-read_data()
-
 # Example
 @APP.route("/echo", methods=['GET'])
 def echo():
@@ -516,3 +514,4 @@ def clear_v1_flask():
 
 if __name__ == "__main__":
     APP.run(debug=True, port=config.port) # Do not edit this port
+    read_data()
