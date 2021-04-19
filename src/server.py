@@ -283,16 +283,19 @@ def message_remove_v1_flask():
     message_remove_v1(data["token"], data["message_id"])
     
     write_data()
-    return json.dumps({})
+    return dumps({})
 
 
 @APP.route("/message/edit/v2", methods=['PUT'])
 def message_edit_v2_flask():
     data = request.get_json()
-    message_edit_v2(data["token"], int(data["message_id"]), data["message"])
+    token = data["token"]
+    message_id = int(data["message_id"])
+    message = data["message"]
+    response = message_edit_v2(token, message_id, message)
 
     write_data()
-    return json.dumps({})
+    return dumps(response)
 
 
 @APP.route("/message/share/v1", methods=['POST'])
