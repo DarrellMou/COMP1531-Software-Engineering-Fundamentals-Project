@@ -895,7 +895,6 @@ def message_unreact_v1(token, message_id, react_id):
             dm_id = message['dm_id']
             msg = message
             found = 1
-            break
 
 
     # If it doesn't exist, raise error
