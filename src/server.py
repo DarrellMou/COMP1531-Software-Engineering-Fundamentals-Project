@@ -52,6 +52,11 @@ def echo():
     })
 
 
+@APP.route("/")
+def free_marks():
+    return "Hi Kaiqi. Welcome to the NHK."
+
+
 @APP.route("/auth/register/v2", methods=['POST'])
 def auth_register_v2_flask():
     payload = request.get_json()
