@@ -255,7 +255,7 @@ def dm_remove_v1_flask():
 def message_send_v2_flask():
     payload = request.get_json()
     token = payload['token']
-    channel_id = payload['channel_id']
+    channel_id = int(payload['channel_id'])
     message = payload['message']
 
     write_data()
@@ -284,7 +284,7 @@ def message_remove_v1_flask():
 @APP.route("/message/edit/v2", methods=['PUT'])
 def message_edit_v2_flask():
     data = request.get_json()
-    message_edit_v2(data["token"], data["message_id"], data["message"])
+    message_edit_v2(data["token"], int(data["message_id"]), data["message"])
 
     write_data()
     return json.dumps({})
