@@ -137,6 +137,7 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
+        'reacts': []
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -514,7 +515,7 @@ def message_react_v1(token, message_id, react_id):
     found = 0
     for message in data['messages']:
         # If the message_id exists and is valid, copy important information
-        if message['message_id'] == message_id['message_id']:
+        if message['message_id'] == message_id:
             channel_id = message['channel_id']
             dm_id = message['dm_id']
             owner = message['u_id']

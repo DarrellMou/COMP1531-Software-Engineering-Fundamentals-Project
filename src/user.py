@@ -285,9 +285,9 @@ def users_stats_v1(token):
     # Create dict for stats
     time_stamp = round(datetime.now().timestamp())
     dreams_stats = {
-        'channels_exist': {total_ch, time_stamp},
-        'dms_exist': {total_dm, time_stamp},
-        'messages_exist': {total_msg, time_stamp},
+        'channels_exist': [{'num_channels_exist': total_ch,'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': total_dm,'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': total_msg,'time_stamp': time_stamp}],
         'utilization_rate': utilization,
     }
 
