@@ -33,7 +33,7 @@ resetPendings = set()
 def getNewSessionID():
     # global sessionID 
 
-    return int(uuid.uuid4())
+    return int(uuid.uuid4()) >> 64
 
 # checks if email address has valid format, if so returns true
 def auth_email_format(email):
