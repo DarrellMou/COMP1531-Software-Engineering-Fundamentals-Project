@@ -32,6 +32,17 @@
 ## standup_send (darrell)
 * Message is sent in the following format - handle_str : message
 
+## auth_passwordreset_request (Winston)
+* The user has access to that email account.
+* the user can memorise or copy/paste the verification code to DREAMS page
+
+## auth_passwordreset_reset (Winston)
+* The new password can be the same as the old one.
+* Verification code never expires, until server restarts.
+
+## user_profile_uploadphoto_v1 (Winston)
+* N/A
+
 
 # ARCHIVE
 # COMP1531 Assignment Iteration 2 Assumptions
