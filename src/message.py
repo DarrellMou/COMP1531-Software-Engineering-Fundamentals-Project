@@ -874,8 +874,27 @@ def message_unpin_v1(token, message_id):
                 msg_dm['is_pinned'] = False
     
     return {}
-# Create or reactivate a reaction to a message in channel/dm
+# Create or add to a reaction to a message in channel/dm
 def message_react_v1(token, message_id, react_id):
+    '''
+    BRIEF DESCRIPTION
+    Given a message within a channel or DM the authorised user is part of, add a "react" to that particular message
+
+    Arguments:
+        token (string)          - User that reacts to the messages
+        message_id (integer)    - The message id of the message being reacted
+        react_id (integer)      - The react id of the reaction
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user is not a member of channel/dm that message is in
+        InputError  - Occurs when the given message_id does not refer to a valid message
+        InputError  - Occurs when the given message_id is already reacted
+        InputError  - Occurs when the given react_id is invalid
+
+    Return Value:
+        N/A
+    '''
     data = retrieve_data()
 
     # Make sure user is valid
@@ -963,6 +982,26 @@ def message_react_v1(token, message_id, react_id):
 
 # Deactivate a reaction in a message
 def message_unreact_v1(token, message_id, react_id):
+    '''
+    BRIEF DESCRIPTION
+    Given a message within a channel or DM the authorised user is part of, remove a "react" to that particular message
+
+    Arguments:
+        token (string)          - User that unreacts to the messages
+        message_id (integer)    - The message id of the message being unreacted
+        react_id (integer)      - The react id of the unreaction
+
+    Exceptions:
+        AccessError - Occurs when the token passed in is not valid
+        AccessError - Occurs when the authorised user is not a member of channel/dm that message is in
+        InputError  - Occurs when the given message_id does not refer to a valid message
+        InputError  - Occurs when the given reaction doesn't exist
+        InputError  - Occurs when the given react_id is invalid
+
+    Return Value:
+        N/A
+    '''
+    
     data = retrieve_data()
 
     # Make sure user is valid

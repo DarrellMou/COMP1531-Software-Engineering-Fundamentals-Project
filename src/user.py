@@ -266,6 +266,21 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
 
 # Function to return the statistics of a user
 def user_stats_v1(token):
+    '''
+    BRIEF DESCRIPTION
+    Fetches the required statistics about this user's use of UNSW Dreams
+
+    Arguments:
+        token   (string)        - authenticated user setting their name
+           
+    Exceptions:
+        N/A
+    
+    Returns:
+        Returns { user_stats }
+
+    '''
+    
     data = retrieve_data()
 
     # Make sure user is valid
@@ -324,6 +339,20 @@ def user_stats_v1(token):
 
 # Function to return the statistics of a user
 def users_stats_v1(token):
+    '''
+    BRIEF DESCRIPTION
+    Fetches the required statistics about the use of UNSW Dreams
+    Arguments:
+        token   (string)        - authenticated user setting their name
+           
+    Exceptions:
+        N/A
+    
+    Returns:
+        Returns { dreams_stats }
+
+    '''
+    
     data = retrieve_data()
 
     # Make sure user is valid
