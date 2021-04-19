@@ -19,7 +19,10 @@ def notifications_get_v1(token):
     Return value:
         notifications (list of notification data structures) - A list of notifications that the user has recieved
     '''
-
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+        
     data = retrieve_data()
 
     if not auth_token_ok(token):

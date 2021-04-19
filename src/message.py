@@ -194,12 +194,8 @@ def message_send_v2(token, channel_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
-        'is_pinned': False
+        'reacts': [],
+        'is_pinned': False,
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -212,11 +208,7 @@ def message_send_v2(token, channel_id, message):
         'dm_id': -1,
         'is_removed': False,
         'was_shared': False,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False,
     }
 
@@ -473,12 +465,8 @@ def message_senddm_v1(token, dm_id, message):
         'u_id': user_id,
         'message': message,
         'time_created': time_created_timestamp,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
-        'is_pinned': False
+        'reacts': [],
+        'is_pinned': False,
     }
 
     # Create a dictionary which we will append to our data['messages'] list
@@ -491,12 +479,8 @@ def message_senddm_v1(token, dm_id, message):
         'dm_id': dm_id,
         'is_removed': False,
         'was_shared': False,
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
-        'is_pinned': False
+        'reacts': [],
+        'is_pinned': False,
     }
 
     # Append our dictionaries to their appropriate lists
@@ -532,109 +516,6 @@ def message_senddm_v1(token, dm_id, message):
     return {
         'message_id': unique_message_id
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def message_sendlater_v1(token, channel_id, message, time_sent):
     '''
@@ -993,3 +874,148 @@ def message_unpin_v1(token, message_id):
                 msg_dm['is_pinned'] = False
     
     return {}
+# Create or reactivate a reaction to a message in channel/dm
+def message_react_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            owner = message['u_id']
+            msg = message
+            found = 1
+            break
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # Check to see if there has been an identical reaction from the user
+    if len(msg['reacts']) != 0:
+        for i in msg['reacts']:
+            for j in i['u_ids']:
+                if (j == user_id and i['react_id'] == react_id):
+                    raise InputError(description="User already has identical active reaction on message")
+
+    # If not found append a new reaction to the message and send a notification
+
+    # Add the reaction
+    # If the first to react with this react_id, create and append a reaction
+    if len(msg['reacts']) == 0:
+        reaction_dict = {
+            'react_id': react_id,
+            'u_ids': [user_id],
+            'is_this_user_reacted': False,
+            }
+        msg['reacts'].append(reaction_dict)
+        if channel_id != -1:
+            for messages in data['channels'][channel_id]['messages']:
+                if messages['message_id'] == message_id:
+                    messages['reacts'].append(reaction_dict)
+        else:
+            for messages in data['dms'][dm_id]['messages']:
+                if messages['message_id'] == message_id:
+                    messages['reacts'].append(reaction_dict)
+    # Otherwise just add to u_ids list
+    else:
+        msg['reacts'][0]['u_ids'].append(user_id)
+    
+    # Create notification message based on whether react was in dm or channel
+    if channel_id != -1:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['channels'][channel_id]['name']))
+    else:
+        notification_message = (str(data['users'][user_id]['handle_str']) + " reacted to your message in " + str(data['dms'][dm_id]['name']))
+    
+    # Create notification for user being reacted to
+    data['users'][owner]['notifications'].append({
+        'channel_id' : channel_id,
+        'dm_id' : dm_id,
+        'notification_message' : notification_message
+    })
+    # Make sure notification list is len 20
+    if len(data['users'][owner]['notifications']) > 20:
+        data['users'][owner]['notifications'].pop(0)
+
+
+# Deactivate a reaction in a message
+def message_unreact_v1(token, message_id, react_id):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Check to see if message_id exists in an existing channel
+    found = 0
+    for message in data['messages']:
+        # If the message_id exists and is valid, copy important information
+        if message['message_id'] == message_id:
+            channel_id = message['channel_id']
+            dm_id = message['dm_id']
+            msg = message
+            found = 1
+            break
+
+
+    # If it doesn't exist, raise error
+    if found == 0:
+        raise InputError(description="The given message_id is not valid")
+
+    # Check to see if user is authorised to react to the message (is in channel/dm)
+    if not channel_id == -1:
+        if user_id not in data['channels'][channel_id]['all_members']:
+            raise AccessError(description="The reacting user is not a member of the messages channel")
+    
+    if not dm_id == -1:
+        if user_id not in data['dms'][dm_id]['members']:
+            raise AccessError(description="The reacting user is not a member of the messages dm")
+
+    # Check to see if the react_id denotes a valid entry in the react library
+    # Only react_id = 1 (like) is implemented
+    if react_id != 1:
+        raise InputError(description="The react_id is not valid")
+
+    # If message has no reacts whatsoever
+    if len(msg['reacts']) == 0:
+        raise InputError(description="User already has no reaction of the same type on message")
+    # Check to see if there has been an identical reaction from the user
+    else:
+        for i in msg['reacts']:
+            for j in i['u_ids']:
+                if (j == user_id and i['react_id'] == react_id):
+                    i['u_ids'].remove(user_id)
+                    # Delete react element if last u_id on the u_ids list
+                    if len(i['u_ids']) == 0: {
+                        msg['reacts'].clear()
+                    }
+                    return
+
+    # If not found, return an error, because we're not creating a new react
+    # we don't need to send a notification
+    raise InputError(description="User already has no reaction of the same type on message")

@@ -4,6 +4,7 @@
 from src.data import data, retrieve_data
 from src.error import AccessError, InputError
 from src.auth import auth_token_ok, auth_decode_token, auth_email_format
+from datetime import datetime
 
 import requests
 import imgspy
@@ -262,4 +263,109 @@ def user_profile_uploadphoto_v1(token, img_url, x_start, y_start, x_end, y_end):
     
     return {}
     
+
+# Function to return the statistics of a user
+def user_stats_v1(token):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    user_id = auth_decode_token(token)
+
+    # Token is valid, continue to gather statistics about this user
+
+    # Channels joined statistic
+    channel_num = 0
+    total_ch = 0
+    for channel in data['channels']:
+        for member in data['channels'][channel]['all_members']:
+            if member == user_id:
+                channel_num += 1
+
+        
+        total_ch += 1
+
+    # Dms joined statistic
+    dm_num = 0
+    total_dm = 0
+    for dm in data['dms']:
+        for member in data['dms'][dm]['members']:
+            if member == user_id:
+                dm_num += 1
+        total_dm += 1
+
+    # Messages sent statistic
+    msg_num = 0
+    total_msg = 0
+    for msg in data['messages']:
+        if msg['u_id'] == user_id:
+            msg_num += 1
+        total_msg += 1
+
+    # Calculate involvement
+    activity = channel_num + dm_num + msg_num
+    server_act = total_ch + total_dm + total_msg
+    involvement = 0
+
+    if not activity == 0:
+        involvement = (activity / server_act)
+
+    # Create dict for stats
+    user_stats = {
+        'num_channels_joined': channel_num,
+        'num_dms_joined': dm_num,
+        'num_msgs_sent': msg_num,
+        'involvement': involvement,
+    }
+
+    return user_stats
+
+# Function to return the statistics of a user
+def users_stats_v1(token):
+    data = retrieve_data()
+
+    # Make sure user is valid
+    if not auth_token_ok(token):
+        raise AccessError(description="The given token is not valid")
+
+    # Token is valid, continue to gather statistics about this user
+
+    # To calculate involvement, get total users and create a list to track
+    # users we encounter involved in channels/dms
+    total_users = len(data['users'])
+    userdex = []
+
+    # Total channels statistic
+    total_ch = 0
+    for channel in data['channels']:
+        for member in data['channels'][channel]['all_members']:
+            if member not in userdex:
+                userdex.append(member)
+        total_ch += 1
+
+    # Total dms statistic
+    total_dm = 0
+    for dm in data['dms']:
+        for member in data['dms'][dm]['members']:
+            if member not in userdex:
+                userdex.append(member)
+        total_dm += 1
+
+    # Messages sent statistic
+    total_msg = len(data['messages'])
+
+    # Calculate utilization
+    utilization = (len(userdex) / total_users)
     
+    # Create dict for stats
+    time_stamp = round(datetime.now().timestamp())
+    dreams_stats = {
+        'channels_exist': [{'num_channels_exist': total_ch,'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': total_dm,'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': total_msg,'time_stamp': time_stamp}],
+        'utilization_rate': utilization,
+    }
+
+    return dreams_stats
