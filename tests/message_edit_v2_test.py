@@ -131,11 +131,7 @@ def test_message_edit_v2_edit_one(set_up_message_data):
         'u_id': messages_info['u_id'],
         'message': 'HI',
         'time_created': messages_info['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict1 = channel_msgs["messages"][1]
@@ -171,11 +167,7 @@ def test_message_edit_v2_edit_multiple(set_up_message_data):
         'u_id': msg0['u_id'],
         'message': 'Hi',
         'time_created': msg0['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict2 = {
@@ -183,11 +175,7 @@ def test_message_edit_v2_edit_multiple(set_up_message_data):
         'u_id': msg2['u_id'],
         'message': 'Hello',
         'time_created': msg2['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict3 = {
@@ -195,11 +183,7 @@ def test_message_edit_v2_edit_multiple(set_up_message_data):
         'u_id': msg3['u_id'],
         'message': 'Hey',
         'time_created': msg3['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
 
@@ -241,11 +225,7 @@ def test_message_edit_v2_edit_all_messages(set_up_message_data):
         'u_id': msg0['u_id'],
         'message': 'Hi',
         'time_created': msg0['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict1 = {
@@ -253,11 +233,7 @@ def test_message_edit_v2_edit_all_messages(set_up_message_data):
         'u_id': msg1['u_id'],
         'message': 'Hello',
         'time_created': msg1['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict2 = {
@@ -265,11 +241,7 @@ def test_message_edit_v2_edit_all_messages(set_up_message_data):
         'u_id': msg2['u_id'],
         'message': 'Hey',
         'time_created': msg3['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict3 = {
@@ -277,11 +249,7 @@ def test_message_edit_v2_edit_all_messages(set_up_message_data):
         'u_id': msg3['u_id'],
         'message': 'Goodbye',
         'time_created': msg3['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict4 = {
@@ -289,11 +257,7 @@ def test_message_edit_v2_edit_all_messages(set_up_message_data):
         'u_id': msg4['u_id'],
         'message': 'Bye',
         'time_created': msg4['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
 
@@ -329,11 +293,7 @@ def test_message_edit_v2_owner_edits_message():
         'u_id': msg1['u_id'],
         'message': 'Bao',
         'time_created': msg1['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict0 = channel_msgs['messages'][2]
@@ -370,11 +330,7 @@ def test_message_edit_v2_dream_owner_edits_message():
         'u_id': msg1['u_id'],
         'message': 'HELLO!',
         'time_created': msg1['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict0 = channel_msgs["messages"][2]
@@ -412,11 +368,7 @@ def test_message_edit_v2_dream_owner_edits_message_in_channel():
         'u_id': msg1['u_id'],
         'message': 'Testing',
         'time_created': msg1['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict0 = channel_msgs["messages"][2]
@@ -511,11 +463,7 @@ def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
         'u_id': msg0['u_id'],
         'message': 'Hey',
         'time_created': msg0['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
     m_dict3 = {
@@ -523,11 +471,7 @@ def test_message_edit_v2_edit_msg_in_dm(set_up_message_data):
         'u_id': msg3['u_id'],
         'message': 'Hello',
         'time_created': msg3['time_created'],
-        'reacts': [{
-            'react_id': 1,
-            'u_ids': [],
-            'is_this_user_reacted': False
-        }],
+        'reacts': [],
         'is_pinned': False
     }
 

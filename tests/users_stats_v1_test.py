@@ -74,9 +74,9 @@ def test_users_stats_v1_empty():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {0, time_stamp},
-        'dms_exist': {0, time_stamp},
-        'messages_exist': {0, time_stamp},
+        'channels_exist': [{'num_channels_exist': 0, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': time_stamp}],
         'utilization_rate': 0,
     }
 
@@ -91,9 +91,9 @@ def test_users_stats_v1_no_msg():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {1, time_stamp},
-        'dms_exist': {1, time_stamp},
-        'messages_exist': {0, time_stamp},
+        'channels_exist': [{'num_channels_exist': 1, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 1, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': time_stamp}],
         'utilization_rate': 1,
     }
 
@@ -110,9 +110,9 @@ def test_users_stats_v1_loner():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {1, time_stamp},
-        'dms_exist': {0, time_stamp},
-        'messages_exist': {4, time_stamp},
+        'channels_exist': [{'num_channels_exist': 1, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 4, 'time_stamp': time_stamp}],
         'utilization_rate': 1,
     }
 
@@ -139,9 +139,9 @@ def test_users_stats_v1_invite_join():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {1, time_stamp},
-        'dms_exist': {1, time_stamp},
-        'messages_exist': {6, time_stamp},
+        'channels_exist': [{'num_channels_exist': 1, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 1, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 6, 'time_stamp': time_stamp}],
         'utilization_rate': 1,
     }
 
@@ -159,9 +159,9 @@ def test_users_stats_v1_partial_util():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {1, time_stamp},
-        'dms_exist': {0, time_stamp},
-        'messages_exist': {1, time_stamp},
+        'channels_exist': [{'num_channels_exist': 1, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 1, 'time_stamp': time_stamp}],
         'utilization_rate': 0.25,
     }
 
@@ -193,28 +193,28 @@ def test_users_stats_v1_active():
 
     time_stamp = round(datetime.now().timestamp())
     assert users_stats_v1(user1['token']) == {
-        'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
+        'channels_exist': [{'num_channels_exist': 5, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 5, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 7, 'time_stamp': time_stamp}],
         'utilization_rate': 0.5,
     }
     assert users_stats_v1(user2['token']) == {
-        'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
+        'channels_exist': [{'num_channels_exist': 5, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 5, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 7, 'time_stamp': time_stamp}],
         'utilization_rate': 0.5,
     }
 
     assert users_stats_v1(user3['token']) == {
-        'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
+        'channels_exist': [{'num_channels_exist': 5, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 5, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 7, 'time_stamp': time_stamp}],
         'utilization_rate': 0.5,
     }
 
     assert users_stats_v1(user4['token']) == {
-        'channels_exist': {5, time_stamp},
-        'dms_exist': {5, time_stamp},
-        'messages_exist': {7, time_stamp},
+        'channels_exist': [{'num_channels_exist': 5, 'time_stamp': time_stamp}],
+        'dms_exist': [{'num_dms_exist': 5, 'time_stamp': time_stamp}],
+        'messages_exist': [{'num_messages_exist': 7, 'time_stamp': time_stamp}],
         'utilization_rate': 0.5,
     }

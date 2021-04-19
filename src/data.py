@@ -60,7 +60,7 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 123416589,
-                    'is_pinned': False
+                    'is_pinned': False,
                     'is_removed': False,
                     'reacts': [
                         {
@@ -144,7 +144,7 @@ data = {
                     'u_id': 35746842521,
                     'message': 'Hello World1',
                     'time_created': 45132806512,
-                    'is_pinned': False
+                    'is_pinned': False,
                     'reacts': [
                         {
                         'react_id': 1,
@@ -158,7 +158,7 @@ data = {
                     'u_id': 11753764853,
                     'message': 'Hello World2',
                     'time_created': 68741450315603,
-                    'is_pinned': False
+                    'is_pinned': False,
                     'reacts': [
                         {
                         'react_id': 1,
@@ -180,7 +180,7 @@ data = {
             'dm_id': -1,
             'is_removed': False,
             'was_shared': False,
-            'is_pinned': False
+            'is_pinned': False,
             'reacts': [
                 {
                 'react_id': 1,
@@ -198,7 +198,7 @@ data = {
             'dm_id': 1691360831,
             'is_removed': False,
             'was_shared': False,
-            'is_pinned': False
+            'is_pinned': False,
             'reacts': [
                 {
                 'react_id': 1,
