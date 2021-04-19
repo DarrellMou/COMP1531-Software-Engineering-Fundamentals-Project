@@ -7,8 +7,10 @@ from src.error import InputError, AccessError
 from src.auth import auth_login_v1, auth_email_format, auth_register_v1, auth_encode_token, auth_decode_token, auth_token_ok
 from src.user import user_profile_v2, user_profile_setname_v2, user_profile_setemail_v2, user_profile_sethandle_v2, users_all_v1, user_profile_uploadphoto_v1
 from src.data import retrieve_data
+from src.other import admin_user_remove_v1
 from src.other import clear_v1
 import time
+import os
 
 
 @pytest.fixture
@@ -55,6 +57,17 @@ def test_user_profile_invalid_auth_id(test_users):
 def test_user_profile_non_existent_user(test_users):
     with pytest.raises(InputError):
         user_profile_v2(test_users['login1']['token'], test_users['login1']['auth_user_id']+1)
+
+
+def test_user_profile_removed_user(test_users):
+    # remove user 'login2' with login1's admin permission
+    admin_user_remove_v1(test_users['login1']['token'], test_users['login2']['auth_user_id'])
+
+    # see if return removed info
+    profile = user_profile_v2(test_users['login2']['token'], test_users['login2']['auth_user_id'])
+    assert profile == {'user': {'handle_str': 'Removed user',
+                    'name_first': 'Removed',
+                    'name_last': 'user'}}
 
 
 def test_user_profile_setname(test_users):
@@ -162,8 +175,14 @@ def test_users_all_v1_invalid_token(test_users):
 
 
 def test_user_profile_uploadphoto_v1(test_users):
-    user_profile_uploadphoto_v1(test_users['login1']['token'], 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg', 0, 0, 100, 100)
+    user_profile_uploadphoto_v1(test_users['login1']['token'], 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg', 0, 0, 800, 800)
+    f = str(auth_decode_token(test_users['login1']['token'])) + '.jpg'
+    os.remove(f) # remove downloaded pussy pic
 
+
+def test_user_profile_uploadphoto_v1_invalid_token(test_users):
+    a = user_profile_uploadphoto_v1('ArandomToken', 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg', 0, 0, 100, 100)
+    assert a == {}
 
 def test_user_profile_uploadphoto_v1_http_err(test_users):
     with pytest.raises(InputError):
