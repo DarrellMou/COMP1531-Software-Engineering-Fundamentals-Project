@@ -63,7 +63,7 @@ def test_user_stats_v1_full(setup_user_data):
     users = setup_user_data
 
     # Creating a public channel
-    channel_id = requests.post(config.url + 'channels/create/v2', json={
+    requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Public',
         'is_public': True,

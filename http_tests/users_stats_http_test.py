@@ -68,7 +68,7 @@ def test_users_stats_v1_no_msg(setup_user_data):
     users = setup_user_data
 
     # Creating a public channel
-    channel_id = requests.post(config.url + 'channels/create/v2', json={
+    requests.post(config.url + 'channels/create/v2', json={
         'token': users['user1']['token'],
         'name': 'Public',
         'is_public': True,
@@ -76,7 +76,7 @@ def test_users_stats_v1_no_msg(setup_user_data):
 
     # Creating a dm
     u_id_list = [users['user2']]
-    dm_id1 = requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
+    requests.post(config.url + 'dm/create/v1', json=dm_create_body(users['user1'],u_id_list)).json()
 
     time_stamp = round(datetime.now().timestamp())
     dreams_stats = requests.get(config.url + 'users/stats/v1', params={
