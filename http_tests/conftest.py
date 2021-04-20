@@ -58,21 +58,7 @@ def setup_user_dict(reset):
 
 @pytest.fixture
 def setup_user_data(setup_user_dict):
-    '''
-    This fixture is used in:
-        - channels/create
-        - channels/listall
-        - message/senddm
-        - admin/userpermission/change
-        - admin/user/remove
-        - search
-        - channel/join/v2
-        - channels/list/v2,
-        - channel/addowner/v1
-        - channel/removeowner/v1
-        - channel/leave/v1
-        - notifications/get/v1
-    '''
+    
     user1 = setup_user_dict['user1_dict']
     user1_details = requests.post(config.url + "auth/register/v2", json=user1).json()
 
