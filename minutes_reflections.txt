@@ -98,8 +98,8 @@ TO-DO:
 -	Winston to ensure coverage in his functions
 
 
-Meeting - Monday 19/04/21
-Duration	8:30pm - 3:00am
+Meeting - Monday 19/04/21-Tuesday 20/04/21
+Duration	8:30pm - 4:00am
 Platform	Discord
 Attendees	Darrell, Brendan, Winston, Nikki, Kellen
 
@@ -112,8 +112,8 @@ ACTIONS:
 -	Winston to debug his auth functions 
 -	Darrell finished reviewing planning.pdf
 -	Brendan and Nikki deploy frontend to work out errors
+-	Brendan stays up to debug any code
 	
-
 TO-DO:
 -	Push everything to master
 
